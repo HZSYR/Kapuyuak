@@ -1324,104 +1324,101 @@ export default function Dashboard() {
       {/* ── NEW KEY TUTORIAL POPUP ── */}
       {showKeyTutorial && newKeyData && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#0f172a] border border-sky-500/30 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-[0_0_50px_rgba(14,165,233,0.15)] overflow-hidden">
-            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-sky-950/20">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-500/30 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <div className="relative bg-[#0a0a0c] bg-opacity-95 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-4xl w-full mx-auto overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Header */}
+            <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                  <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white tracking-tight">License Key Generated Successfully!</h3>
-                  <p className="text-xs text-sky-400/80 uppercase tracking-widest mt-1">Integration Guide for OJS {selectedOjsVersion}</p>
+                  <h3 className="text-2xl font-black text-white tracking-tight">System Secured</h3>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Integration Guide for OJS {selectedOjsVersion}</p>
                 </div>
               </div>
-              <button onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} className="p-2 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              <button onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} className="p-2 text-gray-500 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto flex-1 space-y-6">
-              <div className="bg-emerald-950/30 border border-emerald-500/20 rounded-xl p-4">
-                <p className="text-xs text-emerald-400/80 font-bold uppercase tracking-widest mb-2">Your New Secret Key</p>
-                <div className="flex items-center justify-between bg-black/50 p-3 rounded-lg border border-white/5 group/key">
-                  <code className="text-emerald-400 font-mono text-sm break-all">{newKeyData.apiKey}</code>
+            {/* Body */}
+            <div className="p-8 overflow-y-auto flex-1 space-y-8 custom-scrollbar">
+              
+              {/* API Key Box */}
+              <div>
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 ml-1">Your Secret Key</p>
+                <div className="flex items-center justify-between bg-black/40 p-4 rounded-2xl border border-white/5 group/key hover:border-white/10 transition">
+                  <code className="text-emerald-400 font-mono text-base break-all">{newKeyData.apiKey}</code>
                   <button 
                     onClick={handleCopyKey} 
-                    className={`ml-4 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest transition-all duration-300 flex-shrink-0 flex items-center space-x-1 ${copiedKey ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-400 group-hover/key:bg-emerald-500/30'}`}
+                    className={`ml-6 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 flex-shrink-0 flex items-center space-x-2 ${copiedKey ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-white/5 hover:bg-white/10 text-gray-300 group-hover/key:text-white'}`}
                   >
                     {copiedKey ? (
                       <>
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                        <span>COPIED!</span>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                        <span>Copied</span>
                       </>
                     ) : (
-                      'COPY'
+                      'Copy Key'
                     )}
                   </button>
                 </div>
               </div>
 
+              {/* Code Installation */}
               <div>
-
-                
-                <h4 className="text-sm font-bold text-white mb-3">Langkah Pemasangan di OJS {selectedOjsVersion}</h4>
-                <p className="text-xs text-gray-400 mb-4 leading-relaxed">
-                  Buka file <code className="text-sky-400 bg-sky-400/10 px-1.5 py-0.5 rounded">index.php</code> di root folder OJS {selectedOjsVersion} Anda. Hapus semua isinya, lalu <strong className="text-white">ganti (paste) dengan full kode di bawah ini</strong>:
-                </p>
-                
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 ml-1">Installation Code</p>
                 <div className="relative group/code">
-                  <div className="absolute top-0 right-0 p-2 flex z-10">
+                  <div className="absolute top-4 right-4 flex space-x-2 z-10">
                     <button 
                       onClick={downloadIndexPhp} 
-                      className={`px-3 py-1.5 mr-2 rounded text-[10px] font-bold uppercase tracking-widest transition-all duration-300 backdrop-blur flex items-center space-x-1 ${downloaded ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-400' : 'bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 border border-blue-500/30 opacity-0 group-hover/code:opacity-100'}`}
+                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 backdrop-blur flex items-center space-x-2 ${downloaded ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] border border-blue-400' : 'bg-white/10 hover:bg-white/20 text-gray-300 border border-transparent opacity-0 group-hover/code:opacity-100'}`}
                     >
                       {downloaded ? (
                         <>
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                          <span>DOWNLOADED</span>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                          <span>Downloaded</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                          <span>DOWNLOAD INDEX.PHP</span>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                          <span>Download PHP</span>
                         </>
                       )}
                     </button>
                     <button 
                       onClick={handleCopyCode} 
-                      className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest transition-all duration-300 backdrop-blur flex items-center space-x-1 ${copiedCode ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.5)]' : 'bg-white/10 hover:bg-white/30 text-white opacity-0 group-hover/code:opacity-100'}`}
+                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 backdrop-blur flex items-center space-x-2 ${copiedCode ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.4)]' : 'bg-white/10 hover:bg-white/20 text-white border border-transparent opacity-0 group-hover/code:opacity-100'}`}
                     >
                       {copiedCode ? (
                         <>
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                          <span>COPIED!</span>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                          <span>Copied</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                          <span>COPY FULL CODE</span>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                          <span>Copy Code</span>
                         </>
                       )}
                     </button>
                   </div>
-                  <pre className="bg-[#09090b] border border-white/10 rounded-xl p-4 overflow-x-auto max-h-[40vh] custom-scrollbar">
-                    <code className="text-xs font-mono text-gray-300">
+                  <pre className="bg-[#000000] rounded-2xl p-6 overflow-x-auto max-h-[40vh] custom-scrollbar border border-white/5 relative">
+                    <code className="text-[13px] font-mono text-gray-300 leading-relaxed">
                       {selectedOjsVersion === '3.3' ? getFullIndexPhp(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL) : getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL)}
                     </code>
                   </pre>
                 </div>
-                
-                <div className="mt-4 p-4 bg-sky-950/20 border border-sky-500/20 rounded-xl">
-                  <p className="text-xs text-gray-300 leading-relaxed">
-                    <span className="text-sky-400 font-bold mr-1">Info:</span> 
-                    Kode di atas sudah berisi API Key rahasia Anda secara otomatis. Setelah disimpan, OJS otomatis terlindungi dari injeksi SPAM judi online dan fitur Anti-Inspect Element akan langsung aktif.
+                <div className="mt-6 p-5 bg-white/[0.02] border border-white/5 rounded-2xl flex gap-4 items-start">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Replace the entire contents of <code className="text-white bg-white/10 px-1.5 py-0.5 rounded font-mono">index.php</code> in your OJS root folder with the code above. The security system will be activated instantly.
                   </p>
                 </div>
               </div>
-            </div>
-            
-            <div className="p-6 border-t border-white/5 bg-black/20 flex justify-end">
-              <button onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold uppercase tracking-widest transition shadow-lg shadow-blue-500/20">Selesai</button>
             </div>
           </div>
         </div>
@@ -1450,22 +1447,27 @@ export default function Dashboard() {
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}></div>
-          <div className="relative bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-auto transform transition-all animate-in zoom-in-95 duration-200">
-            <h3 className="text-lg font-bold text-white mb-2">{confirmModal.title}</h3>
-            <p className="text-sm text-gray-300 mb-6">{confirmModal.message}</p>
-            <div className="flex space-x-3 justify-end">
-              <button 
-                onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg text-xs font-bold uppercase tracking-widest transition"
-              >
-                Batal
-              </button>
-              <button 
-                onClick={() => { confirmModal.onConfirm(); setConfirmModal({ ...confirmModal, isOpen: false }); }} 
-                className="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/20 rounded-lg text-xs font-bold uppercase tracking-widest transition"
-              >
-                Oke
-              </button>
+          <div className="relative bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl p-8 shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-sm w-full mx-auto transform transition-all animate-in zoom-in-95 duration-200">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(225,29,72,0.1)]">
+                <svg className="w-7 h-7 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </div>
+              <h3 className="text-xl font-black text-white mb-2 tracking-tight">{confirmModal.title}</h3>
+              <p className="text-xs text-gray-400 mb-8 leading-relaxed px-4">{confirmModal.message}</p>
+              <div className="flex w-full gap-3">
+                <button 
+                  onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                  className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all border border-white/5"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={() => { confirmModal.onConfirm(); setConfirmModal({ ...confirmModal, isOpen: false }); }} 
+                  className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.4)] rounded-2xl text-xs font-bold uppercase tracking-widest transition-all border border-rose-500/50"
+                >
+                  Konfirmasi
+                </button>
+              </div>
             </div>
           </div>
         </div>
