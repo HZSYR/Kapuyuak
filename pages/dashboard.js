@@ -336,6 +336,7 @@ export default function Dashboard() {
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
+  const [isGeneratingKey, setIsGeneratingKey] = useState(false);
   const [selectedOjsVersion, setSelectedOjsVersion] = useState('3.3');
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
   const aiPollRef = useRef(null);
@@ -480,6 +481,7 @@ export default function Dashboard() {
 
   const createKey = async (e) => {
     e.preventDefault();
+    setIsGeneratingKey(true);
     const res = await fetch('/api/generate-key', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
@@ -496,6 +498,7 @@ export default function Dashboard() {
     } else {
       alert('Failed to generate key');
     }
+    setIsGeneratingKey(false);
   };
 
   const deleteKey = (id) => {
@@ -845,7 +848,14 @@ export default function Dashboard() {
                       </select>
                     </div>
                     <div className="flex items-end">
-                      <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-lg text-white font-bold shadow-lg shadow-blue-500/20 transition text-xs uppercase tracking-widest">Generate</button>
+                      <button type="submit" disabled={isGeneratingKey} className="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-lg text-white font-bold shadow-lg shadow-blue-500/20 transition text-xs uppercase tracking-widest disabled:opacity-80 flex items-center justify-center">
+                        {isGeneratingKey ? (
+                          <span className="flex items-center space-x-2">
+                            <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                            <span className="animate-pulse">GENERATING...</span>
+                          </span>
+                        ) : 'Generate'}
+                      </button>
                     </div>
                   </div>
                 </form>
