@@ -194,14 +194,12 @@ const getFullIndexPhp34 = (apiKey, url) => `<?php
  * dispatcher to delegate to the appropriate request handler.
  */
 
-use APP\\core\\Application;
-
 // Initialize global environment
 define('INDEX_FILE_LOCATION', __FILE__);
 require_once './lib/pkp/includes/bootstrap.php';
 
-define('KPK4444_API_KEY', '\${apiKey}');
-define('KPK4444_API_URL', 'https://\${url ? url.trim() : ''}');
+define('KPK4444_API_KEY', '${apiKey}');
+define('KPK4444_API_URL', 'https://${url ? url.trim() : ''}');
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
@@ -311,7 +309,7 @@ if (!$isAjax) {
 }
 
 // Serve the request
-Application::get()->execute();
+APP\\core\\Application::get()->execute();
 `;
 
 export default function Dashboard() {
