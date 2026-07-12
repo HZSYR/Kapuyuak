@@ -475,12 +475,13 @@ export default function Dashboard() {
     const res = await fetch('/api/generate-key', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
-      body: JSON.stringify({ domain: e.target.domain.value, ownerName: e.target.ownerName.value, validDays: e.target.validDays.value })
+      body: JSON.stringify({ domain: e.target.domain.value, ownerName: e.target.ownerName.value, validDays: e.target.validDays.value, ojsVersion: e.target.ojsVersion.value })
     });
     
     if (res.ok) {
       const data = await res.json();
       setNewKeyData(data);
+      if (data.ojsVersion) setSelectedOjsVersion(data.ojsVersion);
       setShowKeyTutorial(true);
       e.target.reset();
       loadData(jwtToken);
@@ -572,7 +573,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center justify-center gap-2">
               <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 tracking-tight">KPK4444</h2>
-              <span className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full ring-1 ring-white/20 shadow-lg shadow-sky-500/20">OJS 3.3 / 3.4</span>
+
             </div>
             <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mt-1">by.150141146151172150</p>
           </div>
@@ -652,7 +653,7 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <h1 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 leading-none">KPK4444</h1>
-                <button onClick={() => setSelectedOjsVersion(v => v === '3.3' ? '3.4' : '3.3')} title="Klik untuk ubah versi" className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full ring-1 ring-white/20 shadow-md shadow-sky-500/20 leading-none hover:scale-105 active:scale-95 transition cursor-pointer">OJS {selectedOjsVersion}</button>
+
               </div>
               <p className="text-[9px] text-gray-500 tracking-widest uppercase">by.150141146151172150</p>
             </div>
@@ -700,7 +701,7 @@ export default function Dashboard() {
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">KPK4444</span>
-                <span className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full ring-1 ring-white/20 shadow-md shadow-sky-500/20">OJS 3.3</span>
+
               </div>
             </div>
             <button
@@ -794,7 +795,7 @@ export default function Dashboard() {
             {tab === 'API KEYS' && (
               <div className="space-y-5">
                 <form onSubmit={createKey} className="bg-black/20 backdrop-blur-xl p-5 rounded-xl border border-white/5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                     <div className="sm:col-span-1">
                       <label className="text-[10px] text-gray-400 mb-1.5 block uppercase tracking-widest">Target Domain</label>
                       <input name="domain" placeholder="jurnal.ac.id" required className="w-full bg-black/40 border border-white/10 px-3 py-2.5 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-xs" />
@@ -802,6 +803,13 @@ export default function Dashboard() {
                     <div className="sm:col-span-1">
                       <label className="text-[10px] text-gray-400 mb-1.5 block uppercase tracking-widest">Owner / Institute</label>
                       <input name="ownerName" placeholder="Owner Name" required className="w-full bg-black/40 border border-white/10 px-3 py-2.5 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-xs" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-gray-400 mb-1.5 block uppercase tracking-widest">OJS Version</label>
+                      <select name="ojsVersion" defaultValue="3.3" className="w-full bg-black/40 border border-white/10 px-3 py-2.5 rounded-lg text-white focus:border-blue-500 focus:outline-none transition appearance-none cursor-pointer text-xs">
+                        <option value="3.3">OJS 3.3</option>
+                        <option value="3.4">OJS 3.4</option>
+                      </select>
                     </div>
                     <div>
                       <label className="text-[10px] text-gray-400 mb-1.5 block uppercase tracking-widest">Valid Duration</label>
@@ -826,7 +834,10 @@ export default function Dashboard() {
                     <div key={k._id} className="bg-black/20 border border-white/5 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-bold text-white text-sm">{k.domain}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-white text-sm">{k.domain}</p>
+                            {k.ojsVersion && <span className="bg-white/10 text-gray-300 text-[8px] px-1.5 py-0.5 rounded font-bold uppercase border border-white/10">v{k.ojsVersion}</span>}
+                          </div>
                           <p className="text-[10px] text-gray-500">{k.ownerName}</p>
                         </div>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${k.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>{k.status.toUpperCase()}</span>
@@ -840,7 +851,7 @@ export default function Dashboard() {
                         <span>Expires: {new Date(k.expiredAt).toLocaleDateString()}</span>
                       </div>
                       <div className="mt-2 flex space-x-2">
-                        <button onClick={() => { setNewKeyData(k); setShowKeyTutorial(true); }} className="flex-1 bg-sky-500/10 hover:bg-sky-500/20 py-1.5 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
+                        <button onClick={() => { setNewKeyData(k); if (k.ojsVersion) setSelectedOjsVersion(k.ojsVersion); setShowKeyTutorial(true); }} className="flex-1 bg-sky-500/10 hover:bg-sky-500/20 py-1.5 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
                         <button onClick={() => setViewKeyLogs(k.domain)} className="flex-1 bg-white/5 hover:bg-white/10 py-1.5 rounded text-[10px] font-bold text-gray-300 uppercase tracking-widest transition border border-white/5">View Logs</button>
                         <button onClick={() => deleteKey(k._id)} className="px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest transition border border-rose-500/20">Delete</button>
                       </div>
@@ -865,7 +876,10 @@ export default function Dashboard() {
                         {keys.map(k => (
                           <tr key={k._id} className="hover:bg-white/[0.02] transition">
                             <td className="px-4 py-3">
-                              <p className="font-bold text-white">{k.domain}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-white">{k.domain}</p>
+                                {k.ojsVersion && <span className="bg-white/10 text-gray-300 text-[8px] px-1.5 py-0.5 rounded font-bold uppercase border border-white/10">v{k.ojsVersion}</span>}
+                              </div>
                               <p className="text-[10px] text-gray-500 mt-0.5">{k.ownerName}</p>
                             </td>
                             <td className="px-4 py-3">
@@ -880,7 +894,7 @@ export default function Dashboard() {
                             <td className="px-4 py-3 text-gray-300 font-mono text-[11px]">{k.requestCount.toLocaleString()}</td>
                             <td className="px-4 py-3 text-gray-400 text-[11px]">{new Date(k.expiredAt).toLocaleDateString()}</td>
                             <td className="px-4 py-3 text-right space-x-2">
-                              <button onClick={() => { setNewKeyData(k); setShowKeyTutorial(true); }} className="px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
+                              <button onClick={() => { setNewKeyData(k); if (k.ojsVersion) setSelectedOjsVersion(k.ojsVersion); setShowKeyTutorial(true); }} className="px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
                               <button onClick={() => setViewKeyLogs(k.domain)} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded text-[10px] font-bold text-gray-300 uppercase tracking-widest transition border border-white/5">View Logs</button>
                               <button onClick={() => deleteKey(k._id)} className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[10px] font-bold uppercase tracking-widest transition border border-rose-500/20">Delete</button>
                             </td>

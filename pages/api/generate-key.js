@@ -17,17 +17,17 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { domain, ownerName, validDays } = req.body;
+    const { domain, ownerName, validDays, ojsVersion } = req.body;
     if (!domain || !ownerName || !validDays) return res.status(400).json({ error: 'Missing required fields' });
     
     const apiKey = 'kpk4444_live_' + crypto.randomBytes(24).toString('hex');
     const expiredAt = new Date();
     expiredAt.setDate(expiredAt.getDate() + parseInt(validDays));
 
-    const newKey = await LicenseKey.create({ apiKey, domain, ownerName, expiredAt });
+    const newKey = await LicenseKey.create({ apiKey, domain, ownerName, expiredAt, ojsVersion: ojsVersion || '3.3' });
     const activationLink = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/activate?key=${apiKey}`;
 
-    return res.status(200).json({ success: true, apiKey, activationLink, domain, ownerName, expiredAt: newKey.expiredAt, createdAt: newKey.createdAt });
+    return res.status(200).json({ success: true, apiKey, activationLink, domain, ownerName, expiredAt: newKey.expiredAt, createdAt: newKey.createdAt, ojsVersion: newKey.ojsVersion });
   }
 
   if (req.method === 'DELETE') {
