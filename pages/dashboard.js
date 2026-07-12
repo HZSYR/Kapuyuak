@@ -497,6 +497,16 @@ export default function Dashboard() {
     loadData(jwtToken);
   };
 
+  const deleteBlacklist = async (id) => {
+    if (!confirm('Hapus rule blacklist ini?')) return;
+    await fetch('/api/blacklist', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
+      body: JSON.stringify({ id })
+    });
+    loadData(jwtToken);
+  };
+
   const createGroqKey = async (e) => {
     e.preventDefault();
     await fetch('/api/groq-keys', {
@@ -1021,9 +1031,12 @@ export default function Dashboard() {
                         <span className="px-2 py-0.5 bg-white/5 rounded text-gray-400 border border-white/5 uppercase font-semibold">{b.type}</span>
                         <span className="text-gray-400">{b.category}</span>
                       </div>
-                      <div className="text-[10px] text-gray-500 flex items-center pt-2 border-t border-white/5 mt-2">
-                        <span className="mr-1">Added by:</span>
-                        <span className={b.addedBy === 'AI_AUTO_LEARNING' ? 'text-emerald-400 font-bold' : 'text-gray-400'}>{b.addedBy}</span>
+                      <div className="flex justify-between items-center pt-2 border-t border-white/5 mt-2">
+                        <div className="text-[10px] text-gray-500 flex items-center">
+                          <span className="mr-1">Added by:</span>
+                          <span className={b.addedBy === 'AI_AUTO_LEARNING' ? 'text-emerald-400 font-bold' : 'text-gray-400'}>{b.addedBy}</span>
+                        </div>
+                        <button onClick={() => deleteBlacklist(b._id)} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[9px] font-bold uppercase tracking-widest border border-rose-500/20 transition">Delete</button>
                       </div>
                     </div>
                   ))}
@@ -1039,7 +1052,7 @@ export default function Dashboard() {
                           <th className="px-4 py-3">Pattern / Value</th>
                           <th className="px-4 py-3">Category</th>
                           <th className="px-4 py-3">Severity</th>
-                          <th className="px-4 py-3 text-right">Added By</th>
+                          <th className="px-4 py-3 text-right">Added By / Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
@@ -1051,8 +1064,9 @@ export default function Dashboard() {
                             <td className="px-4 py-3">
                               <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'}`}>{b.severity}</span>
                             </td>
-                            <td className="px-4 py-3 text-right">
+                            <td className="px-4 py-3 text-right space-x-2">
                               <span className={`text-[10px] font-mono border px-2 py-0.5 rounded ${b.addedBy === 'AI_AUTO_LEARNING' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold' : 'bg-white/5 border-white/10 text-gray-400'}`}>{b.addedBy}</span>
+                              <button onClick={() => deleteBlacklist(b._id)} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[9px] font-bold uppercase tracking-widest border border-rose-500/20 transition">Del</button>
                             </td>
                           </tr>
                         ))}

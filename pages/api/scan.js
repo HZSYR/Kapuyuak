@@ -65,6 +65,7 @@ export default async function handler(req, res) {
 PANDUAN KLASIFIKASI SUPER KETAT:
 [KATEGORI 1: AMAN (Konteks Wajar/Akademik/Sehari-hari/Data Sistem)]
 - Jurnal akademik murni, penggunaan kata ambigu dalam KONTEKS YANG BENAR (misal: burung kacer gacor, slot memori/parkir, pertandingan sepak bola, BET surface area).
+- NAMA ORANG ATAU KATA UMUM SEHARI-HARI (misal: "mas budi", "budi", "agus", "joko", "buku", "jurnal"). JANGAN PERNAH menandai teks sebagai JUDI hanya karena mengandung nama orang.
 - DATA SISTEM / FORMULIR: Teks berupa JSON, parameter form, kode HTML, CSRF token, URL encoded data, atau data teknis server OJS lainnya ADALAH AMAN.
 
 [KATEGORI 2: JUDI (Spam / Promosi Perjudian)]
@@ -86,7 +87,7 @@ Format JSON yang diizinkan:
 }
 Jika status AMAN, "new_signatures" HARUS [].
 TUGAS KHUSUS AI SELF-LEARNING: Ekstrak "new_signatures" (1-3 kosa kata judi/hack baru yang sangat spesifik yang Anda temukan).
-ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan file terlebih dahulu. Pastikan 100% bahwa kosa kata yang diekstrak ke dalam array ini adalah MURNI unsur JUDI atau HACK. JANGAN SEKALI-KALI memasukkan kata-kata normal/akademik!`;
+ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan file terlebih dahulu. Pastikan 100% bahwa kosa kata yang diekstrak ke dalam array ini adalah MURNI unsur JUDI atau HACK. JANGAN SEKALI-KALI memasukkan kata-kata normal/akademik, singkatan wajar, dan NAMA ORANG (seperti "mas budi", dll)! Jika tidak yakin, biarkan array kosong [].`;
 
       let aiSuccess = false;
       
