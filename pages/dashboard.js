@@ -868,7 +868,7 @@ export default function Dashboard() {
                         <div>
                           <div className="flex items-center gap-2">
                             <p className="font-bold text-white text-sm">{k.domain}</p>
-                            {k.ojsVersion && <span className="bg-white/10 text-gray-300 text-[8px] px-1.5 py-0.5 rounded font-bold uppercase border border-white/10">v{k.ojsVersion}</span>}
+                            {k.ojsVersion && <span className="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md font-bold uppercase border border-blue-500/30 shadow-sm shadow-blue-500/10">V{k.ojsVersion}</span>}
                           </div>
                           <p className="text-[10px] text-gray-500">{k.ownerName}</p>
                         </div>
@@ -910,7 +910,7 @@ export default function Dashboard() {
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-2">
                                 <p className="font-bold text-white">{k.domain}</p>
-                                {k.ojsVersion && <span className="bg-white/10 text-gray-300 text-[8px] px-1.5 py-0.5 rounded font-bold uppercase border border-white/10">v{k.ojsVersion}</span>}
+                                {k.ojsVersion && <span className="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md font-bold uppercase border border-blue-500/30 shadow-sm shadow-blue-500/10">V{k.ojsVersion}</span>}
                               </div>
                               <p className="text-[10px] text-gray-500 mt-0.5">{k.ownerName}</p>
                             </td>
@@ -1362,23 +1362,7 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
-                  <h4 className="text-sm font-bold text-white">Pilih Versi OJS Anda:</h4>
-                  <div className="flex space-x-2 bg-black/40 p-1 rounded-lg border border-white/5">
-                    <button 
-                      onClick={() => setSelectedOjsVersion('3.3')}
-                      className={`px-4 py-1.5 rounded-md text-xs font-bold transition uppercase tracking-widest ${selectedOjsVersion === '3.3' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
-                    >
-                      OJS 3.3
-                    </button>
-                    <button 
-                      onClick={() => setSelectedOjsVersion('3.4')}
-                      className={`px-4 py-1.5 rounded-md text-xs font-bold transition uppercase tracking-widest ${selectedOjsVersion === '3.4' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
-                    >
-                      OJS 3.4
-                    </button>
-                  </div>
-                </div>
+
                 
                 <h4 className="text-sm font-bold text-white mb-3">Langkah Pemasangan di OJS {selectedOjsVersion}</h4>
                 <p className="text-xs text-gray-400 mb-4 leading-relaxed">
