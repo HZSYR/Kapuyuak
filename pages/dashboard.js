@@ -572,7 +572,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center justify-center gap-2">
               <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 tracking-tight">KPK4444</h2>
-              <span className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full ring-1 ring-white/20 shadow-lg shadow-sky-500/20">OJS 3.3</span>
+              <span className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full ring-1 ring-white/20 shadow-lg shadow-sky-500/20">OJS 3.3 / 3.4</span>
             </div>
             <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mt-1">by.150141146151172150</p>
           </div>
@@ -652,7 +652,7 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <h1 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 leading-none">KPK4444</h1>
-                <span className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full ring-1 ring-white/20 shadow-md shadow-sky-500/20 leading-none">OJS 3.3</span>
+                <button onClick={() => setSelectedOjsVersion(v => v === '3.3' ? '3.4' : '3.3')} title="Klik untuk ubah versi" className="bg-gradient-to-r from-sky-400 to-blue-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full ring-1 ring-white/20 shadow-md shadow-sky-500/20 leading-none hover:scale-105 active:scale-95 transition cursor-pointer">OJS {selectedOjsVersion}</button>
               </div>
               <p className="text-[9px] text-gray-500 tracking-widest uppercase">by.150141146151172150</p>
             </div>
