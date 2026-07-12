@@ -337,6 +337,7 @@ export default function Dashboard() {
   const [copiedCode, setCopiedCode] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const [selectedOjsVersion, setSelectedOjsVersion] = useState('3.3');
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
   const aiPollRef = useRef(null);
   const countdownRef = useRef(null);
 
@@ -381,6 +382,15 @@ export default function Dashboard() {
     if (token) { setJwtToken(token); setAuth(true); loadData(token); }
   }, []);
 
+  // Global auto-polling every 5 seconds
+  useEffect(() => {
+    if (!auth || !jwtToken) return;
+    const interval = setInterval(() => {
+      loadData(jwtToken, false);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [auth, jwtToken]);
+
   // Auto-polling AI logs every 2 seconds when on AI SETTINGS tab
   useEffect(() => {
     if (!auth || !jwtToken) return;
@@ -413,8 +423,8 @@ export default function Dashboard() {
     };
   }, [tab, auth, jwtToken]);
 
-  const loadData = async (token) => {
-    setIsLoading(true);
+  const loadData = async (token, showLoading = true) => {
+    if (showLoading) setIsLoading(true);
     setApiError(null);
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
@@ -441,7 +451,7 @@ export default function Dashboard() {
     } catch (err) {
       setApiError(`Network Error: ${err.message}`);
     }
-    setIsLoading(false);
+    if (showLoading) setIsLoading(false);
   };
 
   const login = async (e) => {
@@ -488,23 +498,24 @@ export default function Dashboard() {
     }
   };
 
-  const deleteKey = async (id) => {
-    if (!confirm('Delete this License Key?')) return;
-    await fetch(`/api/generate-key?id=${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${jwtToken}` }
+  const deleteKey = (id) => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus License Key', message: 'Apakah Anda yakin ingin menghapus License Key ini?',
+      onConfirm: async () => {
+        await fetch(`/api/generate-key?id=${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
     });
-    loadData(jwtToken);
   };
 
-  const deleteBlacklist = async (id) => {
-    if (!confirm('Hapus rule blacklist ini?')) return;
-    await fetch('/api/blacklist', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
-      body: JSON.stringify({ id })
+  const deleteBlacklist = (id) => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus Rule Blacklist', message: 'Hapus rule blacklist ini?',
+      onConfirm: async () => {
+        await fetch('/api/blacklist', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` }, body: JSON.stringify({ id }) });
+        loadData(jwtToken, false);
+      }
     });
-    loadData(jwtToken);
   };
 
   const createGroqKey = async (e) => {
@@ -515,44 +526,47 @@ export default function Dashboard() {
       body: JSON.stringify({ key: e.target.groqKey.value })
     });
     e.target.reset();
-    loadData(jwtToken);
+    loadData(jwtToken, false);
   };
 
-  const clearAiLogs = async () => {
-    if (!confirm('Clear all AI Terminal Logs?')) return;
-    await fetch('/api/ai-logs', {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${jwtToken}` }
+  const clearAiLogs = () => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus Semua AI Logs', message: 'Clear all AI Terminal Logs?',
+      onConfirm: async () => {
+        await fetch('/api/ai-logs', { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
     });
-    loadData(jwtToken);
   };
 
-  const unbanAllIPs = async () => {
-    if (!confirm('Unban all blacklisted IPs? This will allow previously banned IPs to access the system again.')) return;
-    await fetch('/api/unban', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${jwtToken}` }
+  const unbanAllIPs = () => {
+    setConfirmModal({
+      isOpen: true, title: 'Unban Semua IP', message: 'Unban ALL IPs?',
+      onConfirm: async () => {
+        await fetch('/api/unban', { method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
     });
-    alert('All IPs have been unbanned successfully!');
-    loadData(jwtToken);
   };
 
-  const unbanIP = async (ip) => {
-    if (!confirm(`Unban IP ${ip}?`)) return;
-    await fetch(`/api/banned-ips?ip=${ip}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${jwtToken}` }
+  const unbanIp = (ip) => {
+    setConfirmModal({
+      isOpen: true, title: 'Unban IP', message: `Unban IP ${ip}?`,
+      onConfirm: async () => {
+        await fetch(`/api/banned-ips?ip=${ip}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
     });
-    loadData(jwtToken);
   };
 
-  const deleteGroqKey = async (id) => {
-    if (!confirm('Delete this Groq AI Key?')) return;
-    await fetch(`/api/groq-keys?id=${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${jwtToken}` }
+  const deleteGroqKey = (id) => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus AI Key', message: 'Delete this AI Key?',
+      onConfirm: async () => {
+        await fetch(`/api/groq-keys?id=${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
     });
-    loadData(jwtToken);
   };
 
   const handleTabChange = (t) => {
@@ -1438,6 +1452,31 @@ export default function Dashboard() {
         /* Add bottom padding on mobile for bottom nav */
         @media (max-width: 1023px) { main { padding-bottom: 56px; } }
       `}</style>
+      {/* ── CONFIRM MODAL ── */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}></div>
+          <div className="relative bg-[#0f172a] border border-white/10 rounded-2xl p-6 shadow-2xl max-w-sm w-full mx-auto transform transition-all animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-white mb-2">{confirmModal.title}</h3>
+            <p className="text-sm text-gray-300 mb-6">{confirmModal.message}</p>
+            <div className="flex space-x-3 justify-end">
+              <button 
+                onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg text-xs font-bold uppercase tracking-widest transition"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={() => { confirmModal.onConfirm(); setConfirmModal({ ...confirmModal, isOpen: false }); }} 
+                className="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-white shadow-lg shadow-sky-500/20 rounded-lg text-xs font-bold uppercase tracking-widest transition"
+              >
+                Oke
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
