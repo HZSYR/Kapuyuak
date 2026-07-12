@@ -38,7 +38,7 @@ export default function Activate() {
           <pre className="bg-black p-4 rounded-lg overflow-x-auto text-sm text-blue-300 border border-gray-700">
             <code>
 define('KPK4444_API_KEY', '{key}');{'\n'}
-define('KPK4444_API_URL', 'https://kpk4444.vercel.app');
+define('KPK4444_API_URL', 'https://kapuyuak.vercel.app');
             </code>
           </pre>
         </div>
