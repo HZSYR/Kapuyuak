@@ -78,23 +78,8 @@ if (file_exists($banFile)) {
     if (!$isSignOut && time() - filemtime($banFile) < 600) { // 10 minutes cache to block GET requests
 
                 
-                $paths = array_unique(array_filter($paths));
                 
-                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
                 
-                }
-                $paths = array_unique(array_filter($paths));
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                    foreach($cookies as $cookie) {
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        foreach($paths as $p) {
-                            setcookie($name, '', time()-3600, $p);
-                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
-                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
-                        }
-                    }
                 }
         header('HTTP/1.1 403 Forbidden');
         header('Content-Type: text/html'); 
@@ -188,23 +173,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 file_put_contents($banFile, time());
 
                 
-                $paths = array_unique(array_filter($paths));
                 
-                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
                 
-                }
-                $paths = array_unique(array_filter($paths));
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                    foreach($cookies as $cookie) {
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        foreach($paths as $p) {
-                            setcookie($name, '', time()-3600, $p);
-                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
-                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
-                        }
-                    }
                 }
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: text/html'); 
@@ -213,23 +183,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 file_put_contents($banFile, time());
 
                 
-                $paths = array_unique(array_filter($paths));
                 
-                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
                 
-                }
-                $paths = array_unique(array_filter($paths));
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                    foreach($cookies as $cookie) {
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        foreach($paths as $p) {
-                            setcookie($name, '', time()-3600, $p);
-                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
-                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
-                        }
-                    }
                 }
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: text/html'); 
@@ -361,11 +316,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 file_put_contents($banFile, time());
 
                 
-                $paths = array_unique(array_filter($paths));
                 
-                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
-                
-                }
 
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: text/html'); 
@@ -374,11 +325,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 file_put_contents($banFile, time());
 
                 
-                $paths = array_unique(array_filter($paths));
                 
-                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
-                
-                }
 
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: text/html'); 
