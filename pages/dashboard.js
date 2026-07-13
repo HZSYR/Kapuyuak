@@ -1362,7 +1362,7 @@ export default function Dashboard() {
                           <td className="px-4 py-3 text-[11px] text-slate-900 dark:text-gray-300">{bip.reason || 'Malicious Activity'}</td>
                           <td className="px-4 py-3 text-[11px]">{new Date(bip.expiresAt).toLocaleString()}</td>
                           <td className="px-4 py-3 text-right">
-                            <button onClick={() => unbanIP(bip.ip)} className="text-[10px] px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 rounded transition font-bold uppercase tracking-wider border border-green-500/20">Unban</button>
+                            <button onClick={() => unbanIp(bip.ip)} className="text-[10px] px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 rounded transition font-bold uppercase tracking-wider border border-green-500/20">Unban</button>
                           </td>
                         </tr>
                       ))}
