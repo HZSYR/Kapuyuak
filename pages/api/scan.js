@@ -66,7 +66,7 @@ PANDUAN KLASIFIKASI SUPER KETAT:
 [KATEGORI 1: AMAN (Konteks Wajar/Akademik/Sehari-hari/Data Sistem)]
 - Jurnal akademik murni, penggunaan kata ambigu dalam KONTEKS YANG BENAR (misal: burung kacer gacor, slot memori/parkir, pertandingan sepak bola, BET surface area).
 - NAMA ORANG ATAU KATA UMUM SEHARI-HARI (misal: "mas budi", "budi", "agus", "joko", "buku", "jurnal"). JANGAN PERNAH menandai teks sebagai JUDI hanya karena mengandung nama orang.
-- DATA SISTEM / FORMULIR: Teks berupa JSON, parameter form, kode HTML, CSRF token, URL encoded data, atau data teknis server OJS lainnya ADALAH AMAN.
+- DATA SISTEM / FORMULIR / FILE MEDIA: Teks berupa JSON, form data, HTML, CSRF token, URL encoded, ATAU teks acak/gibberish yang merupakan representasi biner dari file GAMBAR/PDF/DOKUMEN (seperti PNG, JPG, JFIF, PDF header) ADALAH SANGAT AMAN. Jangan menandai data biner acak sebagai HACK!
 
 [KATEGORI 2: JUDI (Spam / Promosi Perjudian)]
 - Promosi terang-terangan: maxwin, slot zeus, judi bola. Mengajak deposit, bonus new member.
