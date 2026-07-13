@@ -26,7 +26,10 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    let ip = req.body.userIp || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    if (typeof ip === 'string') {
+      ip = ip.split(',')[0].trim();
+    }
     const banned = await BannedIP.findOne({ ip, expiresAt: { $gt: new Date() } });
     if (banned) {
       await AILog.create({ message: `BLOCKED BANNED IP: ${ip} tried to access ${domain}`, level: 'ERROR' });
