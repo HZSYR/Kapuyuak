@@ -85,6 +85,25 @@ if (file_exists($banFile)) {
                     if($seg) { $built .= $seg . '/'; $paths[] = $built; }
                 }
                 $paths = array_unique(array_filter($paths));
+                
+                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
+                header_remove('Set-Cookie');
+                
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        foreach($paths as $p) {
+                            setcookie($name, '', time()-3600, $p);
+                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
+                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
+                            // Force HTTP header output immediately for HttpOnly cookies
+                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
+                        }
+                    }
+                }
+                $paths = array_unique(array_filter($paths));
                 if (isset($_SERVER['HTTP_COOKIE'])) {
                     $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
                     foreach($cookies as $cookie) {
@@ -197,6 +216,25 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     if($seg) { $built .= $seg . '/'; $paths[] = $built; }
                 }
                 $paths = array_unique(array_filter($paths));
+                
+                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
+                header_remove('Set-Cookie');
+                
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        foreach($paths as $p) {
+                            setcookie($name, '', time()-3600, $p);
+                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
+                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
+                            // Force HTTP header output immediately for HttpOnly cookies
+                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
+                        }
+                    }
+                }
+                $paths = array_unique(array_filter($paths));
                 if (isset($_SERVER['HTTP_COOKIE'])) {
                     $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
                     foreach($cookies as $cookie) {
@@ -222,6 +260,25 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 $built = '/';
                 foreach($uriSegments as $seg) {
                     if($seg) { $built .= $seg . '/'; $paths[] = $built; }
+                }
+                $paths = array_unique(array_filter($paths));
+                
+                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
+                header_remove('Set-Cookie');
+                
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        foreach($paths as $p) {
+                            setcookie($name, '', time()-3600, $p);
+                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
+                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
+                            // Force HTTP header output immediately for HttpOnly cookies
+                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
+                        }
+                    }
                 }
                 $paths = array_unique(array_filter($paths));
                 if (isset($_SERVER['HTTP_COOKIE'])) {
