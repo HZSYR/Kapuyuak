@@ -340,6 +340,15 @@ export default function Dashboard() {
   const [selectedOjsVersion, setSelectedOjsVersion] = useState('3.3');
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+
+  useEffect(() => {
+    if (isDarkTheme) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkTheme]);
+
   const aiPollRef = useRef(null);
   const countdownRef = useRef(null);
 
@@ -641,8 +650,8 @@ export default function Dashboard() {
     <div className={`min-h-screen transition-colors duration-300 ${isDarkTheme ? 'dark' : ''}`}>
       <div className="min-h-screen bg-slate-100 dark:bg-[#09090b] text-slate-700 dark:text-gray-300 text-[13px]">
         <Head>
+          <script dangerouslySetInnerHTML={{__html: `window.tailwind = { config: { darkMode: 'class' } };`}} />
           <script src="https://cdn.tailwindcss.com"></script>
-          <script dangerouslySetInnerHTML={{__html: `tailwind.config = { darkMode: 'class' }`}} />
           <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
         <link rel="icon" type="image/png" href="/logo.png" />
         <title>KPK4444 — Dashboard</title>
@@ -710,22 +719,6 @@ export default function Dashboard() {
           {/* Bottom Actions */}
           <div className="p-4 border-t border-slate-300 dark:border-white/5 space-y-3">
             <button
-              onClick={() => setIsDarkTheme(!isDarkTheme)}
-              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-lg text-[11px] font-bold bg-slate-400/20 dark:bg-white/5 hover:bg-slate-400/30 dark:bg-white/10 text-slate-700 dark:text-gray-300 transition uppercase tracking-widest"
-            >
-              {isDarkTheme ? (
-                <>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                  <span>Light Theme</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                  <span>Dark Theme</span>
-                </>
-              )}
-            </button>
-            <button
               onClick={() => { sessionStorage.clear(); window.location.reload(); }}
               className="w-full text-center py-2.5 rounded-lg text-[11px] font-bold text-rose-400/80 hover:bg-rose-500/10 hover:text-rose-400 transition uppercase tracking-widest"
             >
@@ -768,12 +761,46 @@ export default function Dashboard() {
                 </h2>
                 <p className="text-slate-600 dark:text-gray-400 text-xs mt-0.5">Real-time threat monitoring</p>
               </div>
-              <div className="hidden sm:flex items-center space-x-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Online</span>
+              <div className="flex items-center space-x-4 sm:space-x-5">
+                {/* Custom Theme Switch (Sun/Moon Slider) */}
+                <button
+                  onClick={() => setIsDarkTheme(!isDarkTheme)}
+                  className={`relative w-[70px] h-[34px] rounded-full overflow-hidden transition-colors duration-500 flex items-center shrink-0 shadow-inner ${
+                    isDarkTheme ? 'bg-[#1a202c] border border-white/10' : 'bg-[#6bb5ff] border border-blue-400/30'
+                  }`}
+                  aria-label="Toggle Theme"
+                >
+                  {/* Clouds (Light mode) */}
+                  <div className={`absolute right-1 top-4 w-6 h-2 bg-white/80 rounded-full blur-[0.5px] transition-opacity duration-500 ${isDarkTheme ? 'opacity-0' : 'opacity-100'}`}></div>
+                  <div className={`absolute right-4 top-2 w-4 h-2 bg-white/90 rounded-full blur-[0.5px] transition-opacity duration-500 ${isDarkTheme ? 'opacity-0' : 'opacity-100'}`}></div>
+                  
+                  {/* Stars (Dark mode) */}
+                  <div className={`absolute left-2.5 top-2 w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_3px_#fff] transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}></div>
+                  <div className={`absolute left-5 top-5 w-[3px] h-[3px] bg-white rounded-full shadow-[0_0_4px_#fff] transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}></div>
+                  <div className={`absolute left-7 top-1.5 w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_3px_#fff] transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}></div>
+
+                  {/* Slider Circle (Sun/Moon) */}
+                  <div
+                    className={`absolute top-1 left-1 w-[24px] h-[24px] rounded-full transition-transform duration-500 flex items-center justify-center overflow-hidden ${
+                      isDarkTheme ? 'transform translate-x-[36px] bg-[#cbd5e1] shadow-[inset_-3px_-2px_6px_rgba(0,0,0,0.3)]' : 'transform translate-x-0 bg-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.8)]'
+                    }`}
+                  >
+                    {/* Craters for Moon */}
+                    <div className={`absolute transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}>
+                      <div className="absolute -top-1 -left-2 w-1.5 h-1.5 bg-[#94a3b8] rounded-full opacity-70"></div>
+                      <div className="absolute top-1 -right-3 w-2 h-2 bg-[#94a3b8] rounded-full opacity-70"></div>
+                      <div className="absolute bottom-1 -left-1 w-2 h-2 bg-[#94a3b8] rounded-full opacity-70"></div>
+                    </div>
+                  </div>
+                </button>
+
+                <div className="hidden sm:flex items-center space-x-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Online</span>
+                </div>
               </div>
             </div>
 
