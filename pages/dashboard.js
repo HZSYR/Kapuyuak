@@ -76,32 +76,11 @@ $banFile = __DIR__ . '/kpk_banned_' . md5($userIp) . '.txt';
 if (file_exists($banFile)) {
     if (time() - filemtime($banFile) < 600) { // 10 minutes cache to block GET requests
 
-                if(session_status() !== PHP_SESSION_ACTIVE) @session_start();
-                @session_destroy();
-                $paths = ['/', '/ojs/', '/journal/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)];
-                $uriSegments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-                $built = '/';
-                foreach($uriSegments as $seg) {
-                    if($seg) { $built .= $seg . '/'; $paths[] = $built; }
-                }
+                
                 $paths = array_unique(array_filter($paths));
                 
                 // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
-                header_remove('Set-Cookie');
                 
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                    foreach($cookies as $cookie) {
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        foreach($paths as $p) {
-                            setcookie($name, '', time()-3600, $p);
-                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
-                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
-                            // Force HTTP header output immediately for HttpOnly cookies
-                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
-                        }
-                    }
                 }
                 $paths = array_unique(array_filter($paths));
                 if (isset($_SERVER['HTTP_COOKIE'])) {
@@ -207,32 +186,11 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
                 file_put_contents($banFile, time());
 
-                if(session_status() !== PHP_SESSION_ACTIVE) @session_start();
-                @session_destroy();
-                $paths = ['/', '/ojs/', '/journal/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)];
-                $uriSegments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-                $built = '/';
-                foreach($uriSegments as $seg) {
-                    if($seg) { $built .= $seg . '/'; $paths[] = $built; }
-                }
+                
                 $paths = array_unique(array_filter($paths));
                 
                 // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
-                header_remove('Set-Cookie');
                 
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                    foreach($cookies as $cookie) {
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        foreach($paths as $p) {
-                            setcookie($name, '', time()-3600, $p);
-                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
-                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
-                            // Force HTTP header output immediately for HttpOnly cookies
-                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
-                        }
-                    }
                 }
                 $paths = array_unique(array_filter($paths));
                 if (isset($_SERVER['HTTP_COOKIE'])) {
@@ -253,32 +211,11 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             } elseif ($code == 403 || $code == 429) {
                 file_put_contents($banFile, time());
 
-                if(session_status() !== PHP_SESSION_ACTIVE) @session_start();
-                @session_destroy();
-                $paths = ['/', '/ojs/', '/journal/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)];
-                $uriSegments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-                $built = '/';
-                foreach($uriSegments as $seg) {
-                    if($seg) { $built .= $seg . '/'; $paths[] = $built; }
-                }
+                
                 $paths = array_unique(array_filter($paths));
                 
                 // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
-                header_remove('Set-Cookie');
                 
-                if (isset($_SERVER['HTTP_COOKIE'])) {
-                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-                    foreach($cookies as $cookie) {
-                        $parts = explode('=', $cookie);
-                        $name = trim($parts[0]);
-                        foreach($paths as $p) {
-                            setcookie($name, '', time()-3600, $p);
-                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']);
-                            setcookie($name, '', time()-3600, $p, '.' . $_SERVER['HTTP_HOST']);
-                            // Force HTTP header output immediately for HttpOnly cookies
-                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
-                        }
-                    }
                 }
                 $paths = array_unique(array_filter($paths));
                 if (isset($_SERVER['HTTP_COOKIE'])) {
@@ -421,11 +358,69 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
                 file_put_contents($banFile, time());
+
+                if(session_status() !== PHP_SESSION_ACTIVE) @session_start();
+                @session_destroy();
+                $paths = ['/', '/ojs/', '/journal/', parse_url($_SERVER['REQUEST_URI']??'/', PHP_URL_PATH)];
+                $uriSegments = explode('/', trim(parse_url($_SERVER['REQUEST_URI']??'/', PHP_URL_PATH), '/'));
+                $built = '/';
+                foreach($uriSegments as $seg) {
+                    if($seg) { $built .= $seg . '/'; $paths[] = $built; }
+                }
+                $paths = array_unique(array_filter($paths));
+                
+                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
+                header_remove('Set-Cookie');
+                
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        foreach($paths as $p) {
+                            setcookie($name, '', time()-3600, $p);
+                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']??'');
+                            setcookie($name, '', time()-3600, $p, '.' . ($_SERVER['HTTP_HOST']??''));
+                            // Force HTTP header output immediately for HttpOnly cookies
+                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
+                        }
+                    }
+                }
+
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: text/html'); 
                 exit(base64_decode('PGh0bWw+PGhlYWQ+PHN0eWxlPmJvZHksaHRtbHttYXJnaW46MDtwYWRkaW5nOjA7d2lkdGg6MTAwdnc7aGVpZ2h0OjEwMHZoO2JhY2tncm91bmQ6IzA5MDkwYjtjb2xvcjojZjQzZjVlO2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1mYW1pbHk6c3lzdGVtLXVpLHNhbnMtc2VyaWY7dXNlci1zZWxlY3Q6bm9uZX1oMXtmb250LXNpemU6NHJlbTt0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW4tYm90dG9tOjA7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTVweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyfS5je2ZvbnQtc2l6ZToycmVtO21hcmdpbi10b3A6MnJlbTtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxNXB4fS5ue2ZvbnQtc2l6ZTo0cmVtO2ZvbnQtd2VpZ2h0OmJvbGQ7Y29sb3I6I2ZmMzM2NjthbmltYXRpb246cHVsc2UgMXMgaW5maW5pdGV9QGtleWZyYW1lcyBwdWxzZXswJXt0cmFuc2Zvcm06c2NhbGUoMSk7b3BhY2l0eToxfTUwJXt0cmFuc2Zvcm06c2NhbGUoMS4zKTtvcGFjaXR5OjAuN30xMDAle3RyYW5zZm9ybTpzY2FsZSgxKTtvcGFjaXR5OjF9fTwvc3R5bGU+PHNjcmlwdD50cnl7bG9jYWxTdG9yYWdlLmNsZWFyKCk7c2Vzc2lvblN0b3JhZ2UuY2xlYXIoKTt9Y2F0Y2goZSl7fWRvY3VtZW50LmNvb2tpZS5zcGxpdCgiOyIpLmZvckVhY2goZnVuY3Rpb24oYyl7dmFyIG5hbWU9Yy5zcGxpdCgiPSIpWzBdLnRyaW0oKTt2YXIgZG9tYWluPXdpbmRvdy5sb2NhdGlvbi5ob3N0bmFtZTtkb2N1bWVudC5jb29raWU9bmFtZSsiPTtleHBpcmVzPVRodSwgMDEgSmFuIDE5NzAgMDA6MDA6MDAgR01UO3BhdGg9LyI7ZG9jdW1lbnQuY29va2llPW5hbWUrIj07ZXhwaXJlcz1UaHUsIDAxIEphbiAxOTcwIDAwOjAwOjAwIEdNVDtwYXRoPS87ZG9tYWluPSIrZG9tYWluO3ZhciBwYXRoUGFydHM9d2luZG93LmxvY2F0aW9uLnBhdGhuYW1lLnNwbGl0KCcvJyk7dmFyIGN1cnJlbnRQYXRoPSIiO2Zvcih2YXIgaT0wO2k8cGF0aFBhcnRzLmxlbmd0aDtpKyspe2lmKHBhdGhQYXJ0c1tpXSljdXJyZW50UGF0aCs9Ii8iK3BhdGhQYXJ0c1tpXTtkb2N1bWVudC5jb29raWU9bmFtZSsiPTtleHBpcmVzPVRodSwgMDEgSmFuIDE5NzAgMDA6MDA6MDAgR01UO3BhdGg9IitjdXJyZW50UGF0aDtkb2N1bWVudC5jb29raWU9bmFtZSsiPTtleHBpcmVzPVRodSwgMDEgSmFuIDE5NzAgMDA6MDA6MDAgR01UO3BhdGg9IitjdXJyZW50UGF0aCsiLyI7fX0pO3ZhciB0PTU7c2V0SW50ZXJ2YWwoZnVuY3Rpb24oKXt0LS07aWYodD49MClkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndGltZXInKS5pbm5lclRleHQ9dDtpZih0PD0wKXdpbmRvdy50b3AubG9jYXRpb24uaHJlZj0iaHR0cHM6Ly93d3cuZ29vZ2xlLmNvbSJ9LDEwMDApOzwvc2NyaXB0PjwvaGVhZD48Ym9keT48aDE+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmNDNmNWUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMjJzOC00IDgtMTBWNWwtOC0zLTggM3Y3YzAgNiA4IDEwIDggMTB6Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iOSAxMiAxMSAxNCAxNSAxMCI+PC9wb2x5bGluZT48L3N2Zz4gQUNDRVNTIERFTklFRDwvaDE+PGRpdiBjbGFzcz0iYyI+UmVkaXJlY3RpbmcgaW4gPHNwYW4gaWQ9InRpbWVyIiBjbGFzcz0ibiI+NTwvc3Bhbj4gc2Vjb25kcy4uLjwvZGl2PjwvYm9keT48L2h0bWw+'));
             } elseif ($code == 403 || $code == 429) {
                 file_put_contents($banFile, time());
+
+                if(session_status() !== PHP_SESSION_ACTIVE) @session_start();
+                @session_destroy();
+                $paths = ['/', '/ojs/', '/journal/', parse_url($_SERVER['REQUEST_URI']??'/', PHP_URL_PATH)];
+                $uriSegments = explode('/', trim(parse_url($_SERVER['REQUEST_URI']??'/', PHP_URL_PATH), '/'));
+                $built = '/';
+                foreach($uriSegments as $seg) {
+                    if($seg) { $built .= $seg . '/'; $paths[] = $built; }
+                }
+                $paths = array_unique(array_filter($paths));
+                
+                // Force overwrite all Set-Cookie headers for OJSSID in case OJS already queued them
+                header_remove('Set-Cookie');
+                
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        foreach($paths as $p) {
+                            setcookie($name, '', time()-3600, $p);
+                            setcookie($name, '', time()-3600, $p, $_SERVER['HTTP_HOST']??'');
+                            setcookie($name, '', time()-3600, $p, '.' . ($_SERVER['HTTP_HOST']??''));
+                            // Force HTTP header output immediately for HttpOnly cookies
+                            header("Set-Cookie: {$name}=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path={$p}; HttpOnly", false);
+                        }
+                    }
+                }
+
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: text/html'); 
                 exit(base64_decode('PGh0bWw+PGhlYWQ+PHN0eWxlPmJvZHksaHRtbHttYXJnaW46MDtwYWRkaW5nOjA7d2lkdGg6MTAwdnc7aGVpZ2h0OjEwMHZoO2JhY2tncm91bmQ6IzA5MDkwYjtjb2xvcjojZjQzZjVlO2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1mYW1pbHk6c3lzdGVtLXVpLHNhbnMtc2VyaWY7dXNlci1zZWxlY3Q6bm9uZX1oMXtmb250LXNpemU6NHJlbTt0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW4tYm90dG9tOjA7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTVweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyfS5je2ZvbnQtc2l6ZToycmVtO21hcmdpbi10b3A6MnJlbTtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxNXB4fS5ue2ZvbnQtc2l6ZTo0cmVtO2ZvbnQtd2VpZ2h0OmJvbGQ7Y29sb3I6I2ZmMzM2NjthbmltYXRpb246cHVsc2UgMXMgaW5maW5pdGV9QGtleWZyYW1lcyBwdWxzZXswJXt0cmFuc2Zvcm06c2NhbGUoMSk7b3BhY2l0eToxfTUwJXt0cmFuc2Zvcm06c2NhbGUoMS4zKTtvcGFjaXR5OjAuN30xMDAle3RyYW5zZm9ybTpzY2FsZSgxKTtvcGFjaXR5OjF9fTwvc3R5bGU+PHNjcmlwdD50cnl7bG9jYWxTdG9yYWdlLmNsZWFyKCk7c2Vzc2lvblN0b3JhZ2UuY2xlYXIoKTt9Y2F0Y2goZSl7fWRvY3VtZW50LmNvb2tpZS5zcGxpdCgiOyIpLmZvckVhY2goZnVuY3Rpb24oYyl7dmFyIG5hbWU9Yy5zcGxpdCgiPSIpWzBdLnRyaW0oKTt2YXIgZG9tYWluPXdpbmRvdy5sb2NhdGlvbi5ob3N0bmFtZTtkb2N1bWVudC5jb29raWU9bmFtZSsiPTtleHBpcmVzPVRodSwgMDEgSmFuIDE5NzAgMDA6MDA6MDAgR01UO3BhdGg9LyI7ZG9jdW1lbnQuY29va2llPW5hbWUrIj07ZXhwaXJlcz1UaHUsIDAxIEphbiAxOTcwIDAwOjAwOjAwIEdNVDtwYXRoPS87ZG9tYWluPSIrZG9tYWluO3ZhciBwYXRoUGFydHM9d2luZG93LmxvY2F0aW9uLnBhdGhuYW1lLnNwbGl0KCcvJyk7dmFyIGN1cnJlbnRQYXRoPSIiO2Zvcih2YXIgaT0wO2k8cGF0aFBhcnRzLmxlbmd0aDtpKyspe2lmKHBhdGhQYXJ0c1tpXSljdXJyZW50UGF0aCs9Ii8iK3BhdGhQYXJ0c1tpXTtkb2N1bWVudC5jb29raWU9bmFtZSsiPTtleHBpcmVzPVRodSwgMDEgSmFuIDE5NzAgMDA6MDA6MDAgR01UO3BhdGg9IitjdXJyZW50UGF0aDtkb2N1bWVudC5jb29raWU9bmFtZSsiPTtleHBpcmVzPVRodSwgMDEgSmFuIDE5NzAgMDA6MDA6MDAgR01UO3BhdGg9IitjdXJyZW50UGF0aCsiLyI7fX0pO3ZhciB0PTU7c2V0SW50ZXJ2YWwoZnVuY3Rpb24oKXt0LS07aWYodD49MClkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndGltZXInKS5pbm5lclRleHQ9dDtpZih0PD0wKXdpbmRvdy50b3AubG9jYXRpb24uaHJlZj0iaHR0cHM6Ly93d3cuZ29vZ2xlLmNvbSJ9LDEwMDApOzwvc2NyaXB0PjwvaGVhZD48Ym9keT48aDE+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmNDNmNWUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMjJzOC00IDgtMTBWNWwtOC0zLTggM3Y3YzAgNiA4IDEwIDggMTB6Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iOSAxMiAxMSAxNCAxNSAxMCI+PC9wb2x5bGluZT48L3N2Zz4gQUNDRVNTIERFTklFRDwvaDE+PGRpdiBjbGFzcz0iYyI+UmVkaXJlY3RpbmcgaW4gPHNwYW4gaWQ9InRpbWVyIiBjbGFzcz0ibiI+NTwvc3Bhbj4gc2Vjb25kcy4uLjwvZGl2PjwvYm9keT48L2h0bWw+'));
