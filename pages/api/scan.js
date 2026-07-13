@@ -92,6 +92,15 @@ Jika status AMAN, "new_signatures" HARUS [].
 TUGAS KHUSUS AI SELF-LEARNING: Ekstrak "new_signatures" (1-3 kosa kata judi/hack baru yang sangat spesifik yang Anda temukan).
 ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan file terlebih dahulu. Pastikan 100% bahwa kosa kata yang diekstrak ke dalam array ini adalah MURNI unsur JUDI atau HACK. JANGAN SEKALI-KALI memasukkan kata-kata normal/akademik, singkatan wajar, dan NAMA ORANG (seperti "mas budi", dll)! Jika tidak yakin, biarkan array kosong [].`;
 
+      
+      // --- SMART CHUNKING ALGORITHM ---
+      // Instead of just taking the first 1500 chars, we take the FIRST 750 and the LAST 750.
+      // Spammers usually inject at the top (Title/Abstract) or the bottom (Footer Links).
+      let aiContent = content;
+      if (content.length > 1500) {
+        aiContent = content.substring(0, 750) + '\n\n... [BAGIAN TENGAH DIPOTONG UNTUK MENGHEMAT TOKEN] ...\n\n' + content.substring(content.length - 750);
+      }
+      
       let aiSuccess = false;
       
       for (const groqKey of keys) {
@@ -110,7 +119,7 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
               model: 'llama-3.1-8b-instant',
               messages: [
                 { role: 'system', content: systemPrompt },
-                { role: 'user', content: `Teks yang dianalisis:\n"""\n${content.substring(0, 8000)}\n"""` }
+                { role: 'user', content: `Teks yang dianalisis:\n"""\n${aiContent}\n"""` }
               ],
               temperature: 0,
               max_tokens: 150,
