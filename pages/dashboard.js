@@ -650,20 +650,30 @@ export default function Dashboard() {
     <div className={`min-h-screen transition-colors duration-300 ${isDarkTheme ? 'dark' : ''}`}>
       <div className="min-h-screen bg-slate-100 dark:bg-[#09090b] text-slate-700 dark:text-gray-300 text-[13px]">
         <Head>
-          <script dangerouslySetInnerHTML={{__html: `window.tailwind = { config: { darkMode: 'class' } };`}} />
           <script src="https://cdn.tailwindcss.com"></script>
+          <script dangerouslySetInnerHTML={{__html: `
+            var initTw = setInterval(function() {
+              if (window.tailwind) {
+                window.tailwind.config = { darkMode: 'class' };
+                clearInterval(initTw);
+              }
+            }, 10);
+          `}} />
           <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-        <link rel="icon" type="image/png" href="/logo.png" />
-        <title>KPK4444 — Dashboard</title>
-        <style>{`
-          * { font-family: 'Outfit', sans-serif; }
-          body { background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #09090b 100%); background-attachment: fixed; }
-          ::-webkit-scrollbar { width: 5px; height: 5px; }
-          ::-webkit-scrollbar-track { background: transparent; }
-          ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
-          select option { background: #09090b; color: white; }
-        `}</style>
-      </Head>
+          <link rel="icon" type="image/png" href="/logo.png" />
+          <title>KPK4444 — Dashboard</title>
+          <style>{`
+            * { font-family: 'Outfit', sans-serif; }
+            body { background-color: #f1f5f9; background-attachment: fixed; transition: background-color 0.3s; }
+            html.dark body { background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #09090b 100%); background-color: #09090b; }
+            ::-webkit-scrollbar { width: 5px; height: 5px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+            html.dark ::-webkit-scrollbar-thumb { background: #27272a; }
+            select option { background: #f1f5f9; color: #0f172a; }
+            html.dark select option { background: #09090b; color: white; }
+          `}</style>
+        </Head>
 
       {/* Mobile overlay */}
       {sidebarOpen && (
