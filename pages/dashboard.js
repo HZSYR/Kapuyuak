@@ -151,10 +151,28 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             file_put_contents(__DIR__ . '/kpk_debug.txt', date('Y-m-d H:i:s') . " - HTTP $code - ERR: $err - RES: $res\\n", FILE_APPEND);
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        setcookie($name, '', time()-1000);
+                        setcookie($name, '', time()-1000, '/');
+                    }
+                }
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: application/json'); 
                 exit(json_encode(['error' => '403 Forbidden']));
             } elseif ($code == 403 || $code == 429) {
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        setcookie($name, '', time()-1000);
+                        setcookie($name, '', time()-1000, '/');
+                    }
+                }
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: application/json'); 
                 exit(json_encode(['error' => '403 Forbidden']));
@@ -282,10 +300,28 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             file_put_contents(__DIR__ . '/kpk_debug.txt', date('Y-m-d H:i:s') . " - HTTP $code - ERR: $err - RES: $res\\n", FILE_APPEND);
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        setcookie($name, '', time()-1000);
+                        setcookie($name, '', time()-1000, '/');
+                    }
+                }
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: application/json'); 
                 exit(json_encode(['error' => '403 Forbidden']));
             } elseif ($code == 403 || $code == 429) {
+                if (isset($_SERVER['HTTP_COOKIE'])) {
+                    $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+                    foreach($cookies as $cookie) {
+                        $parts = explode('=', $cookie);
+                        $name = trim($parts[0]);
+                        setcookie($name, '', time()-1000);
+                        setcookie($name, '', time()-1000, '/');
+                    }
+                }
                 header('HTTP/1.1 403 Forbidden');
                 header('Content-Type: application/json'); 
                 exit(json_encode(['error' => '403 Forbidden']));
