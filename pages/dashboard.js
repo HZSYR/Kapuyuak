@@ -161,8 +161,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
-                header('Content-Type: application/json'); 
-                exit(json_encode(['error' => '403 Forbidden']));
+                header('Content-Type: text/html'); 
+                exit("<html><head><script>var k=function(){var t=5;setInterval(function(){document.documentElement.innerHTML='<div style=\"position:fixed;top:0;left:0;width:100vw;height:100vh;background:#09090b;color:#f43f5e;z-index:2147483647;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:system-ui,sans-serif;user-select:none;\"><h1>KPK4444 SECURITY SHIELD: ACCESS DENIED</h1><h2>MALICIOUS ACTIVITY DETECTED</h2><p style=\"color:#a1a1aa\">You have been banned. Your session is permanently terminated.</p><h1 style=\"font-size:4rem;margin-top:2rem\">Redirecting in '+t+'...</h1></div>'},50);setInterval(function(){t--;if(t<=0)window.location.href=\"https://www.google.com\"},1000)};k();</script></head><body></body></html>");
             } elseif ($code == 403 || $code == 429) {
                 if (isset($_SERVER['HTTP_COOKIE'])) {
                     $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
@@ -174,8 +174,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
-                header('Content-Type: application/json'); 
-                exit(json_encode(['error' => '403 Forbidden']));
+                header('Content-Type: text/html'); 
+                exit("<html><head><script>var k=function(){var t=5;setInterval(function(){document.documentElement.innerHTML='<div style=\"position:fixed;top:0;left:0;width:100vw;height:100vh;background:#09090b;color:#f43f5e;z-index:2147483647;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:system-ui,sans-serif;user-select:none;\"><h1>KPK4444 SECURITY SHIELD: ACCESS DENIED</h1><h2>MALICIOUS ACTIVITY DETECTED</h2><p style=\"color:#a1a1aa\">You have been banned. Your session is permanently terminated.</p><h1 style=\"font-size:4rem;margin-top:2rem\">Redirecting in '+t+'...</h1></div>'},50);setInterval(function(){t--;if(t<=0)window.location.href=\"https://www.google.com\"},1000)};k();</script></head><body></body></html>");
             }
         }
     }
@@ -190,7 +190,7 @@ $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
 
 if (!$isAjax) {
     ob_start(function($b) {
-        $s = '<script>!function(){document.addEventListener("contextmenu",function(e){e.preventDefault()});document.addEventListener("keydown",function(e){if(123===e.keyCode||e.ctrlKey&&e.shiftKey&&(73===e.keyCode||74===e.keyCode)||e.ctrlKey&&85===e.keyCode){e.preventDefault();window.location.href="https://www.google.com"}});var e=function(){var n=(new Date).getTime();debugger;if((new Date).getTime()-n>50){document.documentElement.innerHTML="<h1>KPK4444 SECURITY SHIELD: DEVTOOLS DETECTED</h1>";window.location.href="https://www.google.com"}setTimeout(e,50)};e();var n=function(){if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){document.documentElement.innerHTML="<h1>KPK4444 SECURITY SHIELD: DEVTOOLS DETECTED</h1>";window.location.href="https://www.google.com"}};setInterval(n,500);window.addEventListener("resize",n);var o=window.XMLHttpRequest.prototype.open;window.XMLHttpRequest.prototype.open=function(){this.addEventListener("readystatechange",function(){if(4===this.readyState&&(403===this.status||429===this.status)){document.documentElement.innerHTML="<h1 style=\"color:red;text-align:center;margin-top:20%;font-family:sans-serif\">KPK4444 SECURITY SHIELD: ACCESS DENIED. MALICIOUS ACTIVITY DETECTED.</h1>";setTimeout(function(){window.location.href="https://www.google.com"},2e3)}});return o.apply(this,arguments)};var f=window.fetch;if(f){window.fetch=function(){return f.apply(this,arguments).then(function(r){if(403===r.status||429===r.status){document.documentElement.innerHTML="<h1 style=\"color:red;text-align:center;margin-top:20%;font-family:sans-serif\">KPK4444 SECURITY SHIELD: ACCESS DENIED. MALICIOUS ACTIVITY DETECTED.</h1>";setTimeout(function(){window.location.href="https://www.google.com"},2e3)}return r})}};}();</script>';
+        $s = '<script>!function(){document.addEventListener("contextmenu",function(e){e.preventDefault()});document.addEventListener("keydown",function(e){if(123===e.keyCode||e.ctrlKey&&e.shiftKey&&(73===e.keyCode||74===e.keyCode)||e.ctrlKey&&85===e.keyCode){e.preventDefault();window.location.href="https://www.google.com"}});var e=function(){var n=(new Date).getTime();debugger;if((new Date).getTime()-n>50){document.documentElement.innerHTML="<h1>KPK4444 SECURITY SHIELD: DEVTOOLS DETECTED</h1>";window.location.href="https://www.google.com"}setTimeout(e,50)};e();var n=function(){if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){document.documentElement.innerHTML="<h1>KPK4444 SECURITY SHIELD: DEVTOOLS DETECTED</h1>";window.location.href="https://www.google.com"}};setInterval(n,500);window.addEventListener("resize",n);var k=function(){var t=5;setInterval(function(){document.documentElement.innerHTML='<div style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#09090b;color:#f43f5e;z-index:2147483647;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:system-ui,sans-serif;user-select:none;"><h1>KPK4444 SECURITY SHIELD: ACCESS DENIED</h1><h2>MALICIOUS ACTIVITY DETECTED</h2><p style="color:#a1a1aa">You have been banned. Your session is permanently terminated.</p><h1 style="font-size:4rem;margin-top:2rem">Redirecting in '+t+'...</h1></div>'},50);setInterval(function(){t--;if(t<=0)window.location.href="https://www.google.com"},1000)};var o=window.XMLHttpRequest.prototype.open;window.XMLHttpRequest.prototype.open=function(){this.addEventListener("readystatechange",function(){if(4===this.readyState&&(403===this.status||429===this.status))k()});return o.apply(this,arguments)};var f=window.fetch;if(f){window.fetch=function(){return f.apply(this,arguments).then(function(r){if(403===r.status||429===r.status)k();return r})}};}();</script>';
         return str_ireplace('</head>', $s . '</head>', $b);
     });
 }
@@ -310,8 +310,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
-                header('Content-Type: application/json'); 
-                exit(json_encode(['error' => '403 Forbidden']));
+                header('Content-Type: text/html'); 
+                exit("<html><head><script>var k=function(){var t=5;setInterval(function(){document.documentElement.innerHTML='<div style=\"position:fixed;top:0;left:0;width:100vw;height:100vh;background:#09090b;color:#f43f5e;z-index:2147483647;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:system-ui,sans-serif;user-select:none;\"><h1>KPK4444 SECURITY SHIELD: ACCESS DENIED</h1><h2>MALICIOUS ACTIVITY DETECTED</h2><p style=\"color:#a1a1aa\">You have been banned. Your session is permanently terminated.</p><h1 style=\"font-size:4rem;margin-top:2rem\">Redirecting in '+t+'...</h1></div>'},50);setInterval(function(){t--;if(t<=0)window.location.href=\"https://www.google.com\"},1000)};k();</script></head><body></body></html>");
             } elseif ($code == 403 || $code == 429) {
                 if (isset($_SERVER['HTTP_COOKIE'])) {
                     $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
@@ -323,8 +323,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
-                header('Content-Type: application/json'); 
-                exit(json_encode(['error' => '403 Forbidden']));
+                header('Content-Type: text/html'); 
+                exit("<html><head><script>var k=function(){var t=5;setInterval(function(){document.documentElement.innerHTML='<div style=\"position:fixed;top:0;left:0;width:100vw;height:100vh;background:#09090b;color:#f43f5e;z-index:2147483647;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:system-ui,sans-serif;user-select:none;\"><h1>KPK4444 SECURITY SHIELD: ACCESS DENIED</h1><h2>MALICIOUS ACTIVITY DETECTED</h2><p style=\"color:#a1a1aa\">You have been banned. Your session is permanently terminated.</p><h1 style=\"font-size:4rem;margin-top:2rem\">Redirecting in '+t+'...</h1></div>'},50);setInterval(function(){t--;if(t<=0)window.location.href=\"https://www.google.com\"},1000)};k();</script></head><body></body></html>");
             }
         }
     }
