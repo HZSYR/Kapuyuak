@@ -775,7 +775,7 @@ export default function Dashboard() {
                   }`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full mr-3 flex-shrink-0 transition-all
-                  ${tab === t ? 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]' : 'bg-transparent group-hover:bg-white/60'}`}
+                  ${tab === t ? 'bg-white dark:bg-cyan-400 shadow-[0_0_8px_rgba(255,255,255,0.8)] dark:shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-transparent group-hover:bg-white/60 dark:group-hover:bg-cyan-400/60'}`}
                 />
                 {t}
               </button>
