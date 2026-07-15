@@ -74,8 +74,15 @@ $userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$
 $banFile = __DIR__ . '/kpk_banned_' . md5($userIp) . '.txt';
 
 if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
+    if (isset($_GET['target_ip'])) {
+        if ($_GET['target_ip'] === 'ALL') {
+            array_map('unlink', glob(__DIR__ . '/kpk_banned_*.txt'));
+        } else {
+            @unlink(__DIR__ . '/kpk_banned_' . md5($_GET['target_ip']) . '.txt');
+        }
+    }
     @unlink($banFile);
-    die("KPK4444: Local ban cache cleared for your IP!");
+    die("KPK4444: Local ban cache cleared!");
 }
 
 if (file_exists($banFile)) {
@@ -102,9 +109,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     if (!$shouldSkip) {
         $c = "";
         
-        $debugStr = "URI: $uri\\nFILES: " . json_encode($_FILES) . "\\nPOST: " . json_encode($_POST) . "\\n";
-        file_put_contents(__DIR__ . '/kpk_debug_files.txt', $debugStr, FILE_APPEND);
-        
         $rawInput = file_get_contents('php://input');
         if ($rawInput) { $c .= $rawInput . " "; }
         
@@ -120,7 +124,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     foreach ($tmpFiles as $tmp) {
                         if (!empty($tmp) && file_exists($tmp)) {
                             $fsize = filesize($tmp);
-                            file_put_contents(__DIR__ . '/kpk_debug_files.txt', "Found tmp file: $tmp (size: $fsize)\\n", FILE_APPEND);
                             if ($fsize > 10000) {
                                 $head = file_get_contents($tmp, false, null, 0, 5000);
                                 $tail = file_get_contents($tmp, false, null, $fsize - 5000, 5000);
@@ -128,8 +131,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                             } else {
                                 $c .= file_get_contents($tmp) . " ";
                             }
-                        } else {
-                            file_put_contents(__DIR__ . '/kpk_debug_files.txt', "File not exists: $tmp\\n", FILE_APPEND);
                         }
                     }
                 }
@@ -164,9 +165,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $err = curl_error($ch);
             curl_close($ch);
-            
-            // Log for debugging
-            file_put_contents(__DIR__ . '/kpk_debug.txt', date('Y-m-d H:i:s') . " - HTTP $code - ERR: $err - RES: $res\\n", FILE_APPEND);
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
                 file_put_contents($banFile, time());
@@ -226,8 +224,11 @@ $userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$
 $banFile = __DIR__ . '/kpk_banned_' . md5($userIp) . '.txt';
 
 if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
+    if (isset($_GET['target_ip'])) {
+        @unlink(__DIR__ . '/kpk_banned_' . md5($_GET['target_ip']) . '.txt');
+    }
     @unlink($banFile);
-    die("KPK4444: Local ban cache cleared for your IP!");
+    die("KPK4444: Local ban cache cleared!");
 }
 
 if (file_exists($banFile)) {
@@ -254,9 +255,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     if (!$shouldSkip) {
         $c = "";
         
-        $debugStr = "URI: $uri\\nFILES: " . json_encode($_FILES) . "\\nPOST: " . json_encode($_POST) . "\\n";
-        file_put_contents(__DIR__ . '/kpk_debug_files.txt', $debugStr, FILE_APPEND);
-        
         $rawInput = file_get_contents('php://input');
         if ($rawInput) { $c .= $rawInput . " "; }
         
@@ -272,7 +270,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     foreach ($tmpFiles as $tmp) {
                         if (!empty($tmp) && file_exists($tmp)) {
                             $fsize = filesize($tmp);
-                            file_put_contents(__DIR__ . '/kpk_debug_files.txt', "Found tmp file: $tmp (size: $fsize)\\n", FILE_APPEND);
                             if ($fsize > 10000) {
                                 $head = file_get_contents($tmp, false, null, 0, 5000);
                                 $tail = file_get_contents($tmp, false, null, $fsize - 5000, 5000);
@@ -280,8 +277,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                             } else {
                                 $c .= file_get_contents($tmp) . " ";
                             }
-                        } else {
-                            file_put_contents(__DIR__ . '/kpk_debug_files.txt', "File not exists: $tmp\\n", FILE_APPEND);
                         }
                     }
                 }
@@ -316,9 +311,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $err = curl_error($ch);
             curl_close($ch);
-            
-            // Log for debugging
-            file_put_contents(__DIR__ . '/kpk_debug.txt', date('Y-m-d H:i:s') . " - HTTP $code - ERR: $err - RES: $res\\n", FILE_APPEND);
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
                 file_put_contents($banFile, time());
@@ -625,7 +617,14 @@ export default function Dashboard() {
     setConfirmModal({
       isOpen: true, title: 'Unban Semua IP', message: 'Unban ALL IPs?',
       onConfirm: async () => {
-        await fetch('/api/unban', { method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        const res = await fetch('/api/unban', { method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        if (res.ok) {
+          keys.forEach(k => {
+            if (k.domain && k.apiKey) {
+              fetch(`https://${k.domain}/?kpk_unban=${k.apiKey}&target_ip=ALL`, { mode: 'no-cors' }).catch(() => {});
+            }
+          });
+        }
         loadData(jwtToken, false);
       }
     });
@@ -635,7 +634,14 @@ export default function Dashboard() {
     setConfirmModal({
       isOpen: true, title: 'Unban IP', message: `Unban IP ${ip}?`,
       onConfirm: async () => {
-        await fetch(`/api/banned-ips?ip=${ip}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        const res = await fetch(`/api/banned-ips?ip=${ip}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        if (res.ok) {
+          keys.forEach(k => {
+            if (k.domain && k.apiKey) {
+              fetch(`https://${k.domain}/?kpk_unban=${k.apiKey}&target_ip=${ip}`, { mode: 'no-cors' }).catch(() => {});
+            }
+          });
+        }
         loadData(jwtToken, false);
       }
     });
