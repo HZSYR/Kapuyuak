@@ -274,13 +274,11 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
         ipAddress: ip, userAgent: req.headers['user-agent']
       });
 
-      if (highestSeverity === 'CRITICAL') {
-        await BannedIP.findOneAndUpdate(
-          { ip },
-          { reason: `Triggered CRITICAL patterns: ${matchedPatterns.join(', ')}`, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
-          { upsert: true }
-        );
-      }
+      await BannedIP.findOneAndUpdate(
+        { ip },
+        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        { upsert: true }
+      );
 
       return res.status(200).json({
         blocked: true, category: blockedCategory, severity: highestSeverity,
