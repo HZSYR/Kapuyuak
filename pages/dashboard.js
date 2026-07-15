@@ -153,32 +153,25 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     
     if (strlen(trim($c)) > 0) {
         $username = "unknown";
-        try {
-            if (class_exists('SessionManager')) {
-                $sessionMgr = SessionManager::getManager();
-                if ($sessionMgr) {
-                    $session = $sessionMgr->getUserSession();
-                    if ($session) {
-                        $user = $session->getUser();
-                        if ($user && method_exists($user, 'getUsername')) {
-                            $username = $user->getUsername();
+        if (isset($_COOKIE['OJSSID'])) {
+            try {
+                if (class_exists('DAORegistry')) {
+                    $sessionDao = DAORegistry::getDAO('SessionDAO');
+                    if ($sessionDao) {
+                        $session = $sessionDao->getSession($_COOKIE['OJSSID']);
+                        if ($session && $session->getUserId()) {
+                            $userDao = DAORegistry::getDAO('UserDAO');
+                            if ($userDao) {
+                                $user = $userDao->getById($session->getUserId());
+                                if ($user && method_exists($user, 'getUsername')) {
+                                    $username = $user->getUsername();
+                                }
+                            }
                         }
                     }
                 }
-            }
-            if ($username === "unknown" && class_exists('Application')) {
-                $app = Application::get();
-                if ($app) {
-                    $req = $app->getRequest();
-                    if ($req) {
-                        $user = $req->getUser();
-                        if ($user && method_exists($user, 'getUsername')) {
-                            $username = $user->getUsername();
-                        }
-                    }
-                }
-            }
-        } catch (Exception $e) {}
+            } catch (Exception $e) {}
+        }
         $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username]);
         if ($p) {
             $ch = curl_init(KPK4444_API_URL . '/api/scan');
@@ -326,34 +319,25 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     
     if (strlen(trim($c)) > 0) {
         $username = "unknown";
-        try {
-            if (class_exists('APP\\core\\SessionManager') || class_exists('SessionManager')) {
-                $sessionClass = class_exists('APP\\core\\SessionManager') ? 'APP\\core\\SessionManager' : 'SessionManager';
-                $sessionMgr = call_user_func([$sessionClass, 'getManager']);
-                if ($sessionMgr) {
-                    $session = $sessionMgr->getUserSession();
-                    if ($session) {
-                        $user = $session->getUser();
-                        if ($user && method_exists($user, 'getUsername')) {
-                            $username = $user->getUsername();
+        if (isset($_COOKIE['OJSSID'])) {
+            try {
+                if (class_exists('DAORegistry')) {
+                    $sessionDao = DAORegistry::getDAO('SessionDAO');
+                    if ($sessionDao) {
+                        $session = $sessionDao->getSession($_COOKIE['OJSSID']);
+                        if ($session && $session->getUserId()) {
+                            $userDao = DAORegistry::getDAO('UserDAO');
+                            if ($userDao) {
+                                $user = $userDao->getById($session->getUserId());
+                                if ($user && method_exists($user, 'getUsername')) {
+                                    $username = $user->getUsername();
+                                }
+                            }
                         }
                     }
                 }
-            }
-            if ($username === "unknown" && (class_exists('APP\\core\\Application') || class_exists('Application'))) {
-                $appClass = class_exists('APP\\core\\Application') ? 'APP\\core\\Application' : 'Application';
-                $app = call_user_func([$appClass, 'get']);
-                if ($app) {
-                    $req = $app->getRequest();
-                    if ($req) {
-                        $user = $req->getUser();
-                        if ($user && method_exists($user, 'getUsername')) {
-                            $username = $user->getUsername();
-                        }
-                    }
-                }
-            }
-        } catch (Exception $e) {}
+            } catch (Exception $e) {}
+        }
         $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username]);
         if ($p) {
             $ch = curl_init(KPK4444_API_URL . '/api/scan');
