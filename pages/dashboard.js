@@ -775,7 +775,7 @@ export default function Dashboard() {
                   }`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full mr-3 flex-shrink-0 transition-all
-                  ${tab === t ? 'bg-white dark:bg-cyan-400 shadow-[0_0_8px_rgba(255,255,255,0.8)] dark:shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-transparent group-hover:bg-white/60 dark:group-hover:bg-cyan-400/60'}`}
+                  ${tab === t ? 'bg-white dark:bg-violet-400 shadow-[0_0_8px_rgba(255,255,255,1)] dark:shadow-[0_0_10px_rgba(167,139,250,0.9)]' : 'bg-slate-300 dark:bg-slate-600 group-hover:bg-violet-400 dark:group-hover:bg-violet-500'}`}
                 />
                 {t}
               </button>
