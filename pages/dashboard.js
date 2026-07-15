@@ -642,7 +642,7 @@ export default function Dashboard() {
 
   // ─── LOGIN PAGE ───────────────────────────────────────────────────────────
   if (!auth) return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0f172a] to-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1e3a5f] via-[#1a2035] to-[#141920] flex items-center justify-center p-4">
       <Head>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -651,7 +651,7 @@ export default function Dashboard() {
         <style>{`* { font-family: 'Outfit', sans-serif; }`}</style>
       </Head>
       <div className="w-full max-w-xs sm:max-w-sm">
-        <form onSubmit={login} className="bg-slate-100 dark:bg-white/5 backdrop-blur-xl border border-slate-300 dark:border-white/10 p-7 sm:p-9 rounded-2xl shadow-2xl">
+        <form onSubmit={login} className="bg-slate-100 dark:bg-[#1e2640]/50 backdrop-blur-xl border border-slate-300 dark:border-white/10 p-7 sm:p-9 rounded-2xl shadow-2xl">
           <div className="flex flex-col items-center mb-7">
             <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/10 mb-4 shadow-xl shadow-black/50">
               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
@@ -670,7 +670,7 @@ export default function Dashboard() {
                 value={secret}
                 onChange={e => setSecret(e.target.value)}
                 placeholder="••••••••••••••••"
-                className="w-full bg-white dark:bg-black/30 text-slate-900 dark:text-white border border-slate-300 dark:border-white/10 px-4 py-3 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-600"
+                className="w-full bg-white dark:bg-[#1e2640]/70 text-slate-900 dark:text-white border border-slate-300 dark:border-white/10 px-4 py-3 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-600"
               />
             </div>
             <div className="flex justify-center my-4">
@@ -721,20 +721,20 @@ export default function Dashboard() {
           <style>{`
             * { font-family: 'Outfit', sans-serif; }
             body { background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 100%); background-attachment: fixed; transition: background 0.3s; }
-            html.dark body { background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #09090b 100%); background-color: #09090b; }
+            html.dark body { background-image: radial-gradient(circle at 50% 0%, #1e3a5f 0%, #1a2035 60%, #141920 100%); background-color: #141920; }
             ::-webkit-scrollbar { width: 5px; height: 5px; }
             ::-webkit-scrollbar-track { background: transparent; }
             ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-            html.dark ::-webkit-scrollbar-thumb { background: #27272a; }
+            html.dark ::-webkit-scrollbar-thumb { background: #374151; }
             select option { background: #f1f5f9; color: #0f172a; }
-            html.dark select option { background: #09090b; color: white; }
+            html.dark select option { background: #1a2035; color: white; }
           `}</style>
         </Head>
 
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-slate-300/90 dark:bg-black/60 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-slate-300/90 dark:bg-[#1e2640]/70 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -744,12 +744,12 @@ export default function Dashboard() {
         {/* ── SIDEBAR ───────────────────────────────────────────────────── */}
         <aside className={`
           fixed lg:relative inset-y-0 left-0 z-40
-          w-60 bg-white dark:bg-black/40 backdrop-blur-3xl border-r border-slate-200 dark:border-white/5
+          w-60 bg-white dark:bg-[#1e2640]/90 backdrop-blur-3xl border-r border-slate-200 dark:border-white/10
           flex flex-col transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}>
           {/* Brand */}
-          <div className="p-5 pb-3 flex items-center space-x-3 border-b border-slate-200 dark:border-white/5">
+          <div className="p-5 pb-3 flex items-center space-x-3 border-b border-slate-200 dark:border-white/10">
             <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0 shadow-md">
               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
@@ -770,8 +770,8 @@ export default function Dashboard() {
                 onClick={() => handleTabChange(t)}
                 className={`w-full text-left px-4 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center group
                   ${tab === t
-                    ? 'bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 shadow'
-                    : 'text-slate-800 dark:text-gray-400 hover:bg-slate-100 dark:bg-white/5 hover:text-slate-800 dark:text-gray-200'
+                    ? 'bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 shadow'
+                    : 'text-slate-800 dark:text-gray-400 hover:bg-slate-100 dark:bg-[#1e2640]/50 hover:text-slate-800 dark:text-gray-200'
                   }`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full mr-3 flex-shrink-0 transition-all
@@ -783,7 +783,7 @@ export default function Dashboard() {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="p-4 border-t border-slate-200 dark:border-white/5 space-y-3">
+          <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-3">
             <button
               onClick={() => { sessionStorage.clear(); window.location.reload(); }}
               className="w-full text-center py-2.5 rounded-lg text-[11px] font-bold text-rose-400/80 hover:bg-rose-500/10 hover:text-rose-400 transition uppercase tracking-widest"
@@ -797,7 +797,7 @@ export default function Dashboard() {
         <main className="flex-1 overflow-y-auto flex flex-col min-w-0">
 
           {/* Top bar (visible on mobile) */}
-          <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white dark:bg-black/30 backdrop-blur border-b border-slate-200 dark:border-white/5 lg:hidden">
+          <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white dark:bg-[#1e2640]/80 backdrop-blur border-b border-slate-200 dark:border-white/10 lg:hidden">
             <div className="flex items-center space-x-2">
               <div className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-white/10">
                 <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
@@ -809,7 +809,7 @@ export default function Dashboard() {
             </div>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-gray-300 hover:text-slate-900 dark:text-white transition"
+              className="p-2 rounded-lg bg-slate-100 dark:bg-[#1e2640]/50 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-gray-300 hover:text-slate-900 dark:text-white transition"
               aria-label="Open menu"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -894,21 +894,21 @@ export default function Dashboard() {
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {statsCards.map((s, i) => (
-                    <div key={i} className="bg-white/95 dark:bg-black/20 backdrop-blur-xl p-5 rounded-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:border-white/10 transition">
+                    <div key={i} className="bg-white/95 dark:bg-[#1e2640]/60 backdrop-blur-xl p-5 rounded-xl border border-slate-200 dark:border-white/10 hover:border-slate-300 dark:border-white/10 transition">
                       <p className="text-slate-800 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-2">{s.title}</p>
                       <p className={`text-3xl font-bold tracking-tighter ${s.color}`}>{s.value}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="bg-white/95 dark:bg-black/20 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/5 p-5">
+                <div className="bg-white/95 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/10 p-5">
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">Recent Threat Detections</h3>
                   {logs.length === 0 ? (
                     <p className="text-center py-8 text-slate-700 dark:text-gray-500 text-sm">No recent threats detected.</p>
                   ) : (
                     <div className="space-y-2">
                       {logs.slice(0, 5).map(l => (
-                        <div key={l._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg bg-slate-50/80 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 hover:bg-slate-100 dark:bg-white/5 transition">
+                        <div key={l._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg bg-slate-50/80 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:bg-[#1e2640]/50 transition">
                           <div className="flex items-center space-x-3">
                             <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
                             <div>
@@ -917,7 +917,7 @@ export default function Dashboard() {
                             </div>
                           </div>
                           <div className="flex items-center space-x-2 ml-5 sm:ml-0">
-                            <span className="font-mono text-[10px] text-slate-800 dark:text-gray-400 bg-white dark:bg-black/40 px-2 py-0.5 rounded border border-slate-200 dark:border-white/5 truncate max-w-[120px]">{l.ipAddress}</span>
+                            <span className="font-mono text-[10px] text-slate-800 dark:text-gray-400 bg-white dark:bg-[#1e2640]/80 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10 truncate max-w-[120px]">{l.ipAddress}</span>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded border flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : l.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>{l.category}</span>
                           </div>
                         </div>
@@ -931,26 +931,26 @@ export default function Dashboard() {
             {/* ── API KEYS ── */}
             {tab === 'API KEYS' && (
               <div className="space-y-5">
-                <form onSubmit={createKey} className="bg-white/95 dark:bg-black/20 backdrop-blur-xl p-5 rounded-xl border border-slate-200 dark:border-white/5">
+                <form onSubmit={createKey} className="bg-white/95 dark:bg-[#1e2640]/60 backdrop-blur-xl p-5 rounded-xl border border-slate-200 dark:border-white/10">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                     <div className="sm:col-span-1">
                       <label className="text-[10px] text-slate-800 dark:text-gray-400 mb-1.5 block uppercase tracking-widest">Target Domain</label>
-                      <input name="domain" placeholder="jurnal.ac.id" required className="w-full bg-white dark:bg-black/40 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-xs" />
+                      <input name="domain" placeholder="jurnal.ac.id" required className="w-full bg-white dark:bg-[#1e2640]/80 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-xs" />
                     </div>
                     <div className="sm:col-span-1">
                       <label className="text-[10px] text-slate-800 dark:text-gray-400 mb-1.5 block uppercase tracking-widest">Owner / Institute</label>
-                      <input name="ownerName" placeholder="Owner Name" required className="w-full bg-white dark:bg-black/40 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-xs" />
+                      <input name="ownerName" placeholder="Owner Name" required className="w-full bg-white dark:bg-[#1e2640]/80 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition text-xs" />
                     </div>
                     <div>
                       <label className="text-[10px] text-slate-800 dark:text-gray-400 mb-1.5 block uppercase tracking-widest">OJS Version</label>
-                      <select name="ojsVersion" defaultValue="3.3" className="w-full bg-white dark:bg-black/40 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none transition appearance-none cursor-pointer text-xs">
+                      <select name="ojsVersion" defaultValue="3.3" className="w-full bg-white dark:bg-[#1e2640]/80 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none transition appearance-none cursor-pointer text-xs">
                         <option value="3.3">OJS 3.3</option>
                         <option value="3.4">OJS 3.4</option>
                       </select>
                     </div>
                     <div>
                       <label className="text-[10px] text-slate-800 dark:text-gray-400 mb-1.5 block uppercase tracking-widest">Valid Duration</label>
-                      <select name="validDays" defaultValue="365" className="w-full bg-white dark:bg-black/40 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none transition appearance-none cursor-pointer text-xs">
+                      <select name="validDays" defaultValue="365" className="w-full bg-white dark:bg-[#1e2640]/80 border border-slate-300 dark:border-white/10 px-3 py-2.5 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none transition appearance-none cursor-pointer text-xs">
                         <option value="30">1 Bulan</option>
                         <option value="90">3 Bulan</option>
                         <option value="180">6 Bulan</option>
@@ -975,7 +975,7 @@ export default function Dashboard() {
                 {/* Card view on mobile, table on desktop */}
                 <div className="sm:hidden space-y-3">
                   {keys.map(k => (
-                    <div key={k._id} className="bg-white/95 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-xl p-4 space-y-2">
+                    <div key={k._id} className="bg-white/95 dark:bg-[#1e2640]/60 border border-slate-200 dark:border-white/10 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2">
@@ -986,7 +986,7 @@ export default function Dashboard() {
                         </div>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${k.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>{k.status.toUpperCase()}</span>
                       </div>
-                      <div className="flex items-center space-x-2 bg-white dark:bg-black/40 px-2.5 py-1.5 rounded border border-slate-200 dark:border-white/5 cursor-pointer hover:border-emerald-500/30 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
+                      <div className="flex items-center space-x-2 bg-white dark:bg-[#1e2640]/80 px-2.5 py-1.5 rounded border border-slate-200 dark:border-white/10 cursor-pointer hover:border-emerald-500/30 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
                         <code className="text-emerald-400 font-mono text-[11px] truncate flex-1">{k.apiKey.substring(0, 24)}...</code>
                         <span className="text-[9px] text-slate-700 dark:text-gray-500 font-bold uppercase tracking-widest">COPY</span>
                       </div>
@@ -996,17 +996,17 @@ export default function Dashboard() {
                       </div>
                       <div className="mt-2 flex space-x-2">
                         <button onClick={() => { setNewKeyData(k); if (k.ojsVersion) setSelectedOjsVersion(k.ojsVersion); setShowKeyTutorial(true); }} className="flex-1 bg-sky-500/10 hover:bg-sky-500/20 py-1.5 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
-                        <button onClick={() => setViewKeyLogs(k.domain)} className="flex-1 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 py-1.5 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition border border-slate-200 dark:border-white/5">View Logs</button>
+                        <button onClick={() => setViewKeyLogs(k.domain)} className="flex-1 bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 py-1.5 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition border border-slate-200 dark:border-white/10">View Logs</button>
                         <button onClick={() => deleteKey(k._id)} className="px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest transition border border-rose-500/20">Delete</button>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="hidden sm:block bg-white/95 dark:bg-black/20 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+                <div className="hidden sm:block bg-white/95 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs whitespace-nowrap">
-                      <thead className="bg-white dark:bg-black/40 text-slate-800 dark:text-gray-400 border-b border-slate-200 dark:border-white/5 text-[10px] font-semibold uppercase tracking-widest">
+                      <thead className="bg-white dark:bg-[#1e2640]/80 text-slate-800 dark:text-gray-400 border-b border-slate-200 dark:border-white/10 text-[10px] font-semibold uppercase tracking-widest">
                         <tr>
                           <th className="px-4 py-3">Domain / Owner</th>
                           <th className="px-4 py-3">Security Key</th>
@@ -1027,7 +1027,7 @@ export default function Dashboard() {
                               <p className="text-[10px] text-slate-700 dark:text-gray-500 mt-0.5">{k.ownerName}</p>
                             </td>
                             <td className="px-4 py-3">
-                              <div className="inline-flex items-center space-x-2 bg-white dark:bg-black/40 px-2.5 py-1 rounded border border-slate-200 dark:border-white/5 cursor-pointer hover:border-emerald-500/30 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
+                              <div className="inline-flex items-center space-x-2 bg-white dark:bg-[#1e2640]/80 px-2.5 py-1 rounded border border-slate-200 dark:border-white/10 cursor-pointer hover:border-emerald-500/30 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
                                 <code className="text-emerald-400 font-mono text-[11px]">{k.apiKey.substring(0, 16)}...</code>
                                 <span className="text-[9px] text-slate-700 dark:text-gray-500 group-hover:text-slate-900 dark:text-white font-bold uppercase tracking-widest">COPY</span>
                               </div>
@@ -1039,7 +1039,7 @@ export default function Dashboard() {
                             <td className="px-4 py-3 text-slate-800 dark:text-gray-400 text-[11px]">{new Date(k.expiredAt).toLocaleDateString()}</td>
                             <td className="px-4 py-3 text-right space-x-2">
                               <button onClick={() => { setNewKeyData(k); if (k.ojsVersion) setSelectedOjsVersion(k.ojsVersion); setShowKeyTutorial(true); }} className="px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
-                              <button onClick={() => setViewKeyLogs(k.domain)} className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition border border-slate-200 dark:border-white/5">View Logs</button>
+                              <button onClick={() => setViewKeyLogs(k.domain)} className="px-3 py-1.5 bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition border border-slate-200 dark:border-white/10">View Logs</button>
                               <button onClick={() => deleteKey(k._id)} className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[10px] font-bold uppercase tracking-widest transition border border-rose-500/20">Delete</button>
                             </td>
                           </tr>
@@ -1058,7 +1058,7 @@ export default function Dashboard() {
                   <div className="flex space-x-1.5">
                     <span 
                       onClick={() => setFilterLogs('ALL')}
-                      className={`px-2.5 py-1 rounded text-[10px] font-semibold border cursor-pointer uppercase tracking-wider transition ${filterLogs === 'ALL' ? 'bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-white border-white/20' : 'bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-gray-400 border-slate-200 dark:border-white/5 hover:bg-slate-200 dark:bg-white/10'}`}
+                      className={`px-2.5 py-1 rounded text-[10px] font-semibold border cursor-pointer uppercase tracking-wider transition ${filterLogs === 'ALL' ? 'bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-white border-white/20' : 'bg-slate-100 dark:bg-[#1e2640]/50 text-slate-800 dark:text-gray-400 border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:bg-white/10'}`}
                     >
                       All Events
                     </span>
@@ -1100,7 +1100,7 @@ export default function Dashboard() {
                 {/* Mobile cards */}
                 <div className="sm:hidden space-y-3">
                   {logs.filter(l => filterLogs === 'ALL' || l.severity === 'CRITICAL').map(l => (
-                    <div key={l._id} className="bg-white/95 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-xl p-4 space-y-2">
+                    <div key={l._id} className="bg-white/95 dark:bg-[#1e2640]/60 border border-slate-200 dark:border-white/10 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
                         <p className="font-bold text-slate-900 dark:text-white text-sm">{l.domain}</p>
                         <div className="flex items-center space-x-1.5">
@@ -1118,10 +1118,10 @@ export default function Dashboard() {
                 </div>
 
                 {/* Desktop table */}
-                <div className="hidden sm:block bg-white/95 dark:bg-black/20 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+                <div className="hidden sm:block bg-white/95 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs whitespace-nowrap">
-                      <thead className="bg-white dark:bg-black/40 text-slate-800 dark:text-gray-400 border-b border-slate-200 dark:border-white/5 text-[10px] font-semibold uppercase tracking-widest">
+                      <thead className="bg-white dark:bg-[#1e2640]/80 text-slate-800 dark:text-gray-400 border-b border-slate-200 dark:border-white/10 text-[10px] font-semibold uppercase tracking-widest">
                         <tr>
                           <th className="px-4 py-3">Timestamp</th>
                           <th className="px-4 py-3">Target Domain</th>
@@ -1142,7 +1142,7 @@ export default function Dashboard() {
                               </div>
                             </td>
                             <td className="px-4 py-3 text-slate-900 dark:text-gray-300 text-[11px]">{l.category}</td>
-                            <td className="px-4 py-3"><span className="font-mono text-slate-800 dark:text-gray-400 bg-white dark:bg-black/40 px-2 py-0.5 rounded border border-slate-200 dark:border-white/5 text-[10px]">{l.ipAddress}</span></td>
+                            <td className="px-4 py-3"><span className="font-mono text-slate-800 dark:text-gray-400 bg-white dark:bg-[#1e2640]/80 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10 text-[10px]">{l.ipAddress}</span></td>
                           </tr>
                         ))}
                       </tbody>
@@ -1158,16 +1158,16 @@ export default function Dashboard() {
                 {/* Mobile cards */}
                 <div className="sm:hidden space-y-3">
                   {blacklists.slice((blacklistPage - 1) * 15, blacklistPage * 15).map(b => (
-                    <div key={b._id} className="bg-white/95 dark:bg-black/20 border border-slate-200 dark:border-white/5 rounded-xl p-4 space-y-2">
+                    <div key={b._id} className="bg-white/95 dark:bg-[#1e2640]/60 border border-slate-200 dark:border-white/10 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
                         <code className="text-rose-400 font-mono text-xs">{b.value}</code>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'}`}>{b.severity}</span>
                       </div>
                       <div className="flex justify-between text-[10px]">
-                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded text-slate-800 dark:text-gray-400 border border-slate-200 dark:border-white/5 uppercase font-semibold">{b.type}</span>
+                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-[#1e2640]/50 rounded text-slate-800 dark:text-gray-400 border border-slate-200 dark:border-white/10 uppercase font-semibold">{b.type}</span>
                         <span className="text-slate-800 dark:text-gray-400">{b.category}</span>
                       </div>
-                      <div className="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-white/5 mt-2">
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-white/10 mt-2">
                         <div className="text-[10px] text-slate-700 dark:text-gray-500 flex items-center">
                           <span className="mr-1">Added by:</span>
                           <span className={b.addedBy === 'AI_AUTO_LEARNING' ? 'text-emerald-400 font-bold' : 'text-slate-800 dark:text-gray-400'}>{b.addedBy}</span>
@@ -1179,10 +1179,10 @@ export default function Dashboard() {
                 </div>
 
                 {/* Desktop table */}
-                <div className="hidden sm:block bg-white/95 dark:bg-black/20 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+                <div className="hidden sm:block bg-white/95 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs whitespace-nowrap">
-                      <thead className="bg-white dark:bg-black/40 text-slate-800 dark:text-gray-400 border-b border-slate-200 dark:border-white/5 text-[10px] font-semibold uppercase tracking-widest">
+                      <thead className="bg-white dark:bg-[#1e2640]/80 text-slate-800 dark:text-gray-400 border-b border-slate-200 dark:border-white/10 text-[10px] font-semibold uppercase tracking-widest">
                         <tr>
                           <th className="px-4 py-3">Rule Type</th>
                           <th className="px-4 py-3">Pattern / Value</th>
@@ -1194,14 +1194,14 @@ export default function Dashboard() {
                       <tbody className="divide-y divide-white/5">
                         {blacklists.slice((blacklistPage - 1) * 15, blacklistPage * 15).map(b => (
                           <tr key={b._id} className="hover:bg-slate-50/80 dark:bg-white/[0.02] transition">
-                            <td className="px-4 py-3 text-slate-800 dark:text-gray-400"><span className="px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded text-[10px] font-semibold uppercase border border-slate-200 dark:border-white/5">{b.type}</span></td>
+                            <td className="px-4 py-3 text-slate-800 dark:text-gray-400"><span className="px-2 py-0.5 bg-slate-100 dark:bg-[#1e2640]/50 rounded text-[10px] font-semibold uppercase border border-slate-200 dark:border-white/10">{b.type}</span></td>
                             <td className="px-4 py-3 font-mono text-rose-400 text-[11px]">{b.value}</td>
                             <td className="px-4 py-3 text-slate-900 dark:text-gray-300 text-[11px]">{b.category}</td>
                             <td className="px-4 py-3">
                               <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'}`}>{b.severity}</span>
                             </td>
                             <td className="px-4 py-3 text-right space-x-2">
-                              <span className={`text-[10px] font-mono border px-2 py-0.5 rounded ${b.addedBy === 'AI_AUTO_LEARNING' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold' : 'bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-800 dark:text-gray-400'}`}>{b.addedBy}</span>
+                              <span className={`text-[10px] font-mono border px-2 py-0.5 rounded ${b.addedBy === 'AI_AUTO_LEARNING' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold' : 'bg-slate-100 dark:bg-[#1e2640]/50 border-slate-300 dark:border-white/10 text-slate-800 dark:text-gray-400'}`}>{b.addedBy}</span>
                               <button onClick={() => deleteBlacklist(b._id)} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[9px] font-bold uppercase tracking-widest border border-rose-500/20 transition">Del</button>
                             </td>
                           </tr>
@@ -1219,14 +1219,14 @@ export default function Dashboard() {
                       <button 
                         onClick={() => setBlacklistPage(p => Math.max(1, p - 1))}
                         disabled={blacklistPage === 1}
-                        className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 disabled:opacity-50 disabled:hover:bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition"
+                        className="px-3 py-1.5 bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 disabled:opacity-50 disabled:hover:bg-slate-100 dark:bg-[#1e2640]/50 border border-slate-300 dark:border-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition"
                       >
                         Prev
                       </button>
                       <button 
                         onClick={() => setBlacklistPage(p => p + 1)}
                         disabled={blacklistPage * 15 >= blacklists.length}
-                        className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 disabled:opacity-50 disabled:hover:bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition"
+                        className="px-3 py-1.5 bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 disabled:opacity-50 disabled:hover:bg-slate-100 dark:bg-[#1e2640]/50 border border-slate-300 dark:border-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition"
                       >
                         Next
                       </button>
@@ -1239,7 +1239,7 @@ export default function Dashboard() {
             {/* AI SETTINGS TAB */}
             {tab === 'AI SETTINGS' && (
               <div className="space-y-6">
-                <div className="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
+                <div className="bg-white dark:bg-[#1e2640]/80 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div>
                       <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">AI Scanner Configuration</h3>
@@ -1254,9 +1254,9 @@ export default function Dashboard() {
                     </button>
                   </form>
 
-                  <div className="bg-white dark:bg-[#0f172a]/50 rounded-xl border border-slate-200 dark:border-white/5 overflow-x-auto">
+                  <div className="bg-white dark:bg-[#1e2a45]/60 rounded-xl border border-slate-200 dark:border-white/10 overflow-x-auto">
                     <table className="w-full text-left text-sm text-slate-800 dark:text-gray-400">
-                      <thead className="text-[10px] uppercase text-slate-700 dark:text-gray-500 bg-slate-50/80 dark:bg-white/[0.02] tracking-widest border-b border-slate-200 dark:border-white/5">
+                      <thead className="text-[10px] uppercase text-slate-700 dark:text-gray-500 bg-slate-50/80 dark:bg-white/[0.02] tracking-widest border-b border-slate-200 dark:border-white/10">
                         <tr>
                           <th className="px-4 py-4 font-bold">API Key (Masked)</th>
                           <th className="px-4 py-4 font-bold">Added On</th>
@@ -1336,7 +1336,7 @@ export default function Dashboard() {
 
             {/* BANNED IPs TAB */}
             {tab === 'BANNED IPs' && (
-              <div className="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5 rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
+              <div className="bg-white dark:bg-[#1e2640]/80 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Banned IPs</h3>
@@ -1348,9 +1348,9 @@ export default function Dashboard() {
                   </button>
                 </div>
                 
-                <div className="bg-white dark:bg-[#0f172a]/50 rounded-xl border border-slate-200 dark:border-white/5 overflow-x-auto">
+                <div className="bg-white dark:bg-[#1e2a45]/60 rounded-xl border border-slate-200 dark:border-white/10 overflow-x-auto">
                   <table className="w-full text-left text-sm text-slate-800 dark:text-gray-400">
-                    <thead className="text-[10px] uppercase text-slate-700 dark:text-gray-500 bg-slate-50/80 dark:bg-white/[0.02] tracking-widest border-b border-slate-200 dark:border-white/5">
+                    <thead className="text-[10px] uppercase text-slate-700 dark:text-gray-500 bg-slate-50/80 dark:bg-white/[0.02] tracking-widest border-b border-slate-200 dark:border-white/10">
                       <tr>
                         <th className="px-4 py-4 font-bold">IP Address</th>
                         <th className="px-4 py-4 font-bold">Reason</th>
@@ -1386,14 +1386,14 @@ export default function Dashboard() {
 
       {/* View Logs Modal */}
       {viewKeyLogs && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-300/90 dark:bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-300/90 dark:bg-[#1e2640]/70 backdrop-blur-sm">
           <div className="bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-white/10 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
-            <div className="p-5 border-b border-slate-200 dark:border-white/5 flex justify-between items-center">
+            <div className="p-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Logs: {viewKeyLogs}</h3>
                 <p className="text-[10px] text-slate-800 dark:text-gray-400 uppercase tracking-widest mt-1">Detailed Threat Activity</p>
               </div>
-              <button onClick={() => setViewKeyLogs(null)} className="p-2 text-slate-800 dark:text-gray-400 hover:text-slate-900 dark:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 rounded-lg transition">
+              <button onClick={() => setViewKeyLogs(null)} className="p-2 text-slate-800 dark:text-gray-400 hover:text-slate-900 dark:text-white bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 rounded-lg transition">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -1405,7 +1405,7 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-3">
                   {logs.filter(l => l.domain === viewKeyLogs).map(l => (
-                    <div key={l._id} className="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div key={l._id} className="bg-white dark:bg-[#1e2640]/80 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <div className={`w-2 h-2 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
@@ -1421,7 +1421,7 @@ export default function Dashboard() {
                         )}
                       </div>
                       <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center text-[10px] text-slate-800 dark:text-gray-400 space-y-0 md:space-y-1">
-                        <span className="font-mono bg-slate-100 dark:bg-white/5 px-2 py-1 rounded border border-slate-200 dark:border-white/5">{l.ipAddress}</span>
+                        <span className="font-mono bg-slate-100 dark:bg-[#1e2640]/50 px-2 py-1 rounded border border-slate-200 dark:border-white/10">{l.ipAddress}</span>
                         <span>{new Date(l.timestamp).toLocaleString()}</span>
                       </div>
                     </div>
@@ -1435,11 +1435,11 @@ export default function Dashboard() {
 
       {/* ── NEW KEY TUTORIAL POPUP ── */}
       {showKeyTutorial && newKeyData && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-800/80 dark:bg-black/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-800/80 dark:bg-[#1e2640]/90 backdrop-blur-md">
           <div className="relative bg-slate-100 dark:bg-[#0a0a0c] bg-opacity-95 backdrop-blur-3xl border border-slate-300 dark:border-white/10 rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-4xl w-full mx-auto overflow-hidden flex flex-col max-h-[90vh]">
             
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50/80 dark:bg-white/[0.02]">
+            <div className="px-8 py-6 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50/80 dark:bg-white/[0.02]">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.1)]">
                   <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
@@ -1449,7 +1449,7 @@ export default function Dashboard() {
                   <p className="text-[10px] text-slate-700 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">Integration Guide for OJS {selectedOjsVersion}</p>
                 </div>
               </div>
-              <button onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} className="p-2 text-slate-700 dark:text-gray-500 hover:text-slate-900 dark:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 rounded-xl transition">
+              <button onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} className="p-2 text-slate-700 dark:text-gray-500 hover:text-slate-900 dark:text-white bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 rounded-xl transition">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
@@ -1460,11 +1460,11 @@ export default function Dashboard() {
               {/* API Key Box */}
               <div>
                 <p className="text-[10px] text-slate-700 dark:text-gray-500 font-bold uppercase tracking-widest mb-3 ml-1">Your Secret Key</p>
-                <div className="flex items-center justify-between bg-white dark:bg-black/40 p-4 rounded-2xl border border-slate-200 dark:border-white/5 group/key hover:border-slate-300 dark:border-white/10 transition">
+                <div className="flex items-center justify-between bg-white dark:bg-[#1e2640]/80 p-4 rounded-2xl border border-slate-200 dark:border-white/10 group/key hover:border-slate-300 dark:border-white/10 transition">
                   <code className="text-emerald-400 font-mono text-base break-all">{newKeyData.apiKey}</code>
                   <button 
                     onClick={handleCopyKey} 
-                    className={`ml-6 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 flex-shrink-0 flex items-center space-x-2 ${copiedKey ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-gray-300 group-hover/key:text-slate-900 dark:text-white'}`}
+                    className={`ml-6 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 flex-shrink-0 flex items-center space-x-2 ${copiedKey ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-gray-300 group-hover/key:text-slate-900 dark:text-white'}`}
                   >
                     {copiedKey ? (
                       <>
@@ -1516,13 +1516,13 @@ export default function Dashboard() {
                       )}
                     </button>
                   </div>
-                  <pre className="bg-[#000000] rounded-2xl p-6 overflow-x-auto max-h-[40vh] custom-scrollbar border border-slate-200 dark:border-white/5 relative">
+                  <pre className="bg-[#0d1526] rounded-2xl p-6 overflow-x-auto max-h-[40vh] custom-scrollbar border border-slate-200 dark:border-white/10 relative">
                     <code className="text-[13px] font-mono text-slate-900 dark:text-gray-300 leading-relaxed">
                       {selectedOjsVersion === '3.3' ? getFullIndexPhp(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL) : getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL)}
                     </code>
                   </pre>
                 </div>
-                <div className="mt-6 p-5 bg-slate-50/80 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-2xl flex gap-4 items-start">
+                <div className="mt-6 p-5 bg-slate-50/80 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 rounded-2xl flex gap-4 items-start">
                   <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
@@ -1537,7 +1537,7 @@ export default function Dashboard() {
       )}
 
       {/* Bottom nav (mobile only) */}
-      <nav className="fixed bottom-0 inset-x-0 z-30 bg-slate-300/90 dark:bg-black/60 backdrop-blur border-t border-slate-200 dark:border-white/5 flex lg:hidden">
+      <nav className="fixed bottom-0 inset-x-0 z-30 bg-slate-300/90 dark:bg-[#1e2640]/70 backdrop-blur border-t border-slate-200 dark:border-white/10 flex lg:hidden">
         {TABS.map(t => (
           <button
             key={t}
@@ -1558,8 +1558,8 @@ export default function Dashboard() {
       {/* ── CONFIRM MODAL ── */}
       {confirmModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-300/90 dark:bg-black/60 backdrop-blur-sm" onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}></div>
-          <div className="relative bg-slate-800/80 dark:bg-black/80 backdrop-blur-3xl border border-slate-300 dark:border-white/10 rounded-3xl p-8 shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-sm w-full mx-auto transform transition-all animate-in zoom-in-95 duration-200">
+          <div className="absolute inset-0 bg-slate-300/90 dark:bg-[#1e2640]/70 backdrop-blur-sm" onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}></div>
+          <div className="relative bg-slate-800/80 dark:bg-[#1e2640]/90 backdrop-blur-3xl border border-slate-300 dark:border-white/10 rounded-3xl p-8 shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-sm w-full mx-auto transform transition-all animate-in zoom-in-95 duration-200">
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-5 shadow-[0_0_20px_rgba(225,29,72,0.1)]">
                 <svg className="w-7 h-7 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -1569,7 +1569,7 @@ export default function Dashboard() {
               <div className="flex w-full gap-3">
                 <button 
                   onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
-                  className="flex-1 py-3.5 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-gray-300 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all border border-slate-200 dark:border-white/5"
+                  className="flex-1 py-3.5 bg-slate-100 dark:bg-[#1e2640]/50 hover:bg-slate-200 dark:bg-white/10 text-slate-900 dark:text-gray-300 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all border border-slate-200 dark:border-white/10"
                 >
                   Batal
                 </button>
