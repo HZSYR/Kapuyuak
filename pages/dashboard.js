@@ -363,6 +363,15 @@ export default function Dashboard() {
   const [blacklistPage, setBlacklistPage] = useState(1);
   const [groqKeys, setGroqKeys] = useState([]);
   const [bannedIps, setBannedIps] = useState([]);
+  const [bannedIpSearch, setBannedIpSearch] = useState('');
+  const [bannedIpPage, setBannedIpPage] = useState(1);
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const [aiLogs, setAiLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -641,7 +650,8 @@ export default function Dashboard() {
   const TABS = ['OVERVIEW', 'API KEYS', 'ATTACK LOGS', 'BLACKLIST', 'AI SETTINGS', 'BANNED IPs'];
 
   // ─── LOGIN PAGE ───────────────────────────────────────────────────────────
-  if (!auth) return (
+  if (!auth)
+ return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1e3a5f] via-[#1a2035] to-[#141920] flex items-center justify-center p-4">
       <Head>
         <script src="https://cdn.tailwindcss.com"></script>
@@ -695,6 +705,29 @@ export default function Dashboard() {
     { title: 'Active Licenses', value: keys.filter(k => k.status === 'active').length, color: 'text-emerald-400' },
     { title: 'Blacklist Patterns', value: blacklists.length, color: 'text-blue-400' }
   ];
+
+
+  // Banned IPs calculations
+  const ipAttackCounts = logs.reduce((acc, log) => {
+    if (log.ip) {
+      acc[log.ip] = (acc[log.ip] || 0) + 1;
+    }
+    return acc;
+  }, {});
+  const topAttackIps = Object.entries(ipAttackCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+  
+  const filteredBannedIps = bannedIps.filter(bip => bip.ip.includes(bannedIpSearch));
+  const BANNED_PER_PAGE = 10;
+  const totalBannedPages = Math.max(1, Math.ceil(filteredBannedIps.length / BANNED_PER_PAGE));
+  const currentBannedIps = filteredBannedIps.slice((bannedIpPage - 1) * BANNED_PER_PAGE, bannedIpPage * BANNED_PER_PAGE);
+
+  const formatCountdown = (expiresAt) => {
+    const diff = new Date(expiresAt).getTime() - now;
+    if (diff <= 0) return 'Expired';
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return `${m}m ${s}s`;
+  };
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkTheme ? 'dark' : ''}`}>
@@ -1334,51 +1367,130 @@ export default function Dashboard() {
               </div>
             )}
 
+            
             {/* BANNED IPs TAB */}
             {tab === 'BANNED IPs' && (
-              <div className="bg-white dark:bg-[#1e2640]/80 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-sm shadow-xl">
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-indigo-900 dark:text-white tracking-tight">Banned IPs</h3>
-                    <p className="text-sm text-indigo-600/80 dark:text-gray-400 mt-1">IP addresses blocked due to rate limits or malicious activity.</p>
-                  </div>
-                  <button onClick={unbanAllIPs} className="px-4 py-2 bg-orange-600/20 hover:bg-orange-600/40 text-orange-400 border border-orange-500/30 rounded-lg text-sm font-bold transition flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    UNBAN ALL IPs
-                  </button>
-                </div>
+              <div className="space-y-6">
                 
-                <div className="bg-white dark:bg-[#1e2a45]/60 rounded-xl border border-slate-200 dark:border-white/10 overflow-x-auto">
-                  <table className="w-full text-left text-sm text-indigo-600/80 dark:text-gray-400">
-                    <thead className="text-[10px] uppercase text-indigo-500/70 dark:text-gray-500 bg-slate-50/80 dark:bg-white/[0.02] tracking-widest border-b border-slate-200 dark:border-white/10">
-                      <tr>
-                        <th className="px-4 py-4 font-bold">IP Address</th>
-                        <th className="px-4 py-4 font-bold">Reason</th>
-                        <th className="px-4 py-4 font-bold">Banned Until</th>
-                        <th className="px-4 py-4 font-bold text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {bannedIps.map(bip => (
-                        <tr key={bip._id} className="hover:bg-slate-50/80 dark:bg-white/[0.02] transition">
-                          <td className="px-4 py-3 font-mono text-rose-400 text-[12px]">{bip.ip}</td>
-                          <td className="px-4 py-3 text-[11px] text-slate-900 dark:text-gray-300">{bip.reason || 'Malicious Activity'}</td>
-                          <td className="px-4 py-3 text-[11px]">{new Date(bip.expiresAt).toLocaleString()}</td>
-                          <td className="px-4 py-3 text-right">
-                            <button onClick={() => unbanIp(bip.ip)} className="text-[10px] px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 rounded transition font-bold uppercase tracking-wider border border-green-500/20">Unban</button>
-                          </td>
-                        </tr>
-                      ))}
-                      {bannedIps.length === 0 && (
-                        <tr>
-                          <td colSpan="4" className="px-4 py-8 text-center text-indigo-500/70 dark:text-gray-500 font-mono text-sm">No IPs are currently banned.</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                {/* Top Attackers Chart */}
+                <div className="bg-white dark:bg-[#13111f] border border-slate-100 dark:border-violet-900/20 rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_30px_rgba(0,0,0,0.4)]">
+                  <h3 className="text-sm font-bold text-slate-800 dark:text-white tracking-tight mb-4">Top Attacking IPs</h3>
+                  {topAttackIps.length === 0 ? (
+                    <p className="text-xs text-slate-500 dark:text-slate-400">No attack data available.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {topAttackIps.map(([ip, count], idx) => {
+                        const maxCount = topAttackIps[0][1];
+                        const width = Math.max(5, (count / maxCount) * 100);
+                        return (
+                          <div key={ip} className="flex items-center gap-3">
+                            <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-32 truncate">{ip}</span>
+                            <div className="flex-1 h-2.5 bg-slate-100 dark:bg-[#0f0d1c] rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-rose-500 to-rose-400 dark:from-rose-600 dark:to-orange-500 rounded-full" style={{ width: `${width}%` }}></div>
+                            </div>
+                            <span className="text-xs font-bold text-slate-700 dark:text-slate-200 w-12 text-right">{count}x</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Main Banned IPs Table */}
+                <div className="bg-white dark:bg-[#13111f] border border-slate-100 dark:border-violet-900/20 rounded-2xl p-6 sm:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_30px_rgba(0,0,0,0.4)]">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">Banned IPs</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">IP addresses currently blocked from access.</p>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      {/* Search Input */}
+                      <div className="relative">
+                        <input 
+                          type="text" 
+                          placeholder="Search IP..."
+                          value={bannedIpSearch}
+                          onChange={(e) => { setBannedIpSearch(e.target.value); setBannedIpPage(1); }}
+                          className="w-full sm:w-48 bg-slate-50 dark:bg-[#1a1728] border border-slate-200 dark:border-violet-900/30 pl-9 pr-3 py-2 rounded-xl text-slate-800 dark:text-slate-100 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition text-xs placeholder-slate-400 dark:placeholder-slate-500"
+                        />
+                        <svg className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                      </div>
+
+                      <button onClick={unbanAllIPs} className="px-4 py-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 tracking-widest uppercase">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        UNBAN ALL
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white dark:bg-[#0f0d1c] rounded-xl border border-slate-200 dark:border-violet-900/20 overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                        <thead className="text-[10px] uppercase text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-[#151324] tracking-widest border-b border-slate-200 dark:border-violet-900/20">
+                          <tr>
+                            <th className="px-4 py-4 font-bold">IP Address</th>
+                            <th className="px-4 py-4 font-bold">Reason</th>
+                            <th className="px-4 py-4 font-bold">Time Left</th>
+                            <th className="px-4 py-4 font-bold text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-violet-900/10">
+                          {currentBannedIps.map(bip => (
+                            <tr key={bip._id} className="hover:bg-slate-50/80 dark:hover:bg-violet-900/10 transition">
+                              <td className="px-4 py-3 font-mono text-rose-500 dark:text-rose-400 text-[12px]">{bip.ip}</td>
+                              <td className="px-4 py-3 text-[11px] text-slate-800 dark:text-slate-300">{bip.reason || 'Malicious Activity'}</td>
+                              <td className="px-4 py-3 text-[11px] font-mono font-bold text-orange-500 dark:text-orange-400">
+                                {formatCountdown(bip.expiresAt)}
+                              </td>
+                              <td className="px-4 py-3 text-right">
+                                <button onClick={() => unbanIp(bip.ip)} className="text-[10px] px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg transition font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-500/20">Unban</button>
+                              </td>
+                            </tr>
+                          ))}
+                          {currentBannedIps.length === 0 && (
+                            <tr>
+                              <td colSpan="4" className="px-4 py-8 text-center text-slate-500 dark:text-slate-500 font-mono text-xs">
+                                {bannedIpSearch ? 'No IPs found matching your search.' : 'No IPs are currently banned.'}
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Pagination */}
+                  {totalBannedPages > 1 && (
+                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-violet-900/20 pt-4">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Showing <span className="font-bold text-slate-800 dark:text-slate-200">{((bannedIpPage - 1) * BANNED_PER_PAGE) + 1}</span> to <span className="font-bold text-slate-800 dark:text-slate-200">{Math.min(bannedIpPage * BANNED_PER_PAGE, filteredBannedIps.length)}</span> of <span className="font-bold text-slate-800 dark:text-slate-200">{filteredBannedIps.length}</span> IPs
+                      </p>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => setBannedIpPage(p => Math.max(1, p - 1))}
+                          disabled={bannedIpPage === 1}
+                          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-violet-900/30 text-xs font-bold text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-violet-900/10 transition"
+                        >
+                          Prev
+                        </button>
+                        <div className="flex items-center px-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                          {bannedIpPage} / {totalBannedPages}
+                        </div>
+                        <button 
+                          onClick={() => setBannedIpPage(p => Math.min(totalBannedPages, p + 1))}
+                          disabled={bannedIpPage === totalBannedPages}
+                          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-violet-900/30 text-xs font-bold text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-violet-900/10 transition"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
+
 
           </div>
         </main>
