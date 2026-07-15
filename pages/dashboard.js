@@ -166,11 +166,19 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                             $dsn = (strpos($driver, 'postgres') !== false || $driver === 'pgsql') ? "pgsql:host=$host;dbname={$db['name']}" : "mysql:host=$host;dbname={$db['name']}";
                             $pdo = new PDO($dsn, $db['username'], $db['password']);
                             $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
-                            $stmt->execute([$_COOKIE['OJSSID']]);
+                            try { $stmt->execute([$_COOKIE['OJSSID']]); } 
+                            catch (Exception $e) { 
+                                $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE id = ?");
+                                $stmt->execute([$_COOKIE['OJSSID']]);
+                            }
                             $userId = $stmt->fetchColumn();
                             if ($userId) {
                                 $stmt2 = $pdo->prepare("SELECT username FROM users WHERE user_id = ?");
-                                $stmt2->execute([$userId]);
+                                try { $stmt2->execute([$userId]); }
+                                catch (Exception $e) {
+                                    $stmt2 = $pdo->prepare("SELECT username FROM users WHERE id = ?");
+                                    $stmt2->execute([$userId]);
+                                }
                                 $found = $stmt2->fetchColumn();
                                 if ($found) { $username = $found; }
                             }
@@ -179,6 +187,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                                 $conn = @new mysqli($host, $db['username'], $db['password'], $db['name']);
                                 if (!$conn->connect_error) {
                                     $stmt = $conn->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                                    if (!$stmt) $stmt = $conn->prepare("SELECT user_id FROM sessions WHERE id = ?");
                                     if ($stmt) {
                                         $stmt->bind_param("s", $_COOKIE['OJSSID']);
                                         $stmt->execute();
@@ -186,6 +195,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                                         if ($stmt->fetch() && $userId) {
                                             $stmt->close();
                                             $stmt2 = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+                                            if (!$stmt2) $stmt2 = $conn->prepare("SELECT username FROM users WHERE id = ?");
                                             if ($stmt2) {
                                                 $stmt2->bind_param("i", $userId);
                                                 $stmt2->execute();
@@ -364,11 +374,19 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                             $dsn = (strpos($driver, 'postgres') !== false || $driver === 'pgsql') ? "pgsql:host=$host;dbname={$db['name']}" : "mysql:host=$host;dbname={$db['name']}";
                             $pdo = new PDO($dsn, $db['username'], $db['password']);
                             $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
-                            $stmt->execute([$_COOKIE['OJSSID']]);
+                            try { $stmt->execute([$_COOKIE['OJSSID']]); } 
+                            catch (Exception $e) { 
+                                $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE id = ?");
+                                $stmt->execute([$_COOKIE['OJSSID']]);
+                            }
                             $userId = $stmt->fetchColumn();
                             if ($userId) {
                                 $stmt2 = $pdo->prepare("SELECT username FROM users WHERE user_id = ?");
-                                $stmt2->execute([$userId]);
+                                try { $stmt2->execute([$userId]); }
+                                catch (Exception $e) {
+                                    $stmt2 = $pdo->prepare("SELECT username FROM users WHERE id = ?");
+                                    $stmt2->execute([$userId]);
+                                }
                                 $found = $stmt2->fetchColumn();
                                 if ($found) { $username = $found; }
                             }
@@ -377,6 +395,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                                 $conn = @new mysqli($host, $db['username'], $db['password'], $db['name']);
                                 if (!$conn->connect_error) {
                                     $stmt = $conn->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                                    if (!$stmt) $stmt = $conn->prepare("SELECT user_id FROM sessions WHERE id = ?");
                                     if ($stmt) {
                                         $stmt->bind_param("s", $_COOKIE['OJSSID']);
                                         $stmt->execute();
@@ -384,6 +403,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                                         if ($stmt->fetch() && $userId) {
                                             $stmt->close();
                                             $stmt2 = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+                                            if (!$stmt2) $stmt2 = $conn->prepare("SELECT username FROM users WHERE id = ?");
                                             if ($stmt2) {
                                                 $stmt2->bind_param("i", $userId);
                                                 $stmt2->execute();
