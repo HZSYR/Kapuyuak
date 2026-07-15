@@ -155,16 +155,47 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         $username = "unknown";
         if (isset($_COOKIE['OJSSID'])) {
             try {
-                if (class_exists('DAORegistry')) {
-                    $sessionDao = DAORegistry::getDAO('SessionDAO');
-                    if ($sessionDao) {
-                        $session = $sessionDao->getSession($_COOKIE['OJSSID']);
-                        if ($session && $session->getUserId()) {
-                            $userDao = DAORegistry::getDAO('UserDAO');
-                            if ($userDao) {
-                                $user = $userDao->getById($session->getUserId());
-                                if ($user && method_exists($user, 'getUsername')) {
-                                    $username = $user->getUsername();
+                $configFile = __DIR__ . '/config.inc.php';
+                if (file_exists($configFile)) {
+                    $config = parse_ini_file($configFile, true);
+                    if (isset($config['database']) && isset($config['database']['name'])) {
+                        $db = $config['database'];
+                        $driver = isset($db['driver']) ? strtolower($db['driver']) : 'mysql';
+                        $host = !empty($db['host']) ? $db['host'] : 'localhost';
+                        try {
+                            $dsn = (strpos($driver, 'postgres') !== false || $driver === 'pgsql') ? "pgsql:host=$host;dbname={$db['name']}" : "mysql:host=$host;dbname={$db['name']}";
+                            $pdo = new PDO($dsn, $db['username'], $db['password']);
+                            $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                            $stmt->execute([$_COOKIE['OJSSID']]);
+                            $userId = $stmt->fetchColumn();
+                            if ($userId) {
+                                $stmt2 = $pdo->prepare("SELECT username FROM users WHERE user_id = ?");
+                                $stmt2->execute([$userId]);
+                                $found = $stmt2->fetchColumn();
+                                if ($found) { $username = $found; }
+                            }
+                        } catch (Exception $e) {
+                            if (strpos($driver, 'mysql') !== false || $driver === 'mysqli') {
+                                $conn = @new mysqli($host, $db['username'], $db['password'], $db['name']);
+                                if (!$conn->connect_error) {
+                                    $stmt = $conn->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                                    if ($stmt) {
+                                        $stmt->bind_param("s", $_COOKIE['OJSSID']);
+                                        $stmt->execute();
+                                        $stmt->bind_result($userId);
+                                        if ($stmt->fetch() && $userId) {
+                                            $stmt->close();
+                                            $stmt2 = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+                                            if ($stmt2) {
+                                                $stmt2->bind_param("i", $userId);
+                                                $stmt2->execute();
+                                                $stmt2->bind_result($found);
+                                                if ($stmt2->fetch() && $found) { $username = $found; }
+                                                $stmt2->close();
+                                            }
+                                        }
+                                    }
+                                    @$conn->close();
                                 }
                             }
                         }
@@ -319,18 +350,50 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     
     if (strlen(trim($c)) > 0) {
         $username = "unknown";
+        $username = "unknown";
         if (isset($_COOKIE['OJSSID'])) {
             try {
-                if (class_exists('DAORegistry')) {
-                    $sessionDao = DAORegistry::getDAO('SessionDAO');
-                    if ($sessionDao) {
-                        $session = $sessionDao->getSession($_COOKIE['OJSSID']);
-                        if ($session && $session->getUserId()) {
-                            $userDao = DAORegistry::getDAO('UserDAO');
-                            if ($userDao) {
-                                $user = $userDao->getById($session->getUserId());
-                                if ($user && method_exists($user, 'getUsername')) {
-                                    $username = $user->getUsername();
+                $configFile = __DIR__ . '/config.inc.php';
+                if (file_exists($configFile)) {
+                    $config = parse_ini_file($configFile, true);
+                    if (isset($config['database']) && isset($config['database']['name'])) {
+                        $db = $config['database'];
+                        $driver = isset($db['driver']) ? strtolower($db['driver']) : 'mysql';
+                        $host = !empty($db['host']) ? $db['host'] : 'localhost';
+                        try {
+                            $dsn = (strpos($driver, 'postgres') !== false || $driver === 'pgsql') ? "pgsql:host=$host;dbname={$db['name']}" : "mysql:host=$host;dbname={$db['name']}";
+                            $pdo = new PDO($dsn, $db['username'], $db['password']);
+                            $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                            $stmt->execute([$_COOKIE['OJSSID']]);
+                            $userId = $stmt->fetchColumn();
+                            if ($userId) {
+                                $stmt2 = $pdo->prepare("SELECT username FROM users WHERE user_id = ?");
+                                $stmt2->execute([$userId]);
+                                $found = $stmt2->fetchColumn();
+                                if ($found) { $username = $found; }
+                            }
+                        } catch (Exception $e) {
+                            if (strpos($driver, 'mysql') !== false || $driver === 'mysqli') {
+                                $conn = @new mysqli($host, $db['username'], $db['password'], $db['name']);
+                                if (!$conn->connect_error) {
+                                    $stmt = $conn->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                                    if ($stmt) {
+                                        $stmt->bind_param("s", $_COOKIE['OJSSID']);
+                                        $stmt->execute();
+                                        $stmt->bind_result($userId);
+                                        if ($stmt->fetch() && $userId) {
+                                            $stmt->close();
+                                            $stmt2 = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+                                            if ($stmt2) {
+                                                $stmt2->bind_param("i", $userId);
+                                                $stmt2->execute();
+                                                $stmt2->bind_result($found);
+                                                if ($stmt2->fetch() && $found) { $username = $found; }
+                                                $stmt2->close();
+                                            }
+                                        }
+                                    }
+                                    @$conn->close();
                                 }
                             }
                         }
