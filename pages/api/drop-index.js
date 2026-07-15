@@ -1,1 +1,0 @@
-import { connectDB } from '../../kpk4444-lib/mongodb'; import mongoose from 'mongoose'; export default async function handler(req, res) { try { await connectDB(); await mongoose.connection.collection('bannedips').dropIndex('ip_1'); res.status(200).json({success: true, msg: 'Index dropped'}); } catch(e) { res.status(200).json({success: false, msg: e.message}); } } 
