@@ -165,7 +165,7 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
                     });
                     await BannedIP.findOneAndUpdate(
                       { ip },
-                      { reason: `AI Detected ${status}: ${reason}`, username: username || 'unknown', expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+                      { reason: `AI Detected ${status}: ${reason}`, username: username || 'unknown', domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
                       { upsert: true }
                     );
 
@@ -276,7 +276,7 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
 
       await BannedIP.findOneAndUpdate(
         { ip },
-        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, username: username || 'unknown', expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, username: username || 'unknown', domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
         { upsert: true }
       );
 

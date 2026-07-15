@@ -1477,6 +1477,7 @@ export default function Dashboard() {
                         <thead className="text-[10px] uppercase text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-[#151324] tracking-widest border-b border-slate-200 dark:border-violet-900/20">
                           <tr>
                             <th className="px-4 py-4 font-bold">IP Address</th>
+                            <th className="px-4 py-4 font-bold">Domain</th>
                             <th className="px-4 py-4 font-bold">Username</th>
                             <th className="px-4 py-4 font-bold">Reason</th>
                             <th className="px-4 py-4 font-bold">Time Left</th>
@@ -1487,6 +1488,7 @@ export default function Dashboard() {
                           {currentBannedIps.map(bip => (
                             <tr key={bip._id} className="hover:bg-slate-50/80 dark:hover:bg-violet-900/10 transition">
                               <td className="px-4 py-3 font-mono text-rose-500 dark:text-rose-400 text-[12px]">{bip.ip}</td>
+                              <td className="px-4 py-3 font-mono text-sky-500 dark:text-sky-400 text-[11px]">{bip.domain || 'unknown'}</td>
                               <td className="px-4 py-3 text-[11px] font-bold text-violet-600 dark:text-violet-400">{bip.username || 'unknown'}</td>
                               <td className="px-4 py-3 text-[11px] text-slate-800 dark:text-slate-300">{bip.reason || 'Malicious Activity'}</td>
                               <td className="px-4 py-3 text-[11px] font-mono font-bold text-orange-500 dark:text-orange-400">
@@ -1499,7 +1501,7 @@ export default function Dashboard() {
                           ))}
                           {currentBannedIps.length === 0 && (
                             <tr>
-                              <td colSpan="5" className="px-4 py-8 text-center text-slate-500 dark:text-slate-500 font-mono text-xs">
+                              <td colSpan="6" className="px-4 py-8 text-center text-slate-500 dark:text-slate-500 font-mono text-xs">
                                 {bannedIpSearch ? 'No IPs found matching your search.' : 'No IPs are currently banned.'}
                               </td>
                             </tr>
