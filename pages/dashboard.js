@@ -764,7 +764,11 @@ export default function Dashboard() {
     setConfirmModal({
       isOpen: true, title: 'Unban Entity', message: `Unban ${target}?`,
       onConfirm: async () => {
-        const res = await fetch(`/api/banned-ips?ip=${ip}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        let url = `/api/banned-ips?ip=${ip}`;
+        if (username && username !== 'unknown') {
+            url += `&username=${username}`;
+        }
+        const res = await fetch(url, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
         if (res.ok) {
           keys.forEach(k => {
             if (k.domain && k.apiKey) {

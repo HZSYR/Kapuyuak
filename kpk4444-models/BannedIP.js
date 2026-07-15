@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const BannedIPSchema = new mongoose.Schema({
-  ip: { type: String, required: true, unique: true, index: true },
+  ip: { type: String, required: true, index: true },
   username: { type: String, default: 'unknown' },
   domain: { type: String, default: 'unknown' },
   reason: { type: String },

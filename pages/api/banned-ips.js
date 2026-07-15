@@ -21,9 +21,13 @@ export default async function handler(req, res) {
       return res.status(200).json(ips);
     } 
     else if (req.method === 'DELETE') {
-      const { ip } = req.query;
+      const { ip, username } = req.query;
       if (ip) {
-        await BannedIP.deleteOne({ ip: String(ip).trim() });
+        let filter = { ip: String(ip).trim() };
+        if (username && username !== 'undefined') {
+            filter.username = String(username).trim();
+        }
+        await BannedIP.deleteOne(filter);
       } else {
         await BannedIP.deleteMany({});
       }

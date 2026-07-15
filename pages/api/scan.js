@@ -182,8 +182,8 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
                       ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
                     });
                     await BannedIP.findOneAndUpdate(
-                      { ip },
-                      { reason: `AI Detected ${status}: ${reason}`, username: username || 'unknown', domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+                      { ip, username: username || 'unknown' },
+                      { reason: `AI Detected ${status}: ${reason}`, domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
                       { upsert: true }
                     );
 
@@ -293,8 +293,8 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
       });
 
       await BannedIP.findOneAndUpdate(
-        { ip },
-        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, username: username || 'unknown', domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        { ip, username: username || 'unknown' },
+        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
         { upsert: true }
       );
 
