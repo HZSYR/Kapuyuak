@@ -152,7 +152,22 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     }
     
     if (strlen(trim($c)) > 0) {
-        $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown']);
+        $username = "unknown";
+        if (class_exists('Application')) {
+            try {
+                $app = Application::get();
+                if ($app) {
+                    $req = $app->getRequest();
+                    if ($req) {
+                        $user = $req->getUser();
+                        if ($user && method_exists($user, 'getUsername')) {
+                            $username = $user->getUsername();
+                        }
+                    }
+                }
+            } catch (Exception $e) {}
+        }
+        $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username]);
         if ($p) {
             $ch = curl_init(KPK4444_API_URL . '/api/scan');
             curl_setopt_array($ch, [
@@ -298,7 +313,23 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     }
     
     if (strlen(trim($c)) > 0) {
-        $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown']);
+        $username = "unknown";
+        if (class_exists('APP\\core\\Application') || class_exists('Application')) {
+            try {
+                $appClass = class_exists('APP\\core\\Application') ? 'APP\\core\\Application' : 'Application';
+                $app = call_user_func([$appClass, 'get']);
+                if ($app) {
+                    $req = $app->getRequest();
+                    if ($req) {
+                        $user = $req->getUser();
+                        if ($user && method_exists($user, 'getUsername')) {
+                            $username = $user->getUsername();
+                        }
+                    }
+                }
+            } catch (Exception $e) {}
+        }
+        $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username]);
         if ($p) {
             $ch = curl_init(KPK4444_API_URL . '/api/scan');
             curl_setopt_array($ch, [
@@ -1446,6 +1477,7 @@ export default function Dashboard() {
                         <thead className="text-[10px] uppercase text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-[#151324] tracking-widest border-b border-slate-200 dark:border-violet-900/20">
                           <tr>
                             <th className="px-4 py-4 font-bold">IP Address</th>
+                            <th className="px-4 py-4 font-bold">Username</th>
                             <th className="px-4 py-4 font-bold">Reason</th>
                             <th className="px-4 py-4 font-bold">Time Left</th>
                             <th className="px-4 py-4 font-bold text-right">Action</th>
@@ -1455,6 +1487,7 @@ export default function Dashboard() {
                           {currentBannedIps.map(bip => (
                             <tr key={bip._id} className="hover:bg-slate-50/80 dark:hover:bg-violet-900/10 transition">
                               <td className="px-4 py-3 font-mono text-rose-500 dark:text-rose-400 text-[12px]">{bip.ip}</td>
+                              <td className="px-4 py-3 text-[11px] font-bold text-violet-600 dark:text-violet-400">{bip.username || 'unknown'}</td>
                               <td className="px-4 py-3 text-[11px] text-slate-800 dark:text-slate-300">{bip.reason || 'Malicious Activity'}</td>
                               <td className="px-4 py-3 text-[11px] font-mono font-bold text-orange-500 dark:text-orange-400">
                                 {formatCountdown(bip.expiresAt)}
@@ -1466,7 +1499,7 @@ export default function Dashboard() {
                           ))}
                           {currentBannedIps.length === 0 && (
                             <tr>
-                              <td colSpan="4" className="px-4 py-8 text-center text-slate-500 dark:text-slate-500 font-mono text-xs">
+                              <td colSpan="5" className="px-4 py-8 text-center text-slate-500 dark:text-slate-500 font-mono text-xs">
                                 {bannedIpSearch ? 'No IPs found matching your search.' : 'No IPs are currently banned.'}
                               </td>
                             </tr>

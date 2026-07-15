@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
   if (!await rateLimitMiddleware(req, res, 30)) return;
 
-  const { apiKey, domain, content, type, field } = req.body;
+  const { apiKey, domain, content, type, field, username } = req.body;
   if (typeof apiKey !== 'string' || typeof domain !== 'string') {
     return res.status(400).json({ error: 'Invalid payload structure' });
   }
@@ -161,11 +161,11 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
                     await AttackLog.create({
                       apiKey, domain, category: category === 'SPAM_CONTENT' ? 'AI_DETECTED_SPAM' : 'AI_DETECTED_MALWARE', severity: 'CRITICAL',
                       field: field || 'unknown', snippet: `[GROQ AI REASON: ${reason}] ${content.substring(0, 100)}`,
-                      ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown'
+                      ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
                     });
                     await BannedIP.findOneAndUpdate(
                       { ip },
-                      { reason: `AI Detected ${status}: ${reason}`, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+                      { reason: `AI Detected ${status}: ${reason}`, username: username || 'unknown', expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
                       { upsert: true }
                     );
 
@@ -271,12 +271,12 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
       await AttackLog.create({
         apiKey, domain, category: blockedCategory, severity: highestSeverity,
         field: field || 'unknown', snippet: content.substring(0, 200),
-        ipAddress: ip, userAgent: req.headers['user-agent']
+        ipAddress: ip, userAgent: req.headers['user-agent'], username: username || 'unknown'
       });
 
       await BannedIP.findOneAndUpdate(
         { ip },
-        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, username: username || 'unknown', expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
         { upsert: true }
       );
 
