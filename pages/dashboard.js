@@ -657,7 +657,7 @@ export default function Dashboard() {
               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex items-center justify-center gap-2">
-              <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400 tracking-tight">KPK4444</h2>
+              <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400 tracking-tight">kapuyuak</h2>
 
             </div>
             <p className="text-[10px] text-slate-700 dark:text-gray-500 uppercase tracking-widest font-semibold mt-1">by.150141146151172150</p>
@@ -755,7 +755,7 @@ export default function Dashboard() {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <h1 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400 leading-none">KPK4444</h1>
+                <h1 className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400 leading-none">kapuyuak</h1>
 
               </div>
               <p className="text-[9px] text-slate-700 dark:text-gray-500 tracking-widest uppercase">by.150141146151172150</p>
@@ -803,7 +803,7 @@ export default function Dashboard() {
                 <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400">KPK4444</span>
+                <span className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400">kapuyuak</span>
 
               </div>
             </div>
