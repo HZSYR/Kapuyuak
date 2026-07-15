@@ -744,21 +744,21 @@ export default function Dashboard() {
         {/* ── SIDEBAR ───────────────────────────────────────────────────── */}
         <aside className={`
           fixed lg:relative inset-y-0 left-0 z-40
-          w-60 bg-gradient-to-b from-indigo-700 via-indigo-800 to-blue-900 dark:bg-[#1e2640]/90 backdrop-blur-3xl border-r border-indigo-900/20 dark:border-white/10
+          w-60 bg-[#f1f5f9] dark:bg-[#0f1117] border-r border-slate-200 dark:border-white/[0.06] shadow-[2px_0_12px_rgba(0,0,0,0.06)] dark:shadow-[2px_0_20px_rgba(0,0,0,0.5)]
           flex flex-col transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}>
           {/* Brand */}
-          <div className="p-5 pb-3 flex items-center space-x-3 border-b border-white/10 dark:border-white/10">
+          <div className="p-5 pb-4 flex items-center space-x-3 border-b border-slate-200 dark:border-white/[0.06]">
             <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0 shadow-md">
               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <h1 className="text-base font-black text-white dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-gray-400 leading-none">kapuyuak</h1>
+                <h1 className="text-base font-black text-slate-800 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-gray-400 leading-none">kapuyuak</h1>
 
               </div>
-              <p className="text-[9px] text-indigo-200 dark:text-gray-500 tracking-widest uppercase">by.150141146151172150</p>
+              <p className="text-[9px] text-slate-500 dark:text-slate-600 tracking-widest uppercase font-medium">by.150141146151172150</p>
             </div>
           </div>
 
@@ -770,8 +770,8 @@ export default function Dashboard() {
                 onClick={() => handleTabChange(t)}
                 className={`w-full text-left px-4 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center group
                   ${tab === t
-                    ? 'bg-white/20 dark:bg-white/10 text-white dark:text-white border border-white/30 dark:border-white/10 shadow backdrop-blur-sm'
-                    : 'text-indigo-100 dark:text-gray-400 hover:bg-white/10 dark:bg-[#1e2640]/50 hover:text-white dark:text-gray-200'
+                    ? 'bg-slate-900 dark:bg-white/10 text-white dark:text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
               >
                 <span className={`w-1.5 h-1.5 rounded-full mr-3 flex-shrink-0 transition-all
@@ -783,10 +783,10 @@ export default function Dashboard() {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="p-4 border-t border-white/10 dark:border-white/10 space-y-3">
+          <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-3">
             <button
               onClick={() => { sessionStorage.clear(); window.location.reload(); }}
-              className="w-full text-center py-2.5 rounded-lg text-[11px] font-bold text-rose-300 hover:bg-rose-500/20 hover:text-rose-200 transition uppercase tracking-widest"
+              className="w-full text-center py-2.5 rounded-lg text-[11px] font-bold text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-300 transition uppercase tracking-widest"
             >
               Terminate Session
             </button>
