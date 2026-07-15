@@ -709,8 +709,8 @@ export default function Dashboard() {
 
   // Banned IPs calculations
   const ipAttackCounts = logs.reduce((acc, log) => {
-    if (log.ip) {
-      acc[log.ip] = (acc[log.ip] || 0) + 1;
+    if (log.ipAddress) {
+      acc[log.ipAddress] = (acc[log.ipAddress] || 0) + 1;
     }
     return acc;
   }, {});

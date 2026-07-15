@@ -17,12 +17,13 @@ export default async function handler(req, res) {
       // Auto-cleanup expired IPs before fetching
       await BannedIP.deleteMany({ expiresAt: { $lt: new Date() } });
       const ips = await BannedIP.find().sort({ createdAt: -1 }).lean();
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       return res.status(200).json(ips);
     } 
     else if (req.method === 'DELETE') {
       const { ip } = req.query;
       if (ip) {
-        await BannedIP.deleteOne({ ip });
+        await BannedIP.deleteOne({ ip: String(ip).trim() });
       } else {
         await BannedIP.deleteMany({});
       }
