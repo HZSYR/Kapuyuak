@@ -30,10 +30,28 @@ export default async function handler(req, res) {
     if (typeof ip === 'string') {
       ip = ip.split(',')[0].trim();
     }
-    const banned = await BannedIP.findOne({ ip, expiresAt: { $gt: new Date() } });
-    if (banned) {
-      await AILog.create({ message: `BLOCKED BANNED IP: ${ip} tried to access ${domain}`, level: 'ERROR' });
-      return res.status(403).json({ error: 'Access Denied: Your IP is banned', reason: banned.reason });
+    const reqUsername = username || 'unknown';
+    
+    let isGloballyBanned = false;
+    let globalBanReason = '';
+    
+    if (reqUsername !== 'unknown') {
+        const userBanned = await BannedIP.findOne({ username: reqUsername, expiresAt: { $gt: new Date() } });
+        if (userBanned) {
+            isGloballyBanned = true;
+            globalBanReason = userBanned.reason;
+        }
+    } else {
+        const ipBanned = await BannedIP.findOne({ ip, username: 'unknown', expiresAt: { $gt: new Date() } });
+        if (ipBanned) {
+            isGloballyBanned = true;
+            globalBanReason = ipBanned.reason;
+        }
+    }
+
+    if (isGloballyBanned) {
+      await AILog.create({ message: `BLOCKED BANNED ENTITY: ${reqUsername !== 'unknown' ? reqUsername : ip} tried to access ${domain}`, level: 'ERROR' });
+      return res.status(403).json({ error: 'Access Denied: You are banned', reason: globalBanReason });
     }
 
     const keyRecord = await LicenseKey.findOne({ domain, status: 'active' });
