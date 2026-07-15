@@ -14,6 +14,8 @@ export default async function handler(req, res) {
     await connectDB();
 
     if (req.method === 'GET') {
+      // Auto-cleanup expired IPs before fetching
+      await BannedIP.deleteMany({ expiresAt: { $lt: new Date() } });
       const ips = await BannedIP.find().sort({ createdAt: -1 }).lean();
       return res.status(200).json(ips);
     } 
