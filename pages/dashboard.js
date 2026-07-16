@@ -1754,28 +1754,82 @@ export default function Dashboard() {
             {tab === 'BANNED IPs' && (
               <div className="space-y-6">
                 
-                {/* Top Attackers Chart */}
-                <div className="bg-white dark:bg-[#13111f] border border-slate-100 dark:border-violet-900/20 rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_30px_rgba(0,0,0,0.4)]">
-                  <h3 className="text-sm font-bold text-slate-800 dark:text-white tracking-tight mb-4">Top Attacking IPs</h3>
+                {/* Advanced Analytics Dashboard Style for Top Attackers */}
+                <div className="relative overflow-hidden bg-gradient-to-b from-slate-900 to-[#0f0d1c] dark:from-[#0f0d1c] dark:to-black border border-slate-700/50 dark:border-indigo-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                  {/* Background Grid Pattern */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
+                  
+                  {/* Header */}
+                  <div className="relative flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-white tracking-wide uppercase">Attack Vector Analytics</h3>
+                        <p className="text-xs text-indigo-300/70 font-mono mt-1">Real-time threat intelligence</p>
+                      </div>
+                    </div>
+                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.8)]"></span>
+                      <span className="text-[10px] font-bold text-rose-400 tracking-widest uppercase">Live Tracking</span>
+                    </div>
+                  </div>
+
                   {topAttackIps.length === 0 ? (
-                    <p className="text-xs text-slate-500 dark:text-slate-400">No attack data available.</p>
+                    <div className="relative py-12 flex flex-col items-center justify-center border border-dashed border-slate-700/50 rounded-2xl bg-white/5">
+                      <svg className="w-8 h-8 text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                      <span className="text-slate-400 text-sm font-mono">No threat data available.</span>
+                    </div>
                   ) : (
-                    <div className="space-y-3">
-                      {topAttackIps.map(([ip, count], idx) => {
+                    <div className="relative space-y-4">
+                      {topAttackIps.slice(0, 15).map(([ip, count], idx) => {
                         const maxCount = topAttackIps[0][1];
-                        const width = Math.max(5, (count / maxCount) * 100);
+                        const width = Math.max(2, (count / maxCount) * 100);
+                        const isTop = idx === 0;
+                        const rankColor = isTop ? 'text-rose-400' : idx === 1 ? 'text-orange-400' : idx === 2 ? 'text-amber-400' : 'text-slate-500';
+                        const barGradient = isTop 
+                          ? 'bg-gradient-to-r from-rose-600 via-rose-500 to-fuchsia-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]' 
+                          : idx < 3 
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]'
+                          : 'bg-gradient-to-r from-indigo-500 to-cyan-500 shadow-[0_0_8px_rgba(99,102,241,0.2)]';
+                          
                         return (
-                          <div key={ip} className="flex items-center gap-3">
-                            <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-32 truncate">{ip}</span>
-                            <div className="flex-1 h-2.5 bg-slate-100 dark:bg-[#0f0d1c] rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-rose-500 to-rose-400 dark:from-rose-600 dark:to-orange-500 rounded-full" style={{ width: `${width}%` }}></div>
+                          <div key={ip} className="group relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 rounded-xl hover:bg-white/[0.04] transition duration-300 border border-transparent hover:border-white/10">
+                            {/* Rank & IP */}
+                            <div className="flex items-center gap-3 w-44 shrink-0">
+                              <span className={`text-base font-black w-6 text-center ${rankColor}`}>#{idx + 1}</span>
+                              <span className="text-xs font-mono text-slate-300 bg-black/50 px-2 py-1.5 rounded-lg border border-white/5 group-hover:border-white/20 group-hover:text-white transition shadow-inner">{ip}</span>
                             </div>
-                            <span className="text-xs font-bold text-slate-700 dark:text-slate-200 w-12 text-right">{count}x</span>
+                            
+                            {/* Bar Container */}
+                            <div className="flex-1 h-3 sm:h-4 bg-black/60 rounded-full overflow-hidden border border-white/5 relative">
+                              {/* Animated Bar */}
+                              <div 
+                                className={`h-full rounded-full ${barGradient} transition-all duration-1000 ease-out relative overflow-hidden`} 
+                                style={{ width: `${width}%` }}
+                              >
+                                {/* Shimmer Effect */}
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                              </div>
+                            </div>
+                            
+                            {/* Count Badge */}
+                            <div className="shrink-0 flex items-center justify-end w-20">
+                              <span className={`text-[11px] font-bold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 shadow-sm ${isTop ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : 'text-slate-300 group-hover:bg-white/10 group-hover:text-white'} transition`}>
+                                {count.toLocaleString()}x
+                              </span>
+                            </div>
                           </div>
                         )
                       })}
                     </div>
                   )}
+                  <style dangerouslySetInnerHTML={{__html: `
+                    @keyframes shimmer {
+                      100% { transform: translateX(100%); }
+                    }
+                  `}} />
                 </div>
 
                 {/* Main Banned IPs Table */}
