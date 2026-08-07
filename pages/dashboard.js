@@ -2177,107 +2177,162 @@ export default function Dashboard() {
 
       {/* ── NEW KEY TUTORIAL POPUP ── */}
       {showKeyTutorial && newKeyData && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-800/80 dark:bg-[#1e2640]/90 backdrop-blur-md">
-          <div className="relative bg-slate-100 dark:bg-[#0a0a0c] bg-opacity-95 backdrop-blur-3xl border border-slate-300 dark:border-white/10 rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.8)] max-w-4xl w-full mx-auto overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050914]/80 backdrop-blur-xl animate-fade-in">
+          <div className="relative bg-[#0c1427]/95 border border-slate-700/80 rounded-3xl shadow-[0_0_80px_rgba(0,180,255,0.15)] max-w-6xl w-full mx-auto overflow-hidden flex flex-col max-h-[90vh]">
             
-            {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50/80 dark:bg-white/[0.02]">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-                  <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-[#091020]/90 backdrop-blur-md">
+              <div className="flex items-center space-x-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                  <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-indigo-900 dark:text-white tracking-tight">System Secured</h3>
-                  <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">Integration Guide for OJS {selectedOjsVersion}</p>
+                  <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                    <span>System Secured & License Generated</span>
+                    <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full uppercase">OJS {selectedOjsVersion}</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-400 font-mono tracking-wider mt-0.5">KPK4444 SHIELD INTEGRATION ASSISTANT</p>
                 </div>
               </div>
-              <button onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} className="p-2 text-indigo-500/70 dark:text-gray-500 hover:text-indigo-900 dark:text-white bg-indigo-100 dark:bg-[#1e2640]/50 hover:bg-indigo-200 dark:bg-white/10 rounded-xl transition">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              <button 
+                onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} 
+                className="p-2 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-rose-500/20 hover:border-rose-500/40 border border-slate-700/60 rounded-xl transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             
-            {/* Body */}
-            <div className="p-8 overflow-y-auto flex-1 space-y-8 custom-scrollbar">
+            {/* Modal Body: 2 Columns Side-by-Side */}
+            <div className="p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 custom-scrollbar">
               
-              {/* API Key Box */}
-              <div>
-                <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 font-bold uppercase tracking-widest mb-3 ml-1">Your Secret Key</p>
-                <div className="flex items-center justify-between bg-indigo-50 dark:bg-[#1e2640]/80 p-4 rounded-2xl border border-slate-200 dark:border-white/10 group/key hover:border-slate-300 dark:border-white/10 transition">
-                  <code className="text-emerald-400 font-mono text-base break-all">{newKeyData.apiKey}</code>
-                  <button 
-                    onClick={handleCopyKey} 
-                    className={`ml-6 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 flex-shrink-0 flex items-center space-x-2 ${copiedKey ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-indigo-100 dark:bg-[#1e2640]/50 hover:bg-indigo-200 dark:bg-white/10 text-slate-900 dark:text-gray-300 group-hover/key:text-indigo-900 dark:text-white'}`}
-                  >
-                    {copiedKey ? (
-                      <>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                        <span>Copied</span>
-                      </>
-                    ) : (
-                      'Copy Key'
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Code Installation */}
-              <div>
-                <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 font-bold uppercase tracking-widest mb-3 ml-1">Installation Code</p>
-                <div className="relative group/code">
-                  <div className="absolute top-4 right-4 flex space-x-2 z-10">
+              {/* Left Column (5 Cols): API Key & Quick Action */}
+              <div className="lg:col-span-5 flex flex-col space-y-5 justify-between">
+                
+                {/* Secret Key Card */}
+                <div className="bg-[#111c35]/90 border border-slate-700/80 rounded-2xl p-4 shadow-lg space-y-2.5">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                    <span>Your Secret API Key</span>
+                    <span className="text-emerald-400 font-mono font-bold">READY</span>
+                  </p>
+                  <div className="bg-[#060b17] p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-2">
+                    <code className="text-emerald-400 font-mono text-xs break-all leading-relaxed font-bold">{newKeyData.apiKey}</code>
                     <button 
-                      onClick={downloadIndexPhp} 
-                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 backdrop-blur flex items-center space-x-2 ${downloaded ? 'bg-blue-500 text-indigo-900 dark:text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] border border-blue-400' : 'bg-slate-200 dark:bg-white/10 hover:bg-white/20 text-slate-900 dark:text-gray-300 border border-transparent opacity-0 group-hover/code:opacity-100'}`}
+                      onClick={handleCopyKey} 
+                      className={'px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shrink-0 flex items-center space-x-1.5 ' + (copiedKey ? 'bg-emerald-500 text-slate-950 font-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700')}
                     >
-                      {downloaded ? (
+                      {copiedKey ? (
                         <>
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                          <span>Downloaded</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                          <span>Download PHP</span>
-                        </>
-                      )}
-                    </button>
-                    <button 
-                      onClick={handleCopyCode} 
-                      className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 backdrop-blur flex items-center space-x-2 ${copiedCode ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.4)]' : 'bg-slate-200 dark:bg-white/10 hover:bg-white/20 text-indigo-900 dark:text-white border border-transparent opacity-0 group-hover/code:opacity-100'}`}
-                    >
-                      {copiedCode ? (
-                        <>
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                           <span>Copied</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                          <span>Copy Code</span>
+                          <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                          <span>Copy Key</span>
                         </>
                       )}
                     </button>
                   </div>
-                  <pre className="bg-[#0d1526] rounded-2xl p-6 overflow-x-auto max-h-[40vh] custom-scrollbar border border-slate-200 dark:border-white/10 relative">
-                    <code className="text-[13px] font-mono text-slate-900 dark:text-gray-300 leading-relaxed">
+                </div>
+
+                {/* 1-Click Download Button */}
+                <div className="bg-gradient-to-br from-indigo-900/30 via-slate-900/60 to-cyan-900/30 border border-indigo-500/30 rounded-2xl p-4 shadow-lg space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-white">Instant Installation File</h4>
+                      <p className="text-[10px] text-slate-400">Pre-configured index.php ready to upload</p>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={downloadIndexPhp} 
+                    className={'w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-xl flex items-center justify-center space-x-2 ' + (downloaded ? 'bg-emerald-500 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white border border-cyan-400/40 shadow-[0_0_20px_rgba(6,182,212,0.2)]')}
+                  >
+                    {downloaded ? (
+                      <>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                        <span>index.php Downloaded!</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <span>Download Pre-Configured index.php</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Quick Steps Guide */}
+                <div className="bg-[#111c35]/90 border border-slate-700/80 rounded-2xl p-4 space-y-2.5">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">3-Step Quick Guide</p>
+                  <div className="space-y-2 text-xs text-slate-300">
+                    <div className="flex items-start space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold flex items-center justify-center shrink-0">1</span>
+                      <p className="text-[11px] leading-relaxed">Download or copy the pre-configured <code className="text-cyan-300 font-mono">index.php</code> file.</p>
+                    </div>
+                    <div className="flex items-start space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold flex items-center justify-center shrink-0">2</span>
+                      <p className="text-[11px] leading-relaxed">Upload and replace <code className="text-cyan-300 font-mono">index.php</code> in your OJS root folder.</p>
+                    </div>
+                    <div className="flex items-start space-x-2.5">
+                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold flex items-center justify-center shrink-0">3</span>
+                      <p className="text-[11px] leading-relaxed">KPK4444 Security Shield is active instantly!</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Right Column (7 Cols): Code Editor View */}
+              <div className="lg:col-span-7 flex flex-col bg-[#060b17] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+                
+                {/* Code Terminal Header */}
+                <div className="px-4 py-3 bg-[#0d162a] border-b border-slate-800 flex items-center justify-between shrink-0">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex space-x-1.5">
+                      <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-200">index.php — OJS {selectedOjsVersion} Protection Code</span>
+                  </div>
+
+                  <button 
+                    onClick={handleCopyCode} 
+                    className={'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 flex items-center space-x-1.5 ' + (copiedCode ? 'bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700')}
+                  >
+                    {copiedCode ? (
+                      <>
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                        <span>Full Code Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        <span>Copy Full Code</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Code Body */}
+                <div className="p-4 flex-1 overflow-y-auto max-h-[45vh] custom-scrollbar">
+                  <pre className="text-xs font-mono text-slate-300 leading-relaxed">
+                    <code>
                       {selectedOjsVersion === '3.3' ? getFullIndexPhp(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL) : getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL)}
                     </code>
                   </pre>
                 </div>
-                <div className="mt-6 p-5 bg-indigo-50 dark:bg-white/[0.02] border border-indigo-200/60 dark:border-white/10 rounded-2xl flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  </div>
-                  <p className="text-xs text-indigo-600/80 dark:text-gray-400 leading-relaxed">
-                    Replace the entire contents of <code className="text-indigo-900 dark:text-white bg-slate-200 dark:bg-white/10 px-1.5 py-0.5 rounded font-mono">index.php</code> in your OJS root folder with the code above. The security system will be activated instantly.
-                  </p>
-                </div>
+
               </div>
+
             </div>
           </div>
         </div>
       )}
-
       {/* Bottom nav (mobile only) */}
       <nav className="fixed bottom-0 inset-x-0 z-30 bg-slate-300/90 dark:bg-[#1e2640]/70 backdrop-blur border-t border-slate-200 dark:border-white/10 flex lg:hidden">
         {TABS.map(t => (
