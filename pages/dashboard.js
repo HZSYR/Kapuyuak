@@ -2020,163 +2020,170 @@ export default function Dashboard() {
             </div>
 
             {/* ── MAIN BODY: 2 columns, fixed height, no vertical scroll ── */}
-            <div className="relative z-10 flex-1 flex overflow-hidden p-3 gap-3">
+            <div className="relative z-10 flex-1 flex overflow-hidden p-2.5 gap-2.5">
 
-              {/* LEFT COLUMN: Hologram Map (draggable) + Stats */}
-              <div className="flex flex-col gap-3 w-[340px] shrink-0">
+              {/* LEFT COLUMN */}
+              <div className="flex flex-col gap-2 w-[300px] shrink-0 overflow-hidden">
 
                 {/* Holographic Network Map Panel */}
-                <div className="rounded-xl relative overflow-hidden flex-1 flex flex-col" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.3)', boxShadow:'0 0 40px rgba(0,150,255,0.2), inset 0 0 40px rgba(0,100,200,0.05)'}}>
+                <div className="rounded-xl relative overflow-hidden shrink-0" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.3)', boxShadow:'0 0 30px rgba(0,150,255,0.15), inset 0 0 30px rgba(0,100,200,0.05)'}}>
                   {/* Panel header */}
-                  <div className="drag-handle px-3 py-2 flex items-center justify-between shrink-0" style={{borderBottom:'1px solid rgba(0,200,255,0.2)', background:'rgba(0,30,60,0.8)'}}>
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-widest" style={{color:'#00ccff', textShadow:'0 0 6px #00ccff'}}>⬡ Hologram Network Map</span>
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 rounded-full" style={{background:'#ff4455', boxShadow:'0 0 6px #ff4455'}}></div>
-                      <div className="w-2 h-2 rounded-full" style={{background:'#ffcc00', boxShadow:'0 0 6px #ffcc00'}}></div>
-                      <div className="w-2 h-2 rounded-full" style={{background:'#00ff88', boxShadow:'0 0 6px #00ff88'}}></div>
+                  <div className="drag-handle px-3 py-1.5 flex items-center justify-between" style={{borderBottom:'1px solid rgba(0,200,255,0.2)', background:'rgba(0,30,60,0.8)'}}>
+                    <span className="text-[8px] font-mono font-bold uppercase tracking-widest" style={{color:'#00ccff', textShadow:'0 0 6px #00ccff'}}>⬡ Hologram Network Map</span>
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full" style={{background:'#ff4455', boxShadow:'0 0 5px #ff4455'}}></div>
+                      <div className="w-2 h-2 rounded-full" style={{background:'#ffcc00', boxShadow:'0 0 5px #ffcc00'}}></div>
+                      <div className="w-2 h-2 rounded-full" style={{background:'#00ff88', boxShadow:'0 0 5px #00ff88'}}></div>
                     </div>
                   </div>
 
-                  {/* Hologram body */}
-                  <div className="relative flex-1 flex flex-col items-center justify-center p-4 gap-4">
+                  {/* Hologram body - compact */}
+                  <div className="relative flex flex-col items-center justify-center py-4 px-3 gap-3">
                     {/* Cyan grid */}
-                    <div className="absolute inset-0" style={{backgroundImage:'linear-gradient(rgba(0,200,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.07) 1px,transparent 1px)', backgroundSize:'20px 20px'}}></div>
-                    {/* Glow orb center */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full animate-pulse" style={{background:'radial-gradient(circle, rgba(0,150,255,0.15) 0%, transparent 70%)', filter:'blur(15px)'}}></div>
+                    <div className="absolute inset-0" style={{backgroundImage:'linear-gradient(rgba(0,200,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.06) 1px,transparent 1px)', backgroundSize:'18px 18px'}}></div>
+                    {/* Glow orb */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-24 rounded-full" style={{background:'radial-gradient(circle, rgba(0,150,255,0.12) 0%, transparent 70%)', filter:'blur(12px)'}}></div>
 
-                    {/* Row: Attacker → OJS → Shield */}
-                    <div className="relative z-10 flex items-center w-full justify-between gap-1">
+                    {/* Node row */}
+                    <div className="relative z-10 flex items-center w-full justify-between">
 
-                      {/* ATTACKER NODE */}
-                      <div className="holo-node flex flex-col items-center gap-1.5">
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center relative" style={{background:'rgba(255,20,40,0.15)', border:'2px solid rgba(255,60,80,0.8)', boxShadow:'0 0 20px rgba(255,40,60,0.6), 0 0 40px rgba(255,40,60,0.3), inset 0 0 15px rgba(255,40,60,0.2)'}}>
-                          <div className="absolute inset-0 rounded-full border-2 border-dashed" style={{borderColor:'rgba(255,100,120,0.6)', animation:'spin 3s linear infinite'}}></div>
-                          <div className="absolute inset-[-8px] rounded-full" style={{border:'1px solid rgba(255,60,80,0.3)', animation:'shieldPing 2s ease-out infinite'}}></div>
-                          <svg className="w-7 h-7 relative z-10" viewBox="0 0 24 24" fill="currentColor" style={{color:'#ff4466', filter:'drop-shadow(0 0 6px #ff4466)'}}><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1 13v1H9v-1H8v-1.54C6.19 12.29 5 10.77 5 9c0-3.31 2.69-6 6-6s6 2.69 6 6c0 1.77-1.19 3.29-3 4.46V14h-1v1h-2z"/><circle cx="10" cy="10" r="1"/><circle cx="14" cy="10" r="1"/></svg>
+                      {/* ATTACKER */}
+                      <div className="holo-node flex flex-col items-center gap-1">
+                        <div className="w-11 h-11 rounded-full flex items-center justify-center relative" style={{background:'rgba(255,20,40,0.15)', border:'2px solid rgba(255,60,80,0.8)', boxShadow:'0 0 16px rgba(255,40,60,0.6), 0 0 32px rgba(255,40,60,0.25), inset 0 0 10px rgba(255,40,60,0.15)'}}>
+                          <div className="absolute inset-0 rounded-full border-2 border-dashed" style={{borderColor:'rgba(255,100,120,0.5)', animation:'spin 3s linear infinite'}}></div>
+                          <div className="absolute rounded-full" style={{inset:'-7px', border:'1px solid rgba(255,60,80,0.3)', animation:'shieldPing 2s ease-out infinite'}}></div>
+                          <svg className="w-5 h-5 relative z-10" viewBox="0 0 24 24" fill="currentColor" style={{color:'#ff4466', filter:'drop-shadow(0 0 5px #ff4466)'}}><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1 13v1H9v-1H8v-1.54C6.19 12.29 5 10.77 5 9c0-3.31 2.69-6 6-6s6 2.69 6 6c0 1.77-1.19 3.29-3 4.46V14h-1v1h-2z"/><circle cx="10" cy="10" r="1"/><circle cx="14" cy="10" r="1"/></svg>
                         </div>
-                        <span className="text-[8px] font-black text-center leading-tight tracking-wider" style={{color:'#ff6677', textShadow:'0 0 6px #ff4455'}}>ATTACKER</span>
+                        <span className="text-[7px] font-black tracking-wide" style={{color:'#ff6677', textShadow:'0 0 5px #ff4455'}}>ATTACKER</span>
                       </div>
 
                       {/* Wire Attacker → OJS */}
-                      <div className="flex-1 h-px relative overflow-visible" style={{background:'rgba(255,60,80,0.3)', boxShadow:'0 0 4px rgba(255,60,80,0.4)'}}>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'14px', height:'3px', background:'#ff4466', boxShadow:'0 0 10px #ff4466, 0 0 20px #ff446680', animation:'pkt 1s linear infinite'}}></div>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'8px', height:'2px', background:'#ff7788', boxShadow:'0 0 8px #ff7788', animation:'pkt 1s linear infinite', animationDelay:'0.35s'}}></div>
+                      <div className="flex-1 h-px relative" style={{background:'rgba(255,60,80,0.3)'}}>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'10px', height:'2px', background:'#ff4466', boxShadow:'0 0 8px #ff4466', animation:'pkt 1s linear infinite'}}></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'6px', height:'2px', background:'#ff7788', animation:'pkt 1s linear infinite', animationDelay:'0.35s'}}></div>
                       </div>
 
-                      {/* OJS / FOLDER NODE */}
-                      <div className="holo-node flex flex-col items-center gap-1.5">
-                        <div className="w-14 h-14 rounded-xl flex items-center justify-center relative" style={{background:'rgba(0,100,255,0.15)', border:'2px solid rgba(0,170,255,0.8)', boxShadow:'0 0 20px rgba(0,140,255,0.6), 0 0 40px rgba(0,140,255,0.3), inset 0 0 15px rgba(0,100,255,0.15)', animation:'folderPulse 2.5s ease-in-out infinite'}}>
-                          <div className="absolute inset-0 rounded-xl" style={{background:'linear-gradient(135deg, rgba(0,150,255,0.1) 0%, transparent 50%)', animation:'folderOpen 2s ease-in-out infinite'}}></div>
-                          <svg className="w-8 h-8 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#44aaff', filter:'drop-shadow(0 0 8px #44aaff)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 7a2 2 0 012-2h3.586a1 1 0 01.707.293L10.707 6.707A1 1 0 0011.414 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
+                      {/* OJS FOLDER */}
+                      <div className="holo-node flex flex-col items-center gap-1">
+                        <div className="w-11 h-11 rounded-lg flex items-center justify-center relative" style={{background:'rgba(0,100,255,0.15)', border:'2px solid rgba(0,170,255,0.8)', boxShadow:'0 0 16px rgba(0,140,255,0.6), 0 0 32px rgba(0,140,255,0.25), inset 0 0 10px rgba(0,100,255,0.1)', animation:'folderPulse 2.5s ease-in-out infinite'}}>
+                          <div className="absolute inset-0 rounded-lg" style={{background:'linear-gradient(135deg, rgba(0,150,255,0.1) 0%, transparent 50%)', animation:'folderOpen 2s ease-in-out infinite'}}></div>
+                          <svg className="w-6 h-6 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#44aaff', filter:'drop-shadow(0 0 6px #44aaff)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 7a2 2 0 012-2h3.586a1 1 0 01.707.293L10.707 6.707A1 1 0 0011.414 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
                         </div>
-                        <span className="text-[8px] font-black text-center leading-tight tracking-wider" style={{color:'#44aaff', textShadow:'0 0 6px #0088ff'}}>OJS</span>
+                        <span className="text-[7px] font-black tracking-wide" style={{color:'#44aaff', textShadow:'0 0 5px #0088ff'}}>OJS</span>
                       </div>
 
                       {/* Wire OJS → AI */}
-                      <div className="flex-1 h-px relative overflow-visible" style={{background:'rgba(100,50,255,0.3)', boxShadow:'0 0 4px rgba(100,50,255,0.4)'}}>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'12px', height:'3px', background:'#aa55ff', boxShadow:'0 0 10px #aa55ff, 0 0 20px #aa55ff80', animation:'pkt 0.9s linear infinite', animationDelay:'0.15s'}}></div>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'10px', height:'2px', background:'#ff4466', boxShadow:'0 0 8px #ff4466', animation:'pkt 0.9s linear infinite', animationDelay:'0.55s'}}></div>
+                      <div className="flex-1 h-px relative" style={{background:'rgba(100,50,255,0.3)'}}>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'10px', height:'2px', background:'#aa55ff', boxShadow:'0 0 8px #aa55ff', animation:'pkt 0.9s linear infinite', animationDelay:'0.15s'}}></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'8px', height:'2px', background:'#ff4466', boxShadow:'0 0 6px #ff4466', animation:'pkt 0.9s linear infinite', animationDelay:'0.55s'}}></div>
                       </div>
 
-                      {/* AI PROCESSOR NODE */}
-                      <div className="holo-node flex flex-col items-center gap-1.5">
-                        <div className="w-14 h-14 rounded-xl flex items-center justify-center relative overflow-hidden" style={{background:'rgba(100,0,200,0.2)', border:'2px solid rgba(160,80,255,0.8)', boxShadow:'0 0 20px rgba(150,50,255,0.6), 0 0 40px rgba(150,50,255,0.3), inset 0 0 15px rgba(100,0,200,0.2)'}}>
+                      {/* AI ENGINE */}
+                      <div className="holo-node flex flex-col items-center gap-1">
+                        <div className="w-11 h-11 rounded-xl flex items-center justify-center relative overflow-hidden" style={{background:'rgba(100,0,200,0.2)', border:'2px solid rgba(160,80,255,0.8)', boxShadow:'0 0 16px rgba(150,50,255,0.6), 0 0 32px rgba(150,50,255,0.25), inset 0 0 10px rgba(100,0,200,0.15)'}}>
                           <div className="absolute inset-0 opacity-50" style={{background:'linear-gradient(135deg,#2d0060,#6020c0,#8040e0,#2d0060)',backgroundSize:'300% 300%',animation:'aiProcess 1.5s linear infinite'}}></div>
-                          <svg className="w-7 h-7 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#cc88ff', filter:'drop-shadow(0 0 8px #aa55ff)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
-                            {[0,1,2].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full animate-bounce" style={{background:'#cc88ff', boxShadow:'0 0 4px #cc88ff', animationDelay:`${i*0.2}s`}}></div>)}
+                          <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#cc88ff', filter:'drop-shadow(0 0 6px #aa55ff)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                          <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-0.5">
+                            {[0,1,2].map(i => <div key={i} className="w-1 h-1 rounded-full animate-bounce" style={{background:'#cc88ff', boxShadow:'0 0 3px #cc88ff', animationDelay:`${i*0.2}s`}}></div>)}
                           </div>
                         </div>
-                        <span className="text-[8px] font-black text-center leading-tight tracking-wider" style={{color:'#bb77ff', textShadow:'0 0 6px #aa55ff'}}>AI ENGINE</span>
+                        <span className="text-[7px] font-black tracking-wide" style={{color:'#bb77ff', textShadow:'0 0 5px #aa55ff'}}>AI ENGINE</span>
                       </div>
 
                       {/* Wire AI → Shield */}
-                      <div className="flex-1 h-px relative overflow-visible" style={{background:'rgba(0,200,100,0.3)', boxShadow:'0 0 4px rgba(0,200,100,0.4)'}}>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'16px', height:'3px', background:'#00ff88', boxShadow:'0 0 12px #00ff88, 0 0 25px #00ff8880', animation:'pkt 0.8s linear infinite'}}></div>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'12px', height:'3px', background:'#ff3333', boxShadow:'0 0 12px #ff3333, 0 0 25px #ff333380', animation:'pktRev 1s linear infinite', animationDelay:'0.4s'}}></div>
+                      <div className="flex-1 h-px relative" style={{background:'rgba(0,200,100,0.3)'}}>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'12px', height:'2px', background:'#00ff88', boxShadow:'0 0 10px #00ff88', animation:'pkt 0.8s linear infinite'}}></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'10px', height:'2px', background:'#ff3333', boxShadow:'0 0 10px #ff3333', animation:'pktRev 1s linear infinite', animationDelay:'0.4s'}}></div>
                       </div>
 
-                      {/* KPK4444 SHIELD NODE */}
-                      <div className="holo-node flex flex-col items-center gap-1.5">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center relative" style={{background:'rgba(0,220,120,0.15)', border:'2px solid rgba(0,255,160,0.8)', boxShadow:'0 0 25px rgba(0,255,150,0.7), 0 0 50px rgba(0,255,150,0.4), inset 0 0 20px rgba(0,200,100,0.2)'}}>
-                          <div className="absolute rounded-full" style={{inset:'-12px', border:'1px solid rgba(0,255,150,0.4)', animation:'shieldPing 2s ease-out infinite'}}></div>
-                          <div className="absolute rounded-full" style={{inset:'-20px', border:'1px solid rgba(0,255,150,0.2)', animation:'shieldPing 2s ease-out infinite', animationDelay:'0.7s'}}></div>
-                          <div className="absolute rounded-full" style={{inset:'3px', border:'1px solid rgba(0,255,150,0.5)', animation:'shieldRing 3s linear infinite'}}></div>
-                          <svg className="w-8 h-8 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#00ff99', filter:'drop-shadow(0 0 10px #00ff99)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                      {/* KPK4444 SHIELD */}
+                      <div className="holo-node flex flex-col items-center gap-1">
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center relative" style={{background:'rgba(0,220,120,0.15)', border:'2px solid rgba(0,255,160,0.8)', boxShadow:'0 0 20px rgba(0,255,150,0.7), 0 0 40px rgba(0,255,150,0.35), inset 0 0 15px rgba(0,200,100,0.15)'}}>
+                          <div className="absolute rounded-full" style={{inset:'-10px', border:'1px solid rgba(0,255,150,0.35)', animation:'shieldPing 2s ease-out infinite'}}></div>
+                          <div className="absolute rounded-full" style={{inset:'-16px', border:'1px solid rgba(0,255,150,0.15)', animation:'shieldPing 2s ease-out infinite', animationDelay:'0.7s'}}></div>
+                          <div className="absolute rounded-full" style={{inset:'3px', border:'1px solid rgba(0,255,150,0.4)', animation:'shieldRing 3s linear infinite'}}></div>
+                          <svg className="w-6 h-6 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#00ff99', filter:'drop-shadow(0 0 8px #00ff99)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         </div>
-                        <span className="text-[9px] font-black text-center leading-tight tracking-wider" style={{color:'#00ff99', textShadow:'0 0 8px #00ff88'}}>SHIELD</span>
+                        <span className="text-[8px] font-black tracking-wide" style={{color:'#00ff99', textShadow:'0 0 7px #00ff88'}}>SHIELD</span>
                       </div>
 
                       {/* Wire → KILL */}
-                      <div className="flex-1 h-px relative overflow-visible" style={{background:'rgba(255,30,30,0.3)', boxShadow:'0 0 4px rgba(255,30,30,0.4)'}}>
-                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'14px', height:'3px', background:'#ff2233', boxShadow:'0 0 12px #ff2233, 0 0 25px #ff223380', animation:'pkt 0.75s linear infinite', animationDelay:'0.1s'}}></div>
+                      <div className="flex-1 h-px relative" style={{background:'rgba(255,30,30,0.3)'}}>
+                        <div className="absolute top-1/2 -translate-y-1/2 rounded-full" style={{width:'10px', height:'2px', background:'#ff2233', boxShadow:'0 0 10px #ff2233', animation:'pkt 0.75s linear infinite', animationDelay:'0.1s'}}></div>
                       </div>
 
-                      {/* KILL SYSTEM NODE */}
-                      <div className="holo-node flex flex-col items-center gap-1.5">
-                        <div className="w-14 h-14 rounded-xl flex items-center justify-center relative" style={{background:'rgba(200,0,0,0.2)', border:'2px solid rgba(255,40,40,0.9)', animation:'killPulse 1.2s ease-in-out infinite'}}>
-                          <div className="absolute inset-0 rounded-xl" style={{background:'rgba(255,20,20,0.15)', animation:'nodeGlow 0.8s ease-in-out infinite'}}></div>
-                          <svg className="w-7 h-7 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#ff4444', filter:'drop-shadow(0 0 10px #ff2222)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                      {/* KILL SYSTEM */}
+                      <div className="holo-node flex flex-col items-center gap-1">
+                        <div className="w-11 h-11 rounded-xl flex items-center justify-center relative" style={{background:'rgba(200,0,0,0.2)', border:'2px solid rgba(255,40,40,0.9)', animation:'killPulse 1.2s ease-in-out infinite'}}>
+                          <div className="absolute inset-0 rounded-xl" style={{background:'rgba(255,20,20,0.1)', animation:'nodeGlow 0.8s ease-in-out infinite'}}></div>
+                          <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color:'#ff4444', filter:'drop-shadow(0 0 8px #ff2222)'}}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
                         </div>
-                        <span className="text-[8px] font-black text-center leading-tight tracking-wider" style={{color:'#ff5555', textShadow:'0 0 8px #ff2222'}}>KILL SYS</span>
+                        <span className="text-[7px] font-black tracking-wide" style={{color:'#ff5555', textShadow:'0 0 6px #ff2222'}}>KILL SYS</span>
                       </div>
                     </div>
 
-                    {/* Legend row */}
-                    <div className="relative z-10 flex items-center justify-center gap-3 text-[8px] font-mono font-bold flex-wrap">
-                      <div className="flex items-center gap-1"><div style={{width:'16px', height:'3px', background:'#ff4466', boxShadow:'0 0 6px #ff4466', borderRadius:'2px'}}></div><span style={{color:'#ff6677'}}>Attack</span></div>
-                      <div className="flex items-center gap-1"><div style={{width:'16px', height:'3px', background:'#aa55ff', boxShadow:'0 0 6px #aa55ff', borderRadius:'2px'}}></div><span style={{color:'#bb77ff'}}>AI Scan</span></div>
-                      <div className="flex items-center gap-1"><div style={{width:'16px', height:'3px', background:'#00ff88', boxShadow:'0 0 6px #00ff88', borderRadius:'2px'}}></div><span style={{color:'#00ff88'}}>Clear</span></div>
-                      <div className="flex items-center gap-1"><div style={{width:'16px', height:'3px', background:'#ff2233', boxShadow:'0 0 6px #ff2233', borderRadius:'2px'}}></div><span style={{color:'#ff5555'}}>Kill</span></div>
+                    {/* Legend */}
+                    <div className="relative z-10 flex items-center justify-center gap-3 text-[7px] font-mono font-bold">
+                      <div className="flex items-center gap-1"><div style={{width:'12px', height:'2px', background:'#ff4466', boxShadow:'0 0 5px #ff4466', borderRadius:'2px'}}></div><span style={{color:'#ff6677'}}>Attack</span></div>
+                      <div className="flex items-center gap-1"><div style={{width:'12px', height:'2px', background:'#aa55ff', boxShadow:'0 0 5px #aa55ff', borderRadius:'2px'}}></div><span style={{color:'#bb77ff'}}>AI</span></div>
+                      <div className="flex items-center gap-1"><div style={{width:'12px', height:'2px', background:'#00ff88', boxShadow:'0 0 5px #00ff88', borderRadius:'2px'}}></div><span style={{color:'#00ff88'}}>Clear</span></div>
+                      <div className="flex items-center gap-1"><div style={{width:'12px', height:'2px', background:'#ff2233', boxShadow:'0 0 5px #ff2233', borderRadius:'2px'}}></div><span style={{color:'#ff5555'}}>Kill</span></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Stats + Threat Vectors (compact) */}
-                <div className="rounded-xl p-3 shrink-0" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.2)', boxShadow:'0 0 20px rgba(0,100,200,0.1)'}}>
-                  <div className="grid grid-cols-3 gap-2 mb-3">
+                {/* Stats + Threats: inline compact row */}
+                <div className="rounded-xl px-3 py-2 shrink-0" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.2)'}}>
+                  {/* 3 stat boxes in one row */}
+                  <div className="grid grid-cols-3 gap-1.5 mb-2">
                     {[
-                      {label:'Critical', val: critCount, color:'#ff4455', glow:'#ff445540', bg:'rgba(255,40,60,0.1)', border:'rgba(255,60,80,0.4)'},
-                      {label:'High', val: highCount, color:'#ff8800', glow:'#ff880040', bg:'rgba(255,130,0,0.1)', border:'rgba(255,150,0,0.4)'},
-                      {label:'Total', val: total, color:'#00ffff', glow:'#00ffff40', bg:'rgba(0,200,255,0.08)', border:'rgba(0,200,255,0.3)'},
+                      {label:'CRIT', val: critCount, color:'#ff4455', glow:'#ff445540', bg:'rgba(255,40,60,0.1)', border:'rgba(255,60,80,0.35)'},
+                      {label:'HIGH', val: highCount, color:'#ff8800', glow:'#ff880040', bg:'rgba(255,130,0,0.1)', border:'rgba(255,150,0,0.35)'},
+                      {label:'TOTAL', val: total, color:'#00ffff', glow:'#00ffff40', bg:'rgba(0,200,255,0.08)', border:'rgba(0,200,255,0.3)'},
                     ].map(s => (
-                      <div key={s.label} className="rounded-lg p-2 text-center" style={{background:s.bg, border:`1px solid ${s.border}`}}>
-                        <p className="text-xl font-black font-mono" style={{color:s.color, textShadow:`0 0 10px ${s.glow}`}}>{s.val}</p>
-                        <p className="text-[8px] text-slate-500 uppercase tracking-wider">{s.label}</p>
+                      <div key={s.label} className="rounded-lg p-1.5 text-center" style={{background:s.bg, border:`1px solid ${s.border}`}}>
+                        <p className="text-lg font-black font-mono" style={{color:s.color, textShadow:`0 0 8px ${s.glow}`}}>{s.val}</p>
+                        <p className="text-[7px] text-slate-500 uppercase tracking-wider">{s.label}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="space-y-2">
-                    {[['CRITICAL', critCount, 'bg-rose-500', 'shadow-[0_0_8px_#f43f5e]', 'text-rose-400'],
-                      ['HIGH', highCount, 'bg-orange-500', 'shadow-[0_0_8px_#f97316]', 'text-orange-400'],
-                      ['MEDIUM', medCount, 'bg-yellow-500', 'shadow-[0_0_8px_#eab308]', 'text-yellow-400']].map(([sev,cnt,col,glow,tc]) => (
+                  {/* Threat bars */}
+                  <div className="space-y-1.5">
+                    {[['CRITICAL', critCount, '#ff4455', '#ff445560'],
+                      ['HIGH', highCount, '#ff8800', '#ff880060'],
+                      ['MEDIUM', medCount, '#ffcc00', '#ffcc0060']].map(([sev,cnt,col,glow]) => (
                       <div key={sev}>
-                        <div className="flex justify-between text-[9px] font-bold mb-0.5">
-                          <span className={tc}>{sev}</span><span className="text-white">{cnt}</span>
+                        <div className="flex justify-between text-[8px] font-bold mb-0.5">
+                          <span style={{color:col}}>{sev}</span><span className="text-white">{cnt}</span>
                         </div>
-                        <div className="w-full h-1 bg-black/60 rounded-full overflow-hidden">
-                          <div className={`h-full ${col} ${glow} transition-all duration-1000`} style={{width:`${total>0?(cnt/total)*100:0}%`}}></div>
+                        <div className="w-full h-1 rounded-full overflow-hidden" style={{background:'rgba(0,0,0,0.5)'}}>
+                          <div className="h-full rounded-full transition-all duration-1000" style={{width:`${total>0?(cnt/total)*100:0}%`, background:col, boxShadow:`0 0 6px ${glow}`}}></div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Hardware Diagnostics (compact) */}
-                <div className="bg-[#020b06]/90 border border-emerald-500/20 rounded-xl p-3 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Hardware Status</p>
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[9px] font-mono">
-                    {[
-                      ['CPU LOAD', <div className="flex gap-0.5">{[1,2,3,4,5,6,7,8].map(i=><div key={i} className={`w-1.5 h-3 rounded-sm ${i<4?'bg-emerald-500 shadow-[0_0_4px_#10b981]':i<7?'bg-emerald-500/30':'bg-slate-800'} animate-pulse`} style={{animationDelay:`${i*0.1}s`}}></div>)}</div>],
-                      ['DEFLECTION', <span className="text-emerald-400 font-black">99.9%</span>],
-                      ['AI ENGINE', <span className="text-violet-400 font-bold animate-pulse">SCANNING</span>],
-                      ['KILL SYS', <span className="text-red-400 font-bold">ARMED</span>],
-                    ].map(([k,v],i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <span className="text-slate-600">{k}</span>
-                        {v}
-                      </div>
-                    ))}
+                {/* Hardware Status: horizontal compact */}
+                <div className="rounded-xl px-3 py-2 shrink-0" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.15)'}}>
+                  <p className="text-[7px] font-bold uppercase tracking-widest mb-1.5" style={{color:'rgba(0,200,255,0.5)'}}>Hardware Status</p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[8px] font-mono">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600">CPU LOAD</span>
+                      <div className="flex gap-0.5">{[1,2,3,4,5,6,7,8].map(i=><div key={i} className={`w-1.5 h-2.5 rounded-sm ${i<4?'animate-pulse':''}`} style={{background: i<4?'#00ff88': i<7?'rgba(0,255,136,0.25)':'rgba(30,30,30,1)', boxShadow: i<4?'0 0 4px #00ff88':undefined, animationDelay:`${i*0.1}s`}}></div>)}</div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600">DEFLECTION</span>
+                      <span className="font-black" style={{color:'#00ff88', textShadow:'0 0 6px #00ff8860'}}>99.9%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600">AI ENGINE</span>
+                      <span className="font-bold animate-pulse" style={{color:'#bb77ff'}}>SCANNING</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600">KILL SYS</span>
+                      <span className="font-bold" style={{color:'#ff5555', textShadow:'0 0 6px #ff222260'}}>ARMED</span>
+                    </div>
                   </div>
                 </div>
 
