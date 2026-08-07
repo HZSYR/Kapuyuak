@@ -1978,6 +1978,20 @@ export default function Dashboard() {
           </div>
 
           {/* Main Dashboard Content */}
+          <style>{`
+            @keyframes packetTravel {
+              0% { left: 0%; opacity: 0; }
+              10% { opacity: 1; }
+              90% { opacity: 1; }
+              100% { left: 100%; opacity: 0; }
+            }
+            @keyframes packetTravelReverse {
+              0% { right: 0%; opacity: 0; }
+              10% { opacity: 1; }
+              90% { opacity: 1; }
+              100% { right: 100%; opacity: 0; }
+            }
+          `}</style>
           <div className="relative z-10 flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
             {logs.filter(l => l.domain === viewKeyLogs).length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center">
@@ -1989,100 +2003,159 @@ export default function Dashboard() {
                 <p className="text-sm text-slate-600 mt-2">The system is actively monitoring incoming traffic.</p>
               </div>
             ) : (
-              <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="max-w-7xl mx-auto flex flex-col gap-6">
                 
-                {/* Hardware Status & Analytics Column */}
-                <div className="lg:col-span-1 space-y-6">
-                  {/* Status Panel */}
-                  <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px]"></div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Hardware Diagnostics</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-mono text-slate-500">CPU LOAD</span>
-                        <div className="flex gap-1">
-                          {[1,2,3,4,5,6,7,8].map(i => (
-                            <div key={i} className={`w-2 h-4 rounded-sm ${i < 4 ? 'bg-emerald-500 shadow-[0_0_5px_#10b981]' : i < 7 ? 'bg-emerald-500/30' : 'bg-slate-800'} animate-pulse`} style={{ animationDelay: `${i * 0.1}s` }}></div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-mono text-slate-500">THREAT DEFLECTION</span>
-                        <span className="text-lg font-black text-emerald-400 font-mono">99.9%</span>
-                      </div>
-                      <div className="flex justify-between items-center border-t border-white/5 pt-4">
-                        <span className="text-[10px] font-mono text-slate-500">TOTAL ATTACKS PREVENTED</span>
-                        <span className="text-2xl font-black text-white">{logs.filter(l => l.domain === viewKeyLogs).length.toLocaleString()}</span>
-                      </div>
+                {/* Top Section: Holographic Architecture Simulation */}
+                <div className="w-full bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                  {/* Data grid background */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-30"></div>
+                  
+                  {/* Attacker Node */}
+                  <div className="relative z-10 flex flex-col items-center w-32">
+                    <div className="w-16 h-16 rounded-full border-2 border-rose-500/50 flex items-center justify-center bg-rose-500/10 shadow-[0_0_20px_#f43f5e] relative">
+                      <div className="absolute inset-0 rounded-full border border-rose-500 border-dashed animate-[spin_4s_linear_infinite]"></div>
+                      <svg className="w-8 h-8 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
+                    <span className="text-[10px] text-rose-400 font-bold uppercase tracking-widest mt-3 text-center">Malicious<br/>Actor</span>
                   </div>
 
-                  {/* Visual Distribution Chart */}
-                  <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Threat Vectors</h3>
-                    <div className="space-y-4">
-                      {['CRITICAL', 'HIGH', 'MEDIUM'].map(sev => {
-                        const count = logs.filter(l => l.domain === viewKeyLogs && l.severity === sev).length;
-                        const total = logs.filter(l => l.domain === viewKeyLogs).length;
-                        const pct = total > 0 ? (count / total) * 100 : 0;
-                        const color = sev === 'CRITICAL' ? 'bg-rose-500' : sev === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500';
-                        const glow = sev === 'CRITICAL' ? 'shadow-[0_0_10px_#f43f5e]' : sev === 'HIGH' ? 'shadow-[0_0_10px_#f97316]' : 'shadow-[0_0_10px_#eab308]';
-                        
-                        return (
-                          <div key={sev} className="relative">
-                            <div className="flex justify-between text-[10px] font-bold mb-1">
-                              <span className={sev === 'CRITICAL' ? 'text-rose-400' : sev === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}>{sev}</span>
-                              <span className="text-white">{count}</span>
-                            </div>
-                            <div className="w-full h-1.5 bg-black rounded-full overflow-hidden">
-                              <div className={`h-full ${color} ${glow} transition-all duration-1000`} style={{ width: `${pct}%` }}></div>
-                            </div>
-                          </div>
-                        )
-                      })}
+                  {/* Path 1 (Attacker to OJS) */}
+                  <div className="relative flex-1 h-px bg-white/10 hidden md:block">
+                    <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-rose-500 shadow-[0_0_10px_#f43f5e] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite' }}></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 w-2 h-[2px] bg-rose-400 shadow-[0_0_10px_#f43f5e] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite 0.4s' }}></div>
+                  </div>
+
+                  {/* OJS Client Node */}
+                  <div className="relative z-10 flex flex-col items-center w-32">
+                    <div className="w-20 h-20 rounded-xl border border-blue-500/50 flex items-center justify-center bg-blue-500/10 shadow-[0_0_30px_#3b82f6] relative overflow-hidden">
+                      <div className="absolute inset-0 bg-[linear-gradient(0deg,transparent_50%,rgba(59,130,246,0.1)_50%)] bg-[length:100%_4px] animate-[pulse_3s_infinite]"></div>
+                      <div className="absolute w-full h-0.5 bg-blue-400/50 shadow-[0_0_10px_#3b82f6] top-0 animate-[ping_4s_infinite]"></div>
+                      <svg className="w-10 h-10 text-blue-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     </div>
+                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mt-3 text-center">Target Domain</span>
+                    <span className="text-[9px] text-blue-400/50 font-mono mt-1 text-center truncate w-full">{viewKeyLogs}</span>
+                  </div>
+
+                  {/* Path 2 (OJS to Shield) */}
+                  <div className="relative flex-1 h-px bg-white/10 hidden md:block">
+                    <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-emerald-500 shadow-[0_0_10px_#10b981] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite' }}></div>
+                    <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-rose-500 shadow-[0_0_10px_#f43f5e] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite 0.7s' }}></div>
+                    {/* Return path (blocked) */}
+                    <div className="absolute top-1/2 -translate-y-1/2 w-8 h-[2px] bg-red-500 shadow-[0_0_10px_#ef4444] rounded-full" style={{ animation: 'packetTravelReverse 1.5s linear infinite 1.4s' }}></div>
+                  </div>
+
+                  {/* KPK4444 Shield Node */}
+                  <div className="relative z-10 flex flex-col items-center w-32">
+                    <div className="w-24 h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-500/10 shadow-[0_0_40px_#10b981] relative">
+                      <div className="absolute inset-[-10px] rounded-full border border-emerald-500/30 animate-[ping_2s_infinite]"></div>
+                      <div className="absolute inset-[-20px] rounded-full border border-emerald-500/10 animate-[spin_6s_linear_infinite] border-t-transparent border-b-transparent"></div>
+                      <div className="absolute inset-2 border border-emerald-400/50 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
+                      <svg className="w-12 h-12 text-emerald-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <span className="text-[12px] text-emerald-400 font-black uppercase tracking-widest mt-4 drop-shadow-[0_0_5px_#10b981] text-center">KPK4444<br/>Shield</span>
                   </div>
                 </div>
 
-                {/* Threat Log Terminal Stream */}
-                <div className="lg:col-span-2">
-                  <div className="bg-[#0a0a0c]/90 backdrop-blur-2xl border border-white/10 rounded-2xl flex flex-col h-[60vh] lg:h-full shadow-2xl overflow-hidden">
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-black/40">
-                      <div className="flex gap-2">
-                        <div className="w-3 h-3 rounded-full bg-rose-500/50"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                        <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
-                      </div>
-                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Live Terminal Log</span>
-                    </div>
-                    
-                    <div className="p-4 flex-1 overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                      {logs.filter(l => l.domain === viewKeyLogs).map(l => (
-                        <div key={l._id} className="group relative border-l-2 border-white/10 hover:border-rose-500 pl-4 py-2 transition-colors">
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-[10px] font-mono text-slate-500">[{new Date(l.timestamp).toLocaleString()}]</span>
-                            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400' : l.severity === 'HIGH' ? 'bg-orange-500/20 text-orange-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                              {l.severity}
-                            </span>
-                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">{l.category}</span>
-                            <span className="text-[10px] font-mono text-cyan-400 bg-cyan-900/30 px-1.5 rounded ml-auto">{l.ipAddress}</span>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                  {/* Hardware Status & Analytics Column */}
+                  <div className="lg:col-span-1 space-y-6">
+                    {/* Status Panel */}
+                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px]"></div>
+                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Hardware Diagnostics</h3>
+                      
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-mono text-slate-500">CPU LOAD</span>
+                          <div className="flex gap-1">
+                            {[1,2,3,4,5,6,7,8].map(i => (
+                              <div key={i} className={`w-2 h-4 rounded-sm ${i < 4 ? 'bg-emerald-500 shadow-[0_0_5px_#10b981]' : i < 7 ? 'bg-emerald-500/30' : 'bg-slate-800'} animate-pulse`} style={{ animationDelay: `${i * 0.1}s` }}></div>
+                            ))}
                           </div>
-                          
-                          {l.snippet && (
-                            <div className="mt-2 bg-black/60 border border-rose-900/30 p-2.5 rounded-lg overflow-hidden relative">
-                              <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(255,0,0,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
-                              <code className="text-[10px] font-mono text-rose-400 break-all relative z-10">{l.snippet}</code>
-                            </div>
-                          )}
-                          
-                          {l.userAgent && (
-                            <div className="mt-2 text-[9px] font-mono text-slate-600 line-clamp-1">
-                              UA: {l.userAgent}
-                            </div>
-                          )}
                         </div>
-                      ))}
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-mono text-slate-500">THREAT DEFLECTION</span>
+                          <span className="text-lg font-black text-emerald-400 font-mono">99.9%</span>
+                        </div>
+                        <div className="flex justify-between items-center border-t border-white/5 pt-4">
+                          <span className="text-[10px] font-mono text-slate-500">TOTAL ATTACKS PREVENTED</span>
+                          <span className="text-2xl font-black text-white">{logs.filter(l => l.domain === viewKeyLogs).length.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Visual Distribution Chart */}
+                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Threat Vectors</h3>
+                      <div className="space-y-4">
+                        {['CRITICAL', 'HIGH', 'MEDIUM'].map(sev => {
+                          const count = logs.filter(l => l.domain === viewKeyLogs && l.severity === sev).length;
+                          const total = logs.filter(l => l.domain === viewKeyLogs).length;
+                          const pct = total > 0 ? (count / total) * 100 : 0;
+                          const color = sev === 'CRITICAL' ? 'bg-rose-500' : sev === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500';
+                          const glow = sev === 'CRITICAL' ? 'shadow-[0_0_10px_#f43f5e]' : sev === 'HIGH' ? 'shadow-[0_0_10px_#f97316]' : 'shadow-[0_0_10px_#eab308]';
+                          
+                          return (
+                            <div key={sev} className="relative">
+                              <div className="flex justify-between text-[10px] font-bold mb-1">
+                                <span className={sev === 'CRITICAL' ? 'text-rose-400' : sev === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}>{sev}</span>
+                                <span className="text-white">{count}</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-black rounded-full overflow-hidden">
+                                <div className={`h-full ${color} ${glow} transition-all duration-1000`} style={{ width: `${pct}%` }}></div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Threat Log Terminal Stream */}
+                  <div className="lg:col-span-3">
+                    <div className="bg-[#0a0a0c]/90 backdrop-blur-2xl border border-white/10 rounded-2xl flex flex-col h-[60vh] lg:h-full shadow-2xl overflow-hidden">
+                      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-black/40">
+                        <div className="flex gap-2">
+                          <div className="w-3 h-3 rounded-full bg-rose-500/50 shadow-[0_0_5px_#f43f5e]"></div>
+                          <div className="w-3 h-3 rounded-full bg-yellow-500/50 shadow-[0_0_5px_#eab308]"></div>
+                          <div className="w-3 h-3 rounded-full bg-emerald-500/50 shadow-[0_0_5px_#10b981]"></div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                           <span className="flex h-2 w-2 relative">
+                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                             <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                           </span>
+                           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Live Terminal Log</span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 flex-1 overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                        {logs.filter(l => l.domain === viewKeyLogs).map(l => (
+                          <div key={l._id} className="group relative border-l-2 border-white/10 hover:border-rose-500 pl-4 py-2 transition-colors">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span className="text-[10px] font-mono text-slate-500">[{new Date(l.timestamp).toLocaleString()}]</span>
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400' : l.severity === 'HIGH' ? 'bg-orange-500/20 text-orange-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                                {l.severity}
+                              </span>
+                              <span className="text-[10px] font-bold text-white uppercase tracking-wider">{l.category}</span>
+                              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-900/30 border border-cyan-500/30 px-1.5 py-0.5 rounded ml-auto">{l.ipAddress}</span>
+                            </div>
+                            
+                            {l.snippet && (
+                              <div className="mt-2 bg-black/80 border border-rose-900/30 p-3 rounded-lg overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,1)]">
+                                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(255,0,0,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
+                                <code className="text-[11px] font-mono text-rose-400 break-all relative z-10 leading-relaxed">{l.snippet}</code>
+                              </div>
+                            )}
+                            
+                            {l.userAgent && (
+                              <div className="mt-2 text-[9px] font-mono text-slate-600 line-clamp-1 group-hover:text-slate-400 transition-colors">
+                                UA: {l.userAgent}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
