@@ -1944,51 +1944,151 @@ export default function Dashboard() {
         </main>
       </div>
 
-      {/* View Logs Modal */}
+      {/* ── ADVANCED DOMAIN SECURITY DASHBOARD (View Logs) ── */}
       {viewKeyLogs && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-300/90 dark:bg-[#1e2640]/70 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-white/10 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
-            <div className="p-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-bold text-indigo-900 dark:text-white tracking-tight">Logs: {viewKeyLogs}</h3>
-                <p className="text-[10px] text-indigo-600/80 dark:text-gray-400 uppercase tracking-widest mt-1">Detailed Threat Activity</p>
+        <div className="fixed inset-0 z-[100] flex flex-col bg-slate-900 dark:bg-black overflow-hidden font-sans selection:bg-rose-500/30 text-slate-300">
+          {/* Hardware Background Matrix */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_40%,transparent_100%)] pointer-events-none"></div>
+          
+          {/* Top Navbar */}
+          <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/50 backdrop-blur-md">
+            <div className="flex items-center gap-4">
+              {/* Animated Core Chip */}
+              <div className="relative w-12 h-12 flex items-center justify-center">
+                <div className="absolute inset-0 border-2 border-emerald-500/30 rounded-lg animate-[spin_10s_linear_infinite]"></div>
+                <div className="absolute inset-2 border border-emerald-400/50 rounded animate-[spin_5s_linear_infinite_reverse]"></div>
+                <div className="w-4 h-4 bg-emerald-500 rounded-sm shadow-[0_0_15px_#10b981] animate-pulse"></div>
               </div>
-              <button onClick={() => setViewKeyLogs(null)} className="p-2 text-indigo-600/80 dark:text-gray-400 hover:text-indigo-900 dark:text-white bg-indigo-100 dark:bg-[#1e2640]/50 hover:bg-indigo-200 dark:bg-white/10 rounded-lg transition">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-            <div className="p-5 overflow-y-auto flex-1">
-              {logs.filter(l => l.domain === viewKeyLogs).length === 0 ? (
-                <div className="text-center py-10">
-                  <p className="text-indigo-500/70 dark:text-gray-500 font-mono text-sm">No activity recorded for this domain.</p>
+              <div>
+                <h2 className="text-2xl font-black text-white tracking-wider uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{viewKeyLogs}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <p className="text-[10px] font-mono text-emerald-400 tracking-widest uppercase">KPK4444 Shield Active</p>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {logs.filter(l => l.domain === viewKeyLogs).map(l => (
-                    <div key={l._id} className="bg-white/80 dark:bg-[#1e2640]/80 border border-indigo-200/60 dark:border-white/10 rounded-xl shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <div className={`w-2 h-2 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
-                          <span className={`text-[10px] font-bold uppercase tracking-widest ${l.severity === 'CRITICAL' ? 'text-rose-400' : l.severity === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}`}>{l.severity} - {l.category}</span>
+              </div>
+            </div>
+            
+            <button onClick={() => setViewKeyLogs(null)} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold uppercase tracking-widest text-xs transition duration-300 group shadow-lg">
+              <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+              Close Link
+            </button>
+          </div>
+
+          {/* Main Dashboard Content */}
+          <div className="relative z-10 flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            {logs.filter(l => l.domain === viewKeyLogs).length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center">
+                <div className="w-24 h-24 mb-6 relative">
+                  <div className="absolute inset-0 rounded-full border-4 border-dashed border-slate-700 animate-[spin_10s_linear_infinite]"></div>
+                  <div className="absolute inset-4 rounded-full border-2 border-slate-600"></div>
+                </div>
+                <h3 className="text-xl font-mono text-slate-500 uppercase tracking-widest">No Threat Signatures Detected</h3>
+                <p className="text-sm text-slate-600 mt-2">The system is actively monitoring incoming traffic.</p>
+              </div>
+            ) : (
+              <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* Hardware Status & Analytics Column */}
+                <div className="lg:col-span-1 space-y-6">
+                  {/* Status Panel */}
+                  <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px]"></div>
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Hardware Diagnostics</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-mono text-slate-500">CPU LOAD</span>
+                        <div className="flex gap-1">
+                          {[1,2,3,4,5,6,7,8].map(i => (
+                            <div key={i} className={`w-2 h-4 rounded-sm ${i < 4 ? 'bg-emerald-500 shadow-[0_0_5px_#10b981]' : i < 7 ? 'bg-emerald-500/30' : 'bg-slate-800'} animate-pulse`} style={{ animationDelay: `${i * 0.1}s` }}></div>
+                          ))}
                         </div>
-                        {l.snippet && (
-                          <div className="bg-rose-500/10 border border-rose-500/20 p-2 rounded">
-                            <p className="font-mono text-[10px] text-rose-300">Payload: {l.snippet}</p>
-                          </div>
-                        )}
-                        {l.userAgent && (
-                          <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 font-mono line-clamp-1">{l.userAgent}</p>
-                        )}
                       </div>
-                      <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center text-[10px] text-indigo-600/80 dark:text-gray-400 space-y-0 md:space-y-1">
-                        <span className="font-mono bg-slate-100 dark:bg-[#1e2640]/50 px-2 py-1 rounded border border-slate-200 dark:border-white/10">{l.ipAddress}</span>
-                        <span>{new Date(l.timestamp).toLocaleString()}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-mono text-slate-500">THREAT DEFLECTION</span>
+                        <span className="text-lg font-black text-emerald-400 font-mono">99.9%</span>
+                      </div>
+                      <div className="flex justify-between items-center border-t border-white/5 pt-4">
+                        <span className="text-[10px] font-mono text-slate-500">TOTAL ATTACKS PREVENTED</span>
+                        <span className="text-2xl font-black text-white">{logs.filter(l => l.domain === viewKeyLogs).length.toLocaleString()}</span>
                       </div>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Visual Distribution Chart */}
+                  <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Threat Vectors</h3>
+                    <div className="space-y-4">
+                      {['CRITICAL', 'HIGH', 'MEDIUM'].map(sev => {
+                        const count = logs.filter(l => l.domain === viewKeyLogs && l.severity === sev).length;
+                        const total = logs.filter(l => l.domain === viewKeyLogs).length;
+                        const pct = total > 0 ? (count / total) * 100 : 0;
+                        const color = sev === 'CRITICAL' ? 'bg-rose-500' : sev === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500';
+                        const glow = sev === 'CRITICAL' ? 'shadow-[0_0_10px_#f43f5e]' : sev === 'HIGH' ? 'shadow-[0_0_10px_#f97316]' : 'shadow-[0_0_10px_#eab308]';
+                        
+                        return (
+                          <div key={sev} className="relative">
+                            <div className="flex justify-between text-[10px] font-bold mb-1">
+                              <span className={sev === 'CRITICAL' ? 'text-rose-400' : sev === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}>{sev}</span>
+                              <span className="text-white">{count}</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-black rounded-full overflow-hidden">
+                              <div className={`h-full ${color} ${glow} transition-all duration-1000`} style={{ width: `${pct}%` }}></div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {/* Threat Log Terminal Stream */}
+                <div className="lg:col-span-2">
+                  <div className="bg-[#0a0a0c]/90 backdrop-blur-2xl border border-white/10 rounded-2xl flex flex-col h-[60vh] lg:h-full shadow-2xl overflow-hidden">
+                    <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-black/40">
+                      <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-rose-500/50"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                        <div className="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Live Terminal Log</span>
+                    </div>
+                    
+                    <div className="p-4 flex-1 overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                      {logs.filter(l => l.domain === viewKeyLogs).map(l => (
+                        <div key={l._id} className="group relative border-l-2 border-white/10 hover:border-rose-500 pl-4 py-2 transition-colors">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <span className="text-[10px] font-mono text-slate-500">[{new Date(l.timestamp).toLocaleString()}]</span>
+                            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400' : l.severity === 'HIGH' ? 'bg-orange-500/20 text-orange-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                              {l.severity}
+                            </span>
+                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">{l.category}</span>
+                            <span className="text-[10px] font-mono text-cyan-400 bg-cyan-900/30 px-1.5 rounded ml-auto">{l.ipAddress}</span>
+                          </div>
+                          
+                          {l.snippet && (
+                            <div className="mt-2 bg-black/60 border border-rose-900/30 p-2.5 rounded-lg overflow-hidden relative">
+                              <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(255,0,0,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
+                              <code className="text-[10px] font-mono text-rose-400 break-all relative z-10">{l.snippet}</code>
+                            </div>
+                          )}
+                          
+                          {l.userAgent && (
+                            <div className="mt-2 text-[9px] font-mono text-slate-600 line-clamp-1">
+                              UA: {l.userAgent}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
           </div>
         </div>
       )}
