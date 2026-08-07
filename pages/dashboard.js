@@ -2287,7 +2287,7 @@ export default function Dashboard() {
               </div>
 
               {/* Right Column (7 Cols): Code Editor View */}
-              <div className="lg:col-span-7 flex flex-col bg-[#060b17] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="lg:col-span-7 flex flex-col bg-[#060b17] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl min-w-0">
                 
                 {/* Code Terminal Header */}
                 <div className="px-4 py-3 bg-[#0d162a] border-b border-slate-800 flex items-center justify-between shrink-0">
@@ -2319,7 +2319,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Code Body */}
-                <div className="p-4 flex-1 overflow-y-auto max-h-[45vh] custom-scrollbar">
+                <div className="p-4 flex-1 overflow-auto max-h-[45vh] custom-scrollbar">
                   <pre className="text-xs font-mono text-slate-300 leading-relaxed">
                     <code>
                       {selectedOjsVersion === '3.3' ? getFullIndexPhp(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL) : getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL)}
