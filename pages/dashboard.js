@@ -1951,201 +1951,262 @@ export default function Dashboard() {
         const highCount = domainLogs.filter(l => l.severity === 'HIGH').length;
         const medCount = domainLogs.filter(l => l.severity === 'MEDIUM').length;
         const total = domainLogs.length;
+
         return (
-          <div className="fixed inset-0 z-[100] flex flex-col overflow-hidden font-sans select-none" style={{background:'radial-gradient(ellipse at 20% 50%, #001a2e 0%, #000d1a 40%, #000000 100%)'}}>
-            <style>{`
-              @keyframes pkt { 0%{left:0%;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{left:100%;opacity:0} }
-              @keyframes pktRev { 0%{right:0%;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{right:100%;opacity:0} }
-              @keyframes scanLine { 0%{top:-5%} 100%{top:110%} }
-              @keyframes matrixFall { 0%{transform:translateY(-100%);opacity:0.8} 100%{transform:translateY(100vh);opacity:0} }
-              @keyframes killPulse { 0%,100%{box-shadow:0 0 15px #ff2222,0 0 30px #ff2222,inset 0 0 10px #ff222240} 50%{box-shadow:0 0 40px #ff2222,0 0 80px #ff2222,0 0 120px #ff444440,inset 0 0 20px #ff222260} }
-              @keyframes aiProcess { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-              @keyframes folderPulse { 0%,100%{box-shadow:0 0 10px #00aaff,0 0 20px #00aaff40} 50%{box-shadow:0 0 25px #00ccff,0 0 50px #00ccff60} }
-              @keyframes nodeGlow { 0%,100%{opacity:0.5} 50%{opacity:1} }
-              @keyframes cyanPulse { 0%,100%{box-shadow:0 0 15px #00ffff,0 0 30px #00ffff40} 50%{box-shadow:0 0 35px #00ffff,0 0 70px #00ffff60} }
-              @keyframes shieldRing { 0%{transform:rotate(0deg);opacity:0.8} 100%{transform:rotate(360deg);opacity:0.8} }
-              @keyframes shieldPing { 0%{transform:scale(1);opacity:0.8} 70%{transform:scale(1.6);opacity:0} 100%{transform:scale(1.6);opacity:0} }
-              @keyframes flicker { 0%,19%,21%,23%,25%,54%,56%,100%{opacity:1} 20%,24%,55%{opacity:0.4} }
-              .drag-handle { cursor: grab; }
-              .drag-handle:active { cursor: grabbing; }
-              .holo-node:hover { transform: scale(1.08); transition: transform 0.2s ease; }
-            `}</style>
-
-            {/* Matrix rain background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-              {[...Array(20)].map((_, i) => (
-                <div key={i} className="absolute font-mono text-[11px] leading-4"
-                  style={{ left:`${i*5.2}%`, color: i%3===0 ? '#00ffff' : i%3===1 ? '#0088ff' : '#00ff88', animation:`matrixFall ${2.5+i*0.4}s linear infinite`, animationDelay:`${i*0.25}s` }}>
-                  {['01','10','0x','FF','A9','3B','7C','E1','00','11','1A','C3','D7','9F','2E'].map((c,j) => <div key={j}>{c}</div>)}
-                </div>
-              ))}
-            </div>
-            {/* Cyan Grid overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,200,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,200,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none"></div>
-            {/* Radial glow center */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full pointer-events-none" style={{background:'radial-gradient(ellipse, rgba(0,150,255,0.08) 0%, transparent 70%)'}}></div>
-            {/* Scan line effect */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute w-full h-12 bg-gradient-to-b from-transparent via-cyan-400/8 to-transparent" style={{ animation:'scanLine 5s linear infinite' }}></div>
-            </div>
-
-            {/* ── TOP NAV BAR ── */}
-            <div className="relative z-20 flex items-center justify-between px-5 py-2.5 shrink-0" style={{borderBottom:'1px solid rgba(0,200,255,0.25)', background:'rgba(0,10,30,0.9)', backdropFilter:'blur(12px)'}}>
-              <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
-                  <div className="absolute inset-0 rounded-lg border border-cyan-400/60" style={{animation:'spin 8s linear infinite', boxShadow:'0 0 8px rgba(0,255,255,0.3)'}}></div>
-                  <div className="absolute inset-1.5 rounded border border-cyan-300/80" style={{animation:'spin 4s linear infinite reverse'}}></div>
-                  <div className="w-3 h-3 bg-cyan-400 rounded-sm" style={{boxShadow:'0 0 15px #00ffff, 0 0 30px #00ffff60', animation:'pulse 1.5s ease-in-out infinite'}}></div>
+          <div className="fixed inset-0 z-[100] flex flex-col bg-[#080c14] text-slate-200 font-sans select-none overflow-hidden">
+            
+            {/* ── TOP EXECUTIVE HEADER ── */}
+            <div className="flex items-center justify-between px-6 py-3.5 bg-[#0e1726]/90 border-b border-slate-800/80 backdrop-blur-xl shrink-0">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 border border-indigo-500/30 flex items-center justify-center shadow-lg shadow-indigo-500/10">
+                  <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base font-black tracking-widest uppercase" style={{color:'#00ffff', textShadow:'0 0 10px #00ffff, 0 0 20px #00ffff60'}}>{viewKeyLogs}</h2>
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded font-bold" style={{color:'#00ffff', background:'rgba(0,255,255,0.1)', border:'1px solid rgba(0,255,255,0.4)'}}>ACTIVE</span>
+                  <div className="flex items-center space-x-3">
+                    <h2 className="text-lg font-black text-white tracking-tight uppercase font-mono">{viewKeyLogs}</h2>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
+                      PROTECTED
+                    </span>
                   </div>
-                  <p className="text-[9px] font-mono tracking-widest" style={{color:'rgba(0,200,255,0.6)'}}>KPK4444 SHIELD v3.5 — MONITORING ACTIVE</p>
+                  <p className="text-[11px] text-slate-400 font-mono tracking-wider mt-0.5">KPK4444 SECURITY SHIELD v3.5 — REALTIME INTEL STREAM</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center gap-5 text-[9px] font-mono font-bold">
-                  <span style={{color:'#ff4455', textShadow:'0 0 8px #ff4455'}}>{critCount} CRITICAL</span>
-                  <span style={{color:'#ff8800', textShadow:'0 0 8px #ff8800'}}>{highCount} HIGH</span>
-                  <span style={{color:'#ffcc00', textShadow:'0 0 8px #ffcc00'}}>{medCount} MED</span>
-                  <span style={{color:'#ffffff', textShadow:'0 0 10px #ffffff80'}}>{total} TOTAL</span>
-                </div>
-                <button onClick={() => setViewKeyLogs(null)} className="flex items-center gap-1.5 px-3 py-1.5 font-bold text-[10px] transition rounded" style={{background:'rgba(255,30,50,0.15)', border:'1px solid rgba(255,60,80,0.5)', color:'#ff6677'}}>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                  CLOSE
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={() => setViewKeyLogs(null)} 
+                  className="flex items-center space-x-2 px-4 py-2 bg-slate-800/80 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 border border-slate-700/80 hover:border-rose-500/40 rounded-xl text-xs font-bold transition-all duration-200 shadow-md"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>Close Terminal</span>
                 </button>
               </div>
             </div>
 
-            {/* ── MAIN BODY: 2 columns, fixed height, no vertical scroll ── */}
-            <div className="relative z-10 flex-1 flex overflow-hidden p-2.5 gap-2.5">
+            {/* ── TOP KPI CARDS BAR ── */}
+            <div className="px-6 py-3 bg-[#0a101d] border-b border-slate-800/60 grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
+              <div className="bg-[#111827]/80 border border-slate-800/80 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Threats</p>
+                  <p className="text-2xl font-black text-white font-mono mt-0.5">{total}</p>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-slate-800/60 flex items-center justify-center text-slate-300 border border-slate-700/50">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-6z" /></svg>
+                </div>
+              </div>
 
-              {/* LEFT COLUMN */}
-              <div className="flex flex-col gap-2 w-[300px] shrink-0 overflow-hidden">
+              <div className="bg-[#111827]/80 border border-rose-500/20 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold text-rose-400 uppercase tracking-wider">Critical Malware</p>
+                  <p className="text-2xl font-black text-rose-400 font-mono mt-0.5">{critCount}</p>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 border border-rose-500/30">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+              </div>
 
-                {/* Stats + Threats: inline compact row */}
-                <div className="rounded-xl px-3 py-2 shrink-0" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.2)'}}>
-                  {/* 3 stat boxes in one row */}
-                  <div className="grid grid-cols-3 gap-1.5 mb-2">
-                    {[
-                      {label:'CRIT', val: critCount, color:'#ff4455', glow:'#ff445540', bg:'rgba(255,40,60,0.1)', border:'rgba(255,60,80,0.35)'},
-                      {label:'HIGH', val: highCount, color:'#ff8800', glow:'#ff880040', bg:'rgba(255,130,0,0.1)', border:'rgba(255,150,0,0.35)'},
-                      {label:'TOTAL', val: total, color:'#00ffff', glow:'#00ffff40', bg:'rgba(0,200,255,0.08)', border:'rgba(0,200,255,0.3)'},
-                    ].map(s => (
-                      <div key={s.label} className="rounded-lg p-1.5 text-center" style={{background:s.bg, border:`1px solid ${s.border}`}}>
-                        <p className="text-lg font-black font-mono" style={{color:s.color, textShadow:`0 0 8px ${s.glow}`}}>{s.val}</p>
-                        <p className="text-[7px] text-slate-500 uppercase tracking-wider">{s.label}</p>
+              <div className="bg-[#111827]/80 border border-amber-500/20 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">High Risk Events</p>
+                  <p className="text-2xl font-black text-amber-400 font-mono mt-0.5">{highCount}</p>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 border border-amber-500/30">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+              </div>
+
+              <div className="bg-[#111827]/80 border border-emerald-500/20 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Deflection Rate</p>
+                  <p className="text-2xl font-black text-emerald-400 font-mono mt-0.5">99.9%</p>
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+              </div>
+            </div>
+
+            {/* ── MAIN DASHBOARD BODY (2 Columns) ── */}
+            <div className="flex-1 flex overflow-hidden p-6 gap-6">
+
+              {/* LEFT COLUMN: System Status & Security Breakdown */}
+              <div className="w-80 shrink-0 flex flex-col gap-5 overflow-y-auto pr-1 custom-scrollbar">
+
+                {/* Threat Distribution Card */}
+                <div className="bg-[#0f172a]/90 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center justify-between">
+                    <span>Threat Severity Ratio</span>
+                    <span className="text-[10px] text-slate-500 font-mono">{total} Logs</span>
+                  </h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-xs font-bold mb-1">
+                        <span className="text-rose-400 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-rose-500"></span> CRITICAL
+                        </span>
+                        <span className="text-slate-300 font-mono">{critCount}</span>
                       </div>
-                    ))}
-                  </div>
-                  {/* Threat bars */}
-                  <div className="space-y-1.5">
-                    {[['CRITICAL', critCount, '#ff4455', '#ff445560'],
-                      ['HIGH', highCount, '#ff8800', '#ff880060'],
-                      ['MEDIUM', medCount, '#ffcc00', '#ffcc0060']].map(([sev,cnt,col,glow]) => (
-                      <div key={sev}>
-                        <div className="flex justify-between text-[8px] font-bold mb-0.5">
-                          <span style={{color:col}}>{sev}</span><span className="text-white">{cnt}</span>
-                        </div>
-                        <div className="w-full h-1 rounded-full overflow-hidden" style={{background:'rgba(0,0,0,0.5)'}}>
-                          <div className="h-full rounded-full transition-all duration-1000" style={{width:`${total>0?(cnt/total)*100:0}%`, background:col, boxShadow:`0 0 6px ${glow}`}}></div>
-                        </div>
+                      <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-rose-500 transition-all duration-500 rounded-full" style={{ width: `${total > 0 ? (critCount / total) * 100 : 0}%` }}></div>
                       </div>
-                    ))}
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs font-bold mb-1">
+                        <span className="text-amber-400 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-amber-500"></span> HIGH
+                        </span>
+                        <span className="text-slate-300 font-mono">{highCount}</span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-500 transition-all duration-500 rounded-full" style={{ width: `${total > 0 ? (highCount / total) * 100 : 0}%` }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-xs font-bold mb-1">
+                        <span className="text-yellow-400 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-yellow-500"></span> MEDIUM
+                        </span>
+                        <span className="text-slate-300 font-mono">{medCount}</span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-yellow-500 transition-all duration-500 rounded-full" style={{ width: `${total > 0 ? (medCount / total) * 100 : 0}%` }}></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Hardware Status: horizontal compact */}
-                <div className="rounded-xl px-3 py-2 shrink-0" style={{background:'rgba(0,15,35,0.95)', border:'1px solid rgba(0,200,255,0.15)'}}>
-                  <p className="text-[7px] font-bold uppercase tracking-widest mb-1.5" style={{color:'rgba(0,200,255,0.5)'}}>Hardware Status</p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[8px] font-mono">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-600">CPU LOAD</span>
-                      <div className="flex gap-0.5">{[1,2,3,4,5,6,7,8].map(i=><div key={i} className={`w-1.5 h-2.5 rounded-sm ${i<4?'animate-pulse':''}`} style={{background: i<4?'#00ff88': i<7?'rgba(0,255,136,0.25)':'rgba(30,30,30,1)', boxShadow: i<4?'0 0 4px #00ff88':undefined, animationDelay:`${i*0.1}s`}}></div>)}</div>
+                {/* Active Defense Status Card */}
+                <div className="bg-[#0f172a]/90 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Active Shield Modules</h3>
+
+                  <div className="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                      <span className="text-xs font-bold text-slate-300">OJS File Guard</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-600">DEFLECTION</span>
-                      <span className="font-black" style={{color:'#00ff88', textShadow:'0 0 6px #00ff8860'}}>99.9%</span>
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">ACTIVE</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                      <span className="text-xs font-bold text-slate-300">Groq AI Engine</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-600">AI ENGINE</span>
-                      <span className="font-bold animate-pulse" style={{color:'#bb77ff'}}>SCANNING</span>
+                    <span className="text-[10px] font-mono text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">ONLINE (12ms)</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></div>
+                      <span className="text-xs font-bold text-slate-300">IP Auto-Kill</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-600">KILL SYS</span>
-                      <span className="font-bold" style={{color:'#ff5555', textShadow:'0 0 6px #ff222260'}}>ARMED</span>
+                    <span className="text-[10px] font-mono text-rose-400 font-bold bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">ARMED</span>
+                  </div>
+                </div>
+
+                {/* Telemetry Metrics */}
+                <div className="bg-[#0f172a]/90 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Server Telemetry</h3>
+                  <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                    <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                      <p className="text-[9px] text-slate-500 uppercase">System Load</p>
+                      <p className="text-sm font-bold text-emerald-400 mt-0.5">14.2%</p>
+                    </div>
+                    <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                      <p className="text-[9px] text-slate-500 uppercase">Rule Check</p>
+                      <p className="text-sm font-bold text-cyan-400 mt-0.5">38 Rules</p>
                     </div>
                   </div>
                 </div>
 
               </div>
 
-              {/* RIGHT COLUMN: Terminal Log (fixed height, scrollable inside) */}
-              <div className="flex-1 flex flex-col min-w-0">
-                <div className="bg-[#020b06]/90 border border-emerald-500/20 rounded-xl flex flex-col overflow-hidden h-full shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-                  {/* Terminal top bar */}
-                  <div className="px-3 py-2 border-b border-emerald-500/20 bg-black/60 flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500/70 shadow-[0_0_5px_#f43f5e]"></div>
-                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70 shadow-[0_0_5px_#eab308]"></div>
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70 shadow-[0_0_5px_#10b981]"></div>
-                      </div>
-                      <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">KPK4444 // LIVE THREAT TERMINAL</span>
+              {/* RIGHT COLUMN: Terminal Log Feed */}
+              <div className="flex-1 flex flex-col min-w-0 bg-[#0c121e] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+                
+                {/* Log Terminal Header */}
+                <div className="px-5 py-3 bg-[#111827] border-b border-slate-800 flex items-center justify-between shrink-0">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex space-x-1.5">
+                      <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="flex h-1.5 w-1.5 relative">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
-                      </span>
-                      <span className="text-[9px] font-mono text-rose-400">REC</span>
-                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-300 tracking-wider">LIVE SECURITY EVENT TERMINAL</span>
                   </div>
-
-                  {/* Scrollable logs area */}
-                  <div className="flex-1 overflow-y-auto p-3 space-y-2" style={{scrollbarWidth:'thin', scrollbarColor:'rgba(16,185,129,0.2) transparent'}}>
-                    {domainLogs.length === 0 ? (
-                      <div className="h-full flex flex-col items-center justify-center">
-                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-700 animate-[spin_10s_linear_infinite] mb-4"></div>
-                        <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">No Threats Detected</p>
-                      </div>
-                    ) : domainLogs.map((l, idx) => (
-                      <div key={l._id} className="group relative border-l-2 border-white/5 hover:border-emerald-500/50 pl-3 py-1.5 transition-all duration-200 rounded-r-lg hover:bg-emerald-500/[0.03]">
-                        {/* Header row */}
-                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
-                          <span className="text-[9px] font-mono text-slate-600">[{new Date(l.timestamp).toLocaleString()}]</span>
-                          <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${l.severity==='CRITICAL'?'bg-rose-500/20 text-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.3)]':l.severity==='HIGH'?'bg-orange-500/20 text-orange-400':'bg-yellow-500/20 text-yellow-400'}`}>
-                            {l.severity}
-                          </span>
-                          <span className="text-[9px] font-bold text-slate-300 uppercase">{l.category}</span>
-                          <div className="flex items-center gap-1 ml-auto">
-                            {/* Folder icon for file access attacks */}
-                            {(l.category || '').includes('MALWARE') || (l.category || '').includes('UPLOAD') ? (
-                              <svg className="w-3 h-3 text-orange-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
-                            ) : null}
-                            <span className="text-[9px] font-mono text-cyan-400 bg-cyan-900/20 border border-cyan-500/20 px-1.5 py-0.5 rounded">{l.ipAddress}</span>
-                          </div>
-                        </div>
-                        {/* Payload */}
-                        {l.snippet && (
-                          <div className="bg-black/80 border border-rose-900/20 p-2 rounded overflow-hidden relative">
-                            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,0,0.025)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
-                            <code className="text-[10px] font-mono text-rose-400 break-all leading-relaxed">{l.snippet}</code>
-                          </div>
-                        )}
-                        {/* UA */}
-                        {l.userAgent && (
-                          <p className="mt-1 text-[8px] font-mono text-slate-700 group-hover:text-slate-500 transition-colors line-clamp-1">UA: {l.userAgent}</p>
-                        )}
-                      </div>
-                    ))}
+                  <div className="flex items-center space-x-2 text-xs font-mono text-slate-400">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>Live Audit Log</span>
                   </div>
                 </div>
+
+                {/* Log Feed List */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-3 custom-scrollbar">
+                  {domainLogs.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-500 py-16">
+                      <div className="w-16 h-16 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center mb-4">
+                        <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-sm font-bold text-slate-300">No Security Threats Recorded</p>
+                      <p className="text-xs text-slate-500 mt-1">This domain is operating clean under KPK4444 protection.</p>
+                    </div>
+                  ) : domainLogs.map((l) => (
+                    <div key={l._id} className="bg-[#111827]/90 border border-slate-800 hover:border-slate-700 rounded-xl p-4 transition duration-200 space-y-3">
+                      
+                      {/* Log Badge Row */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/60 pb-2.5">
+                        <div className="flex items-center space-x-2.5">
+                          <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                            l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' :
+                            l.severity === 'HIGH' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
+                            'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40'
+                          }`}>
+                            {l.severity}
+                          </span>
+                          <span className="text-xs font-bold text-slate-200">{l.category}</span>
+                        </div>
+
+                        <div className="flex items-center space-x-3 text-xs font-mono">
+                          <span className="text-slate-400">{new Date(l.timestamp).toLocaleString()}</span>
+                          <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold">
+                            IP: {l.ipAddress}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Snippet / Code Payload Box */}
+                      {l.snippet && (
+                        <div className="bg-[#060a12] border border-slate-800/80 rounded-lg p-3 font-mono text-xs overflow-x-auto">
+                          <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1 font-sans">Attack Payload Snippet</div>
+                          <code className="text-rose-300 break-all leading-relaxed">{l.snippet}</code>
+                        </div>
+                      )}
+
+                      {/* User Agent */}
+                      {l.userAgent && (
+                        <div className="text-[11px] font-mono text-slate-500 truncate">
+                          <span className="text-slate-600 font-sans">User-Agent:</span> {l.userAgent}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
               </div>
 
             </div>
+
           </div>
         );
       })()}
