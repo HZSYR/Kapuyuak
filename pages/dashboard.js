@@ -2236,21 +2236,28 @@ export default function Dashboard() {
                 </div>
 
                 {/* 1-Click Download Button */}
-                <div className="bg-gradient-to-br from-indigo-900/30 via-slate-900/60 to-cyan-900/30 border border-indigo-500/30 rounded-2xl p-4 shadow-lg space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                <div className="relative overflow-hidden bg-gradient-to-br from-[#0c1328] to-[#080d1c] border border-cyan-500/20 hover:border-cyan-400/50 rounded-2xl p-5 shadow-[0_0_25px_rgba(0,150,255,0.08)] space-y-4 transition-all duration-300 group/dl">
+                  
+                  {/* Decorative background glow */}
+                  <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover/dl:bg-cyan-500/20 transition-all duration-500"></div>
+
+                  <div className="flex items-center space-x-4 relative z-10">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 border border-cyan-300/40 flex items-center justify-center text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] group-hover/dl:scale-110 transition-transform duration-300">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-white">Instant Installation File</h4>
-                      <p className="text-[10px] text-slate-400">Pre-configured index.php ready to upload</p>
+                      <h4 className="text-[13px] font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-100 tracking-wide drop-shadow-sm">INSTANT INSTALLATION FILE</h4>
+                      <p className="text-[10px] text-cyan-200/60 font-mono mt-0.5">Pre-configured index.php ready to upload</p>
                     </div>
                   </div>
 
                   <button 
                     onClick={downloadIndexPhp} 
-                    className={'w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-xl flex items-center justify-center space-x-2 ' + (downloaded ? 'bg-emerald-500 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white border border-cyan-400/40 shadow-[0_0_20px_rgba(6,182,212,0.2)]')}
+                    className={'relative overflow-hidden w-full py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2.5 z-10 ' + (downloaded ? 'bg-emerald-500 text-slate-950 shadow-[0_0_25px_rgba(16,185,129,0.5)] scale-[1.02]' : 'bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white border border-cyan-400/50 shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] hover:scale-[1.02] group/btn')}
                   >
+                    {/* Shimmer Effect */}
+                    {!downloaded && <div className="absolute inset-0 -translate-x-[150%] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover/btn:translate-x-[150%] transition-transform duration-1000 skew-x-12"></div>}
+                    
                     {downloaded ? (
                       <>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
@@ -2258,8 +2265,8 @@ export default function Dashboard() {
                       </>
                     ) : (
                       <>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        <span>Download Pre-Configured index.php</span>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <span>Download index.php</span>
                       </>
                     )}
                   </button>
