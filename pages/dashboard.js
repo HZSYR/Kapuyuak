@@ -1961,128 +1961,144 @@ export default function Dashboard() {
         });
 
         return (
-          <div className="fixed inset-0 z-[100] flex flex-col bg-[#070b12] text-slate-200 font-sans select-none overflow-hidden">
+          <div className="fixed inset-0 z-[100] flex flex-col bg-[#050912] text-slate-200 font-sans select-none overflow-hidden">
             
             {/* ── TOP EXECUTIVE HEADER ── */}
-            <div className="flex items-center justify-between px-6 py-3 bg-[#0d1524] border-b border-slate-800/80 backdrop-blur-xl shrink-0">
-              <div className="flex items-center space-x-3.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 border border-indigo-500/30 flex items-center justify-center shadow-lg shadow-indigo-500/10">
+            <div className="flex items-center justify-between px-6 py-3.5 bg-[#0a1224]/90 border-b border-cyan-500/20 backdrop-blur-xl shrink-0 shadow-lg">
+              <div className="flex items-center space-x-4">
+                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 via-cyan-500/20 to-emerald-500/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(0,200,255,0.15)]">
                   <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <div>
-                  <div className="flex items-center space-x-2.5">
-                    <h2 className="text-base font-black text-white tracking-tight uppercase font-mono">{viewKeyLogs}</h2>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  <div className="flex items-center space-x-3">
+                    <h2 className="text-lg font-black text-white tracking-tight uppercase font-mono drop-shadow-[0_0_10px_rgba(0,200,255,0.3)]">{viewKeyLogs}</h2>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
-                      ACTIVE MONITORING
+                      SHIELD ACTIVE
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400 font-mono tracking-wider mt-0.5">KPK4444 SECURITY SHIELD v3.5 — REALTIME INTEL STREAM</p>
+                  <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest mt-0.5">KPK4444 SECURITY SHIELD v3.5 — REALTIME THREAT STREAM</p>
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Close Button */}
               <div className="flex items-center space-x-3">
                 <button 
                   onClick={() => setViewKeyLogs(null)} 
-                  className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-slate-800/80 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 border border-slate-700/80 hover:border-rose-500/40 rounded-xl text-xs font-bold transition-all duration-200 shadow-md"
+                  className="flex items-center space-x-2 px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:border-rose-500/60 rounded-xl text-xs font-bold transition-all duration-200 shadow-lg shadow-rose-500/10"
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  <span>Close Terminal</span>
+                  <span>Close Dashboard</span>
                 </button>
               </div>
             </div>
 
-            {/* ── TOP HORIZONTAL WIDGETS ROW (Side-by-Side 4 Grid) ── */}
-            <div className="px-6 py-3 bg-[#090e1a] border-b border-slate-800/80 grid grid-cols-1 md:grid-cols-4 gap-3.5 shrink-0">
+            {/* ── TOP HORIZONTAL WIDGETS ROW (Glossy 4-Card HUD) ── */}
+            <div className="px-6 py-3.5 bg-[#070e1c] border-b border-slate-800/80 grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
               
-              {/* Widget 1: Threat Counts */}
-              <div className="bg-[#101726]/90 border border-slate-800/90 rounded-xl p-3 flex items-center justify-between shadow-lg">
+              {/* Card 1: Total Threats */}
+              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 flex items-center justify-between shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all">
                 <div>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Total Threats</p>
-                  <div className="flex items-baseline space-x-2 mt-0.5">
-                    <span className="text-2xl font-black text-white font-mono">{total}</span>
-                    <span className="text-[10px] text-emerald-400 font-bold font-mono">99.9% Shielded</span>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Threats</p>
+                  <div className="flex items-baseline space-x-2.5 mt-1">
+                    <span className="text-2xl font-black text-white font-mono drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">{total}</span>
+                    <span className="text-[10px] font-bold font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-md">99.9% Deflection</span>
                   </div>
                 </div>
-                <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.2)]">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-6z" /></svg>
                 </div>
               </div>
 
-              {/* Widget 2: Threat Severity Ratios */}
-              <div className="bg-[#101726]/90 border border-slate-800/90 rounded-xl p-3 shadow-lg">
-                <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+              {/* Card 2: Severity Ratio */}
+              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all flex flex-col justify-between">
+                <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   <span>Severity Ratio</span>
-                  <span className="text-rose-400">{critCount} CRIT</span>
+                  <span className="text-rose-400 font-mono font-black">{critCount} CRITICAL</span>
                 </div>
-                <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: total > 0 ? (critCount / total * 100) + '%' : '0%' }}></div>
-                  <div className="h-full bg-amber-500 transition-all duration-500" style={{ width: total > 0 ? (highCount / total * 100) + '%' : '0%' }}></div>
-                  <div className="h-full bg-yellow-500 transition-all duration-500" style={{ width: total > 0 ? (medCount / total * 100) + '%' : '0%' }}></div>
+                
+                {/* Segmented bar */}
+                <div className="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden flex my-1.5 border border-slate-700/50">
+                  <div className="h-full bg-rose-500 shadow-[0_0_8px_#f43f5e] transition-all duration-500" style={{ width: total > 0 ? (critCount / total * 100) + '%' : '0%' }}></div>
+                  <div className="h-full bg-amber-500 shadow-[0_0_8px_#f97316] transition-all duration-500" style={{ width: total > 0 ? (highCount / total * 100) + '%' : '0%' }}></div>
+                  <div className="h-full bg-yellow-500 shadow-[0_0_8px_#eab308] transition-all duration-500" style={{ width: total > 0 ? (medCount / total * 100) + '%' : '0%' }}></div>
                 </div>
-                <div className="flex justify-between items-center text-[9px] font-bold mt-1.5 font-mono">
-                  <span className="text-rose-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>{critCount}</span>
-                  <span className="text-amber-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>{highCount}</span>
-                  <span className="text-yellow-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>{medCount}</span>
+
+                <div className="flex justify-between items-center text-[10px] font-mono font-bold">
+                  <span className="text-rose-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]"></span>{critCount} Crit</span>
+                  <span className="text-amber-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_6px_#f97316]"></span>{highCount} High</span>
+                  <span className="text-yellow-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_6px_#eab308]"></span>{medCount} Med</span>
                 </div>
               </div>
 
-              {/* Widget 3: Active Protection Modules */}
-              <div className="bg-[#101726]/90 border border-slate-800/90 rounded-xl p-3 shadow-lg flex flex-col justify-between">
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Active Protection Modules</p>
-                <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-emerald-400 flex items-center gap-1 font-bold"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>OJS Guard</span>
-                  <span className="text-cyan-400 flex items-center gap-1 font-bold"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>AI (12ms)</span>
-                  <span className="text-rose-400 flex items-center gap-1 font-bold"><span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>Auto-Kill</span>
-                </div>
-              </div>
-
-              {/* Widget 4: Telemetry Metrics */}
-              <div className="bg-[#101726]/90 border border-slate-800/90 rounded-xl p-3 shadow-lg flex items-center justify-between">
-                <div>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Server Telemetry</p>
-                  <div className="flex items-center space-x-3 mt-1 text-[11px] font-mono font-bold">
-                    <span className="text-emerald-400">CPU: 14.2%</span>
-                    <span className="text-slate-600">|</span>
-                    <span className="text-cyan-400">Rules: 38</span>
+              {/* Card 3: Active Protection Modules */}
+              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all flex flex-col justify-between">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Protection Modules</p>
+                <div className="flex items-center justify-between text-[10px] font-mono mt-2">
+                  <div className="flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 rounded-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span className="text-emerald-300 font-bold">OJS Guard</span>
+                  </div>
+                  <div className="flex items-center space-x-1.5 bg-cyan-500/10 border border-cyan-500/30 px-2 py-1 rounded-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span className="text-cyan-300 font-bold">AI 12ms</span>
+                  </div>
+                  <div className="flex items-center space-x-1.5 bg-rose-500/10 border border-rose-500/30 px-2 py-1 rounded-lg">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+                    <span className="text-rose-300 font-bold">Auto-Kill</span>
                   </div>
                 </div>
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+              </div>
+
+              {/* Card 4: Server Telemetry */}
+              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Server Telemetry</p>
+                  <div className="flex items-center space-x-2 mt-1.5">
+                    <span className="text-[11px] font-mono font-bold text-emerald-400">CPU Load: 14.2%</span>
+                    <div className="flex gap-0.5">
+                      {[1,2,3,4,5,6].map(i => (
+                        <div key={i} className={'w-1.5 h-3 rounded-sm ' + (i <= 3 ? 'bg-emerald-400 animate-pulse shadow-[0_0_4px_#10b981]' : 'bg-slate-700')}></div>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-[10px] font-mono text-cyan-400 font-bold mt-1">Active Rules: 38 Rules</p>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
               </div>
 
             </div>
 
-            {/* ── MAIN AUDIT STREAM TERMINAL (Full Width & Dynamic Height) ── */}
-            <div className="flex-1 flex flex-col min-h-0 p-5 bg-[#070b12]">
+            {/* ── MAIN SECURITY LOG TERMINAL (Full Width & Height) ── */}
+            <div className="flex-1 flex flex-col min-h-0 p-5 bg-[#050912]">
               
-              <div className="flex-1 flex flex-col min-h-0 bg-[#0b1019] border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="flex-1 flex flex-col min-h-0 bg-[#091122]/90 border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
                 
-                {/* Terminal Control Bar */}
-                <div className="px-5 py-3 bg-[#101726] border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                {/* Log Terminal Header with Severity Filters */}
+                <div className="px-5 py-3 bg-[#0d162d] border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
                   <div className="flex items-center space-x-3">
                     <div className="flex space-x-1.5">
-                      <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
-                      <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-                      <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-rose-500/80 shadow-[0_0_6px_#f43f5e]"></div>
+                      <div className="w-3 h-3 rounded-full bg-amber-500/80 shadow-[0_0_6px_#f97316]"></div>
+                      <div className="w-3 h-3 rounded-full bg-emerald-500/80 shadow-[0_0_6px_#10b981]"></div>
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-200 tracking-wider">LIVE AUDIT STREAM TERMINAL</span>
+                    <span className="text-xs font-mono font-bold text-slate-200 tracking-wider">KPK4444 // LIVE SECURITY INCIDENT INTELLIGENCE FEED</span>
                   </div>
 
                   {/* Filter Pills */}
                   <div className="flex items-center space-x-2 text-[10px] font-mono">
-                    <span className="text-slate-400 font-sans mr-1">Severity:</span>
+                    <span className="text-slate-400 font-sans mr-1 font-bold">Severity Filter:</span>
                     {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM'].map(f => (
                       <button
                         key={f}
                         onClick={() => setFilterLogs(f)}
-                        className={'px-3 py-1 rounded-lg font-bold transition-all ' + (filterLogs === f ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'bg-slate-800/60 text-slate-400 hover:text-slate-200 border border-slate-700/60')}
+                        className={'px-3.5 py-1 rounded-lg font-bold transition-all duration-200 ' + (filterLogs === f ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'bg-slate-800/60 text-slate-400 hover:text-slate-200 border border-slate-700/60')}
                       >
                         {f}
                       </button>
@@ -2103,14 +2119,14 @@ export default function Dashboard() {
                       <p className="text-xs text-slate-500 mt-1">No matching threat logs recorded for domain under filter [{filterLogs}].</p>
                     </div>
                   ) : filteredLogs.map((l) => (
-                    <div key={l._id} className="bg-[#101726]/90 border border-slate-800/90 hover:border-slate-700 rounded-xl p-4 transition duration-200 space-y-3">
+                    <div key={l._id} className="bg-[#0c1429]/90 border border-slate-800/90 hover:border-cyan-500/40 rounded-xl p-4 transition duration-200 space-y-3 shadow-md hover:shadow-[0_0_15px_rgba(0,180,255,0.06)]">
                       
                       {/* Log Badge Row */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/60 pb-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
                         <div className="flex items-center space-x-2.5">
-                          <span className={'px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ' + (
-                            l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' :
-                            l.severity === 'HIGH' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
+                          <span className={'px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ' + (
+                            l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.2)]' :
+                            l.severity === 'HIGH' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_8px_rgba(249,115,22,0.2)]' :
                             'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40'
                           )}>
                             {l.severity}
@@ -2120,7 +2136,7 @@ export default function Dashboard() {
 
                         <div className="flex items-center space-x-3 text-xs font-mono">
                           <span className="text-slate-400">{new Date(l.timestamp).toLocaleString()}</span>
-                          <span className="px-2.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold">
+                          <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold shadow-[0_0_8px_rgba(6,182,212,0.1)]">
                             IP: {l.ipAddress}
                           </span>
                         </div>
@@ -2128,8 +2144,11 @@ export default function Dashboard() {
 
                       {/* Snippet / Code Payload Box */}
                       {l.snippet && (
-                        <div className="bg-[#050810] border border-slate-800/90 rounded-lg p-3 font-mono text-xs overflow-x-auto">
-                          <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1 font-sans">Attack Payload Snippet</div>
+                        <div className="bg-[#040812] border border-slate-800/90 rounded-xl p-3 font-mono text-xs overflow-x-auto relative group">
+                          <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1.5 font-sans font-bold flex items-center justify-between">
+                            <span>Attack Payload Snippet</span>
+                            <span className="text-rose-400 font-mono">MALICIOUS_CODE_DETECTED</span>
+                          </div>
                           <code className="text-rose-300 break-all leading-relaxed">{l.snippet}</code>
                         </div>
                       )}
@@ -2137,7 +2156,7 @@ export default function Dashboard() {
                       {/* User Agent */}
                       {l.userAgent && (
                         <div className="text-[11px] font-mono text-slate-500 truncate">
-                          <span className="text-slate-600 font-sans">User-Agent:</span> {l.userAgent}
+                          <span className="text-slate-600 font-sans font-bold">User-Agent:</span> {l.userAgent}
                         </div>
                       )}
                     </div>
