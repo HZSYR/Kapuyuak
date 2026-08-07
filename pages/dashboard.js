@@ -1945,226 +1945,310 @@ export default function Dashboard() {
       </div>
 
       {/* ── ADVANCED DOMAIN SECURITY DASHBOARD (View Logs) ── */}
-      {viewKeyLogs && (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-slate-900 dark:bg-black overflow-hidden font-sans selection:bg-rose-500/30 text-slate-300">
-          {/* Hardware Background Matrix */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_40%,transparent_100%)] pointer-events-none"></div>
-          
-          {/* Top Navbar */}
-          <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/50 backdrop-blur-md">
-            <div className="flex items-center gap-4">
-              {/* Animated Core Chip */}
-              <div className="relative w-12 h-12 flex items-center justify-center">
-                <div className="absolute inset-0 border-2 border-emerald-500/30 rounded-lg animate-[spin_10s_linear_infinite]"></div>
-                <div className="absolute inset-2 border border-emerald-400/50 rounded animate-[spin_5s_linear_infinite_reverse]"></div>
-                <div className="w-4 h-4 bg-emerald-500 rounded-sm shadow-[0_0_15px_#10b981] animate-pulse"></div>
-              </div>
-              <div>
-                <h2 className="text-2xl font-black text-white tracking-wider uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{viewKeyLogs}</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <p className="text-[10px] font-mono text-emerald-400 tracking-widest uppercase">KPK4444 Shield Active</p>
+      {viewKeyLogs && (() => {
+        const domainLogs = logs.filter(l => l.domain === viewKeyLogs);
+        const critCount = domainLogs.filter(l => l.severity === 'CRITICAL').length;
+        const highCount = domainLogs.filter(l => l.severity === 'HIGH').length;
+        const medCount = domainLogs.filter(l => l.severity === 'MEDIUM').length;
+        const total = domainLogs.length;
+        return (
+          <div className="fixed inset-0 z-[100] flex flex-col bg-black overflow-hidden font-sans text-slate-300 select-none">
+            <style>{`
+              @keyframes pkt { 0%{left:0%;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{left:100%;opacity:0} }
+              @keyframes pktRev { 0%{right:0%;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{right:100%;opacity:0} }
+              @keyframes scanLine { 0%{top:-5%} 100%{top:105%} }
+              @keyframes matrixFall { 0%{transform:translateY(-100%);opacity:1} 100%{transform:translateY(100vh);opacity:0} }
+              @keyframes glitch { 0%,100%{clip-path:inset(0 0 100% 0)} 10%{clip-path:inset(30% 0 50% 0)} 20%{clip-path:inset(60% 0 10% 0)} 30%{clip-path:inset(0 0 80% 0)} 40%{clip-path:inset(80% 0 0 0)} 50%{clip-path:inset(10% 0 60% 0)} }
+              @keyframes killPulse { 0%,100%{box-shadow:0 0 10px #ef4444,0 0 20px #ef4444} 50%{box-shadow:0 0 30px #ef4444,0 0 60px #ef4444,0 0 90px #ef4444} }
+              @keyframes aiProcess { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+              @keyframes folderOpen { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(0.85)} }
+              @keyframes nodeGlow { 0%,100%{opacity:0.3} 50%{opacity:1} }
+              .drag-handle { cursor: grab; }
+              .drag-handle:active { cursor: grabbing; }
+            `}</style>
+
+            {/* Matrix rain background */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+              {[...Array(15)].map((_, i) => (
+                <div key={i} className="absolute text-emerald-500 font-mono text-xs leading-4"
+                  style={{ left:`${i*7}%`, animation:`matrixFall ${3+i*0.5}s linear infinite`, animationDelay:`${i*0.3}s` }}>
+                  {['01','10','0x','FF','A9','3B','7C','E1','00','11'].map((c,j) => <div key={j}>{c}</div>)}
                 </div>
+              ))}
+            </div>
+            {/* Grid overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.04)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+            {/* Scan line effect */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute w-full h-8 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent" style={{ animation:'scanLine 4s linear infinite' }}></div>
+            </div>
+
+            {/* ── TOP NAV BAR ── */}
+            <div className="relative z-20 flex items-center justify-between px-5 py-2.5 border-b border-emerald-500/20 bg-black/80 backdrop-blur-md shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
+                  <div className="absolute inset-0 border-2 border-emerald-500/40 rounded-lg animate-[spin_8s_linear_infinite]"></div>
+                  <div className="absolute inset-1.5 border border-emerald-400/60 rounded animate-[spin_4s_linear_infinite_reverse]"></div>
+                  <div className="w-3 h-3 bg-emerald-400 rounded-sm shadow-[0_0_12px_#10b981] animate-pulse"></div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-black text-white tracking-widest uppercase">{viewKeyLogs}</h2>
+                    <span className="text-[9px] font-mono text-emerald-400 bg-emerald-900/30 border border-emerald-500/30 px-1.5 py-0.5 rounded">ACTIVE</span>
+                  </div>
+                  <p className="text-[9px] font-mono text-emerald-500/70 tracking-widest">KPK4444 SHIELD v3.5 — MONITORING ACTIVE</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center gap-4 text-[9px] font-mono">
+                  <span className="text-rose-400">{critCount} CRITICAL</span>
+                  <span className="text-orange-400">{highCount} HIGH</span>
+                  <span className="text-yellow-400">{medCount} MED</span>
+                  <span className="text-white font-black">{total} TOTAL</span>
+                </div>
+                <button onClick={() => setViewKeyLogs(null)} className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded text-white font-bold text-[10px] transition group">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  CLOSE
+                </button>
               </div>
             </div>
-            
-            <button onClick={() => setViewKeyLogs(null)} className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white font-bold uppercase tracking-widest text-xs transition duration-300 group shadow-lg">
-              <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-              Close Link
-            </button>
-          </div>
 
-          {/* Main Dashboard Content */}
-          <style>{`
-            @keyframes packetTravel {
-              0% { left: 0%; opacity: 0; }
-              10% { opacity: 1; }
-              90% { opacity: 1; }
-              100% { left: 100%; opacity: 0; }
-            }
-            @keyframes packetTravelReverse {
-              0% { right: 0%; opacity: 0; }
-              10% { opacity: 1; }
-              90% { opacity: 1; }
-              100% { right: 100%; opacity: 0; }
-            }
-          `}</style>
-          <div className="relative z-10 flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-            {logs.filter(l => l.domain === viewKeyLogs).length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center">
-                <div className="w-24 h-24 mb-6 relative">
-                  <div className="absolute inset-0 rounded-full border-4 border-dashed border-slate-700 animate-[spin_10s_linear_infinite]"></div>
-                  <div className="absolute inset-4 rounded-full border-2 border-slate-600"></div>
-                </div>
-                <h3 className="text-xl font-mono text-slate-500 uppercase tracking-widest">No Threat Signatures Detected</h3>
-                <p className="text-sm text-slate-600 mt-2">The system is actively monitoring incoming traffic.</p>
-              </div>
-            ) : (
-              <div className="max-w-7xl mx-auto flex flex-col gap-6">
-                
-                {/* Top Section: Holographic Architecture Simulation */}
-                <div className="w-full bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-                  {/* Data grid background */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-30"></div>
-                  
-                  {/* Attacker Node */}
-                  <div className="relative z-10 flex flex-col items-center w-32">
-                    <div className="w-16 h-16 rounded-full border-2 border-rose-500/50 flex items-center justify-center bg-rose-500/10 shadow-[0_0_20px_#f43f5e] relative">
-                      <div className="absolute inset-0 rounded-full border border-rose-500 border-dashed animate-[spin_4s_linear_infinite]"></div>
-                      <svg className="w-8 h-8 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            {/* ── MAIN BODY: 2 columns, fixed height, no vertical scroll ── */}
+            <div className="relative z-10 flex-1 flex overflow-hidden p-3 gap-3">
+
+              {/* LEFT COLUMN: Hologram Map (draggable) + Stats */}
+              <div className="flex flex-col gap-3 w-[340px] shrink-0">
+
+                {/* Holographic Network Map Panel */}
+                <div className="bg-[#020b06]/90 border border-emerald-500/20 rounded-xl relative overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.1)] flex-1 flex flex-col">
+                  {/* Panel header */}
+                  <div className="drag-handle px-3 py-2 border-b border-emerald-500/20 bg-black/60 flex items-center justify-between shrink-0">
+                    <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest">⬡ Hologram Network Map</span>
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-rose-500/60"></div>
+                      <div className="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+                      <div className="w-2 h-2 rounded-full bg-emerald-500/60"></div>
                     </div>
-                    <span className="text-[10px] text-rose-400 font-bold uppercase tracking-widest mt-3 text-center">Malicious<br/>Actor</span>
                   </div>
 
-                  {/* Path 1 (Attacker to OJS) */}
-                  <div className="relative flex-1 h-px bg-white/10 hidden md:block">
-                    <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-rose-500 shadow-[0_0_10px_#f43f5e] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite' }}></div>
-                    <div className="absolute top-1/2 -translate-y-1/2 w-2 h-[2px] bg-rose-400 shadow-[0_0_10px_#f43f5e] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite 0.4s' }}></div>
-                  </div>
+                  {/* Hologram body */}
+                  <div className="relative flex-1 flex flex-col items-center justify-center p-4 gap-4">
+                    {/* Subtle grid */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.06)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+                    {/* Glow orb */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-emerald-500/5 blur-[30px] animate-pulse"></div>
 
-                  {/* OJS Client Node */}
-                  <div className="relative z-10 flex flex-col items-center w-32">
-                    <div className="w-20 h-20 rounded-xl border border-blue-500/50 flex items-center justify-center bg-blue-500/10 shadow-[0_0_30px_#3b82f6] relative overflow-hidden">
-                      <div className="absolute inset-0 bg-[linear-gradient(0deg,transparent_50%,rgba(59,130,246,0.1)_50%)] bg-[length:100%_4px] animate-[pulse_3s_infinite]"></div>
-                      <div className="absolute w-full h-0.5 bg-blue-400/50 shadow-[0_0_10px_#3b82f6] top-0 animate-[ping_4s_infinite]"></div>
-                      <svg className="w-10 h-10 text-blue-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    </div>
-                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mt-3 text-center">Target Domain</span>
-                    <span className="text-[9px] text-blue-400/50 font-mono mt-1 text-center truncate w-full">{viewKeyLogs}</span>
-                  </div>
+                    {/* Row: Attacker → OJS → Shield */}
+                    <div className="relative z-10 flex items-center w-full justify-between gap-1">
 
-                  {/* Path 2 (OJS to Shield) */}
-                  <div className="relative flex-1 h-px bg-white/10 hidden md:block">
-                    <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-emerald-500 shadow-[0_0_10px_#10b981] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite' }}></div>
-                    <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-rose-500 shadow-[0_0_10px_#f43f5e] rounded-full" style={{ animation: 'packetTravel 1.5s linear infinite 0.7s' }}></div>
-                    {/* Return path (blocked) */}
-                    <div className="absolute top-1/2 -translate-y-1/2 w-8 h-[2px] bg-red-500 shadow-[0_0_10px_#ef4444] rounded-full" style={{ animation: 'packetTravelReverse 1.5s linear infinite 1.4s' }}></div>
-                  </div>
+                      {/* ATTACKER NODE */}
+                      <div className="flex flex-col items-center gap-1 w-16">
+                        <div className="w-12 h-12 rounded-full border border-rose-500/60 bg-rose-950/60 flex items-center justify-center relative shadow-[0_0_15px_rgba(244,63,94,0.4)]">
+                          <div className="absolute inset-0 rounded-full border border-rose-500/40 border-dashed animate-[spin_3s_linear_infinite]"></div>
+                          {/* Skull icon */}
+                          <svg className="w-6 h-6 text-rose-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1 13v1H9v-1H8v-1.54C6.19 12.29 5 10.77 5 9c0-3.31 2.69-6 6-6s6 2.69 6 6c0 1.77-1.19 3.29-3 4.46V14h-1v1h-2z"/><circle cx="10" cy="10" r="1"/><circle cx="14" cy="10" r="1"/></svg>
+                        </div>
+                        <span className="text-[8px] text-rose-400 font-bold text-center leading-tight">ATTACKER</span>
+                      </div>
 
-                  {/* KPK4444 Shield Node */}
-                  <div className="relative z-10 flex flex-col items-center w-32">
-                    <div className="w-24 h-24 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-500/10 shadow-[0_0_40px_#10b981] relative">
-                      <div className="absolute inset-[-10px] rounded-full border border-emerald-500/30 animate-[ping_2s_infinite]"></div>
-                      <div className="absolute inset-[-20px] rounded-full border border-emerald-500/10 animate-[spin_6s_linear_infinite] border-t-transparent border-b-transparent"></div>
-                      <div className="absolute inset-2 border border-emerald-400/50 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
-                      <svg className="w-12 h-12 text-emerald-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <span className="text-[12px] text-emerald-400 font-black uppercase tracking-widest mt-4 drop-shadow-[0_0_5px_#10b981] text-center">KPK4444<br/>Shield</span>
-                  </div>
-                </div>
+                      {/* Wire Attacker → OJS */}
+                      <div className="flex-1 h-px bg-rose-500/20 relative overflow-hidden">
+                        <div className="absolute top-1/2 -translate-y-1/2 w-3 h-[2px] bg-rose-500 shadow-[0_0_8px_#f43f5e] rounded-full" style={{animation:'pkt 1.2s linear infinite'}}></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 w-2 h-[2px] bg-rose-400 rounded-full" style={{animation:'pkt 1.2s linear infinite', animationDelay:'0.4s'}}></div>
+                      </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                  {/* Hardware Status & Analytics Column */}
-                  <div className="lg:col-span-1 space-y-6">
-                    {/* Status Panel */}
-                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[50px]"></div>
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Hardware Diagnostics</h3>
-                      
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-mono text-slate-500">CPU LOAD</span>
-                          <div className="flex gap-1">
-                            {[1,2,3,4,5,6,7,8].map(i => (
-                              <div key={i} className={`w-2 h-4 rounded-sm ${i < 4 ? 'bg-emerald-500 shadow-[0_0_5px_#10b981]' : i < 7 ? 'bg-emerald-500/30' : 'bg-slate-800'} animate-pulse`} style={{ animationDelay: `${i * 0.1}s` }}></div>
-                            ))}
+                      {/* OJS / FOLDER NODE */}
+                      <div className="flex flex-col items-center gap-1 w-16">
+                        <div className="w-12 h-12 rounded-lg border border-blue-500/60 bg-blue-950/60 flex items-center justify-center relative shadow-[0_0_15px_rgba(59,130,246,0.4)]" style={{animation:'folderOpen 2s ease-in-out infinite'}}>
+                          <div className="absolute inset-0 rounded-lg bg-blue-500/10 animate-pulse"></div>
+                          {/* Folder icon */}
+                          <svg className="w-7 h-7 text-blue-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 7a2 2 0 012-2h3.586a1 1 0 01.707.293L10.707 6.707A1 1 0 0011.414 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
+                        </div>
+                        <span className="text-[8px] text-blue-400 font-bold text-center leading-tight">OJS {viewKeyLogs.substring(0,8)}</span>
+                      </div>
+
+                      {/* Wire OJS → AI */}
+                      <div className="flex-1 h-px bg-violet-500/20 relative overflow-hidden">
+                        <div className="absolute top-1/2 -translate-y-1/2 w-3 h-[2px] bg-violet-500 shadow-[0_0_8px_#8b5cf6] rounded-full" style={{animation:'pkt 1s linear infinite', animationDelay:'0.2s'}}></div>
+                        <div className="absolute top-1/2 -translate-y-1/2 w-3 h-[2px] bg-rose-500 shadow-[0_0_8px_#f43f5e] rounded-full" style={{animation:'pkt 1s linear infinite', animationDelay:'0.6s'}}></div>
+                      </div>
+
+                      {/* AI PROCESSOR NODE */}
+                      <div className="flex flex-col items-center gap-1 w-16">
+                        <div className="w-12 h-12 rounded-lg border border-violet-500/60 bg-violet-950/60 flex items-center justify-center relative overflow-hidden shadow-[0_0_15px_rgba(139,92,246,0.4)]">
+                          {/* Animated gradient bg for AI */}
+                          <div className="absolute inset-0 opacity-40" style={{background:'linear-gradient(135deg,#4c1d95,#6d28d9,#7c3aed,#4c1d95)',backgroundSize:'300% 300%',animation:'aiProcess 2s linear infinite'}}></div>
+                          <svg className="w-6 h-6 text-violet-300 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                          {/* Processing dots */}
+                          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+                            {[0,1,2].map(i => <div key={i} className="w-1 h-1 rounded-full bg-violet-400 animate-bounce" style={{animationDelay:`${i*0.2}s`}}></div>)}
                           </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-mono text-slate-500">THREAT DEFLECTION</span>
-                          <span className="text-lg font-black text-emerald-400 font-mono">99.9%</span>
+                        <span className="text-[8px] text-violet-400 font-bold text-center leading-tight">AI ENGINE</span>
+                      </div>
+
+                      {/* Wire AI → Shield */}
+                      <div className="flex-1 h-px bg-emerald-500/20 relative overflow-hidden">
+                        <div className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-emerald-500 shadow-[0_0_8px_#10b981] rounded-full" style={{animation:'pkt 0.9s linear infinite'}}></div>
+                        {/* Kill packet (blocked) */}
+                        <div className="absolute top-1/2 -translate-y-1/2 w-5 h-[2px] bg-red-600 shadow-[0_0_8px_#dc2626] rounded-full" style={{animation:'pktRev 1.2s linear infinite', animationDelay:'0.5s'}}></div>
+                      </div>
+
+                      {/* KPK4444 SHIELD NODE */}
+                      <div className="flex flex-col items-center gap-1 w-16">
+                        <div className="w-12 h-12 rounded-full border-2 border-emerald-500/60 bg-emerald-950/60 flex items-center justify-center relative shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                          <div className="absolute inset-[-6px] rounded-full border border-emerald-500/30 animate-[ping_2s_infinite]"></div>
+                          <div className="absolute inset-1 border border-emerald-400/50 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
+                          <svg className="w-6 h-6 text-emerald-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         </div>
-                        <div className="flex justify-between items-center border-t border-white/5 pt-4">
-                          <span className="text-[10px] font-mono text-slate-500">TOTAL ATTACKS PREVENTED</span>
-                          <span className="text-2xl font-black text-white">{logs.filter(l => l.domain === viewKeyLogs).length.toLocaleString()}</span>
+                        <span className="text-[8px] text-emerald-400 font-black text-center leading-tight">SHIELD</span>
+                      </div>
+
+                      {/* Wire → KILL */}
+                      <div className="flex-1 h-px bg-red-500/20 relative overflow-hidden">
+                        <div className="absolute top-1/2 -translate-y-1/2 w-3 h-[2px] bg-red-500 shadow-[0_0_8px_#ef4444] rounded-full" style={{animation:'pkt 0.8s linear infinite', animationDelay:'0.1s'}}></div>
+                      </div>
+
+                      {/* KILL SYSTEM NODE */}
+                      <div className="flex flex-col items-center gap-1 w-16">
+                        <div className="w-12 h-12 rounded-lg border border-red-600/80 bg-red-950/60 flex items-center justify-center relative" style={{animation:'killPulse 1.5s ease-in-out infinite'}}>
+                          <svg className="w-6 h-6 text-red-400 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                          {/* Flicker overlay */}
+                          <div className="absolute inset-0 bg-red-600/20 rounded-lg" style={{animation:'nodeGlow 0.8s ease-in-out infinite'}}></div>
                         </div>
+                        <span className="text-[8px] text-red-400 font-black text-center leading-tight">KILL SYS</span>
                       </div>
                     </div>
 
-                    {/* Visual Distribution Chart */}
-                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Threat Vectors</h3>
-                      <div className="space-y-4">
-                        {['CRITICAL', 'HIGH', 'MEDIUM'].map(sev => {
-                          const count = logs.filter(l => l.domain === viewKeyLogs && l.severity === sev).length;
-                          const total = logs.filter(l => l.domain === viewKeyLogs).length;
-                          const pct = total > 0 ? (count / total) * 100 : 0;
-                          const color = sev === 'CRITICAL' ? 'bg-rose-500' : sev === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500';
-                          const glow = sev === 'CRITICAL' ? 'shadow-[0_0_10px_#f43f5e]' : sev === 'HIGH' ? 'shadow-[0_0_10px_#f97316]' : 'shadow-[0_0_10px_#eab308]';
-                          
-                          return (
-                            <div key={sev} className="relative">
-                              <div className="flex justify-between text-[10px] font-bold mb-1">
-                                <span className={sev === 'CRITICAL' ? 'text-rose-400' : sev === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}>{sev}</span>
-                                <span className="text-white">{count}</span>
-                              </div>
-                              <div className="w-full h-1.5 bg-black rounded-full overflow-hidden">
-                                <div className={`h-full ${color} ${glow} transition-all duration-1000`} style={{ width: `${pct}%` }}></div>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
+                    {/* Legend row */}
+                    <div className="relative z-10 flex items-center justify-center gap-4 text-[8px] font-mono">
+                      <div className="flex items-center gap-1"><div className="w-4 h-[2px] bg-rose-500 shadow-[0_0_4px_#f43f5e]"></div><span className="text-rose-400">Attack</span></div>
+                      <div className="flex items-center gap-1"><div className="w-4 h-[2px] bg-violet-500 shadow-[0_0_4px_#8b5cf6]"></div><span className="text-violet-400">AI Scan</span></div>
+                      <div className="flex items-center gap-1"><div className="w-4 h-[2px] bg-emerald-500 shadow-[0_0_4px_#10b981]"></div><span className="text-emerald-400">Clear</span></div>
+                      <div className="flex items-center gap-1"><div className="w-4 h-[2px] bg-red-500 shadow-[0_0_4px_#ef4444]"></div><span className="text-red-400">Kill</span></div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Threat Log Terminal Stream */}
-                  <div className="lg:col-span-3">
-                    <div className="bg-[#0a0a0c]/90 backdrop-blur-2xl border border-white/10 rounded-2xl flex flex-col h-[60vh] lg:h-full shadow-2xl overflow-hidden">
-                      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-black/40">
-                        <div className="flex gap-2">
-                          <div className="w-3 h-3 rounded-full bg-rose-500/50 shadow-[0_0_5px_#f43f5e]"></div>
-                          <div className="w-3 h-3 rounded-full bg-yellow-500/50 shadow-[0_0_5px_#eab308]"></div>
-                          <div className="w-3 h-3 rounded-full bg-emerald-500/50 shadow-[0_0_5px_#10b981]"></div>
+                {/* Stats + Threat Vectors (compact) */}
+                <div className="bg-[#020b06]/90 border border-emerald-500/20 rounded-xl p-3 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    {[
+                      {label:'Critical', val: critCount, color:'text-rose-400', glow:'shadow-[0_0_10px_#f43f5e40]', bg:'bg-rose-500/10 border-rose-500/20'},
+                      {label:'High', val: highCount, color:'text-orange-400', glow:'shadow-[0_0_10px_#f9731640]', bg:'bg-orange-500/10 border-orange-500/20'},
+                      {label:'Total', val: total, color:'text-white', glow:'', bg:'bg-white/5 border-white/10'},
+                    ].map(s => (
+                      <div key={s.label} className={`border rounded-lg p-2 text-center ${s.bg}`}>
+                        <p className={`text-xl font-black font-mono ${s.color}`}>{s.val}</p>
+                        <p className="text-[8px] text-slate-500 uppercase tracking-wider">{s.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    {[['CRITICAL', critCount, 'bg-rose-500', 'shadow-[0_0_8px_#f43f5e]', 'text-rose-400'],
+                      ['HIGH', highCount, 'bg-orange-500', 'shadow-[0_0_8px_#f97316]', 'text-orange-400'],
+                      ['MEDIUM', medCount, 'bg-yellow-500', 'shadow-[0_0_8px_#eab308]', 'text-yellow-400']].map(([sev,cnt,col,glow,tc]) => (
+                      <div key={sev}>
+                        <div className="flex justify-between text-[9px] font-bold mb-0.5">
+                          <span className={tc}>{sev}</span><span className="text-white">{cnt}</span>
                         </div>
-                        <div className="flex items-center gap-3">
-                           <span className="flex h-2 w-2 relative">
-                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                             <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                           </span>
-                           <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Live Terminal Log</span>
+                        <div className="w-full h-1 bg-black/60 rounded-full overflow-hidden">
+                          <div className={`h-full ${col} ${glow} transition-all duration-1000`} style={{width:`${total>0?(cnt/total)*100:0}%`}}></div>
                         </div>
                       </div>
-                      
-                      <div className="p-4 flex-1 overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                        {logs.filter(l => l.domain === viewKeyLogs).map(l => (
-                          <div key={l._id} className="group relative border-l-2 border-white/10 hover:border-rose-500 pl-4 py-2 transition-colors">
-                            <div className="flex flex-wrap items-center gap-2 mb-1">
-                              <span className="text-[10px] font-mono text-slate-500">[{new Date(l.timestamp).toLocaleString()}]</span>
-                              <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400' : l.severity === 'HIGH' ? 'bg-orange-500/20 text-orange-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                                {l.severity}
-                              </span>
-                              <span className="text-[10px] font-bold text-white uppercase tracking-wider">{l.category}</span>
-                              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-900/30 border border-cyan-500/30 px-1.5 py-0.5 rounded ml-auto">{l.ipAddress}</span>
-                            </div>
-                            
-                            {l.snippet && (
-                              <div className="mt-2 bg-black/80 border border-rose-900/30 p-3 rounded-lg overflow-hidden relative shadow-[inset_0_0_10px_rgba(0,0,0,1)]">
-                                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(255,0,0,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
-                                <code className="text-[11px] font-mono text-rose-400 break-all relative z-10 leading-relaxed">{l.snippet}</code>
-                              </div>
-                            )}
-                            
-                            {l.userAgent && (
-                              <div className="mt-2 text-[9px] font-mono text-slate-600 line-clamp-1 group-hover:text-slate-400 transition-colors">
-                                UA: {l.userAgent}
-                              </div>
-                            )}
-                          </div>
-                        ))}
+                    ))}
+                  </div>
+                </div>
+
+                {/* Hardware Diagnostics (compact) */}
+                <div className="bg-[#020b06]/90 border border-emerald-500/20 rounded-xl p-3 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Hardware Status</p>
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[9px] font-mono">
+                    {[
+                      ['CPU LOAD', <div className="flex gap-0.5">{[1,2,3,4,5,6,7,8].map(i=><div key={i} className={`w-1.5 h-3 rounded-sm ${i<4?'bg-emerald-500 shadow-[0_0_4px_#10b981]':i<7?'bg-emerald-500/30':'bg-slate-800'} animate-pulse`} style={{animationDelay:`${i*0.1}s`}}></div>)}</div>],
+                      ['DEFLECTION', <span className="text-emerald-400 font-black">99.9%</span>],
+                      ['AI ENGINE', <span className="text-violet-400 font-bold animate-pulse">SCANNING</span>],
+                      ['KILL SYS', <span className="text-red-400 font-bold">ARMED</span>],
+                    ].map(([k,v],i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-slate-600">{k}</span>
+                        {v}
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
 
               </div>
-            )}
+
+              {/* RIGHT COLUMN: Terminal Log (fixed height, scrollable inside) */}
+              <div className="flex-1 flex flex-col min-w-0">
+                <div className="bg-[#020b06]/90 border border-emerald-500/20 rounded-xl flex flex-col overflow-hidden h-full shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+                  {/* Terminal top bar */}
+                  <div className="px-3 py-2 border-b border-emerald-500/20 bg-black/60 flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500/70 shadow-[0_0_5px_#f43f5e]"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70 shadow-[0_0_5px_#eab308]"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70 shadow-[0_0_5px_#10b981]"></div>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">KPK4444 // LIVE THREAT TERMINAL</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="flex h-1.5 w-1.5 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
+                      </span>
+                      <span className="text-[9px] font-mono text-rose-400">REC</span>
+                    </div>
+                  </div>
+
+                  {/* Scrollable logs area */}
+                  <div className="flex-1 overflow-y-auto p-3 space-y-2" style={{scrollbarWidth:'thin', scrollbarColor:'rgba(16,185,129,0.2) transparent'}}>
+                    {domainLogs.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center">
+                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-slate-700 animate-[spin_10s_linear_infinite] mb-4"></div>
+                        <p className="text-slate-500 font-mono text-sm uppercase tracking-widest">No Threats Detected</p>
+                      </div>
+                    ) : domainLogs.map((l, idx) => (
+                      <div key={l._id} className="group relative border-l-2 border-white/5 hover:border-emerald-500/50 pl-3 py-1.5 transition-all duration-200 rounded-r-lg hover:bg-emerald-500/[0.03]">
+                        {/* Header row */}
+                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                          <span className="text-[9px] font-mono text-slate-600">[{new Date(l.timestamp).toLocaleString()}]</span>
+                          <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${l.severity==='CRITICAL'?'bg-rose-500/20 text-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.3)]':l.severity==='HIGH'?'bg-orange-500/20 text-orange-400':'bg-yellow-500/20 text-yellow-400'}`}>
+                            {l.severity}
+                          </span>
+                          <span className="text-[9px] font-bold text-slate-300 uppercase">{l.category}</span>
+                          <div className="flex items-center gap-1 ml-auto">
+                            {/* Folder icon for file access attacks */}
+                            {(l.category || '').includes('MALWARE') || (l.category || '').includes('UPLOAD') ? (
+                              <svg className="w-3 h-3 text-orange-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+                            ) : null}
+                            <span className="text-[9px] font-mono text-cyan-400 bg-cyan-900/20 border border-cyan-500/20 px-1.5 py-0.5 rounded">{l.ipAddress}</span>
+                          </div>
+                        </div>
+                        {/* Payload */}
+                        {l.snippet && (
+                          <div className="bg-black/80 border border-rose-900/20 p-2 rounded overflow-hidden relative">
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,0,0.025)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
+                            <code className="text-[10px] font-mono text-rose-400 break-all leading-relaxed">{l.snippet}</code>
+                          </div>
+                        )}
+                        {/* UA */}
+                        {l.userAgent && (
+                          <p className="mt-1 text-[8px] font-mono text-slate-700 group-hover:text-slate-500 transition-colors line-clamp-1">UA: {l.userAgent}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
+
+
 
       {/* ── NEW KEY TUTORIAL POPUP ── */}
       {showKeyTutorial && newKeyData && (
@@ -2322,3 +2406,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
