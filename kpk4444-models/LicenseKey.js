@@ -4,7 +4,7 @@ const LicenseKeySchema = new mongoose.Schema({
   apiKey: { type: String, required: true, unique: true, index: true },
   domain: { type: String, required: true },
   ownerName: { type: String, required: true },
-  ojsVersion: { type: String, default: '3.3', enum: ['3.3', '3.4'] },
+  ojsVersion: { type: String, default: '3.3', enum: ['3.3', '3.4', '3.5'] },
   status: { type: String, default: 'active', enum: ['active', 'suspended', 'expired'] },
   plan: { type: String, default: 'standard' },
   createdAt: { type: Date, default: Date.now },
