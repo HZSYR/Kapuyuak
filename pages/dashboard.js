@@ -2319,7 +2319,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Code Body */}
-                <div className="p-4 flex-1 overflow-y-auto overflow-x-hidden max-h-[45vh] custom-scrollbar">
+                <div className="p-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
                   <pre className="text-[11px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap break-words">
                     <code>
                       {selectedOjsVersion === '3.3' ? getFullIndexPhp(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL) : getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL)}
