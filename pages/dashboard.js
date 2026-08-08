@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import Globe3D from '../components/Globe3D';
 
 const getFullIndexPhp = (apiKey, url) => `<?php
 
@@ -1306,11 +1307,64 @@ export default function Dashboard() {
             {/* ── OVERVIEW ── */}
             {tab === 'OVERVIEW' && (
               <div className="space-y-5">
+                
+                {/* CYBER GLOBE SECTION (SafeLine WAF Style) */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-[#050811] dark:from-[#080d1a] dark:to-black border border-slate-700/50 dark:border-indigo-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                  {/* Grid overlay */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(0,200,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,200,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none"></div>
+                  
+                  <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                    
+                    {/* Left: Stats & Top Countries */}
+                    <div className="w-full lg:w-1/3 space-y-6">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 tracking-wide">GLOBAL THREAT MAP</h3>
+                          <p className="text-[10px] text-cyan-500/70 font-mono tracking-widest uppercase">Live Geo-Location Targeting</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Top Attack Origins</p>
+                        
+                        {/* Dummy Stats for Simulation */}
+                        {[
+                          { country: 'China', count: '14,592', color: 'from-rose-500 to-red-600', percent: 'w-[85%]' },
+                          { country: 'United States', count: '8,241', color: 'from-orange-500 to-amber-500', percent: 'w-[60%]' },
+                          { country: 'Singapore', count: '3,105', color: 'from-cyan-500 to-blue-500', percent: 'w-[35%]' },
+                          { country: 'Russia', count: '1,894', color: 'from-indigo-400 to-indigo-600', percent: 'w-[20%]' },
+                          { country: 'Indonesia', count: '943', color: 'from-slate-500 to-slate-700', percent: 'w-[10%]' }
+                        ].map((stat, i) => (
+                          <div key={i} className="group flex flex-col gap-1.5">
+                            <div className="flex justify-between items-end">
+                              <span className="text-xs text-slate-300 font-semibold">{stat.country}</span>
+                              <span className="text-[10px] text-cyan-400 font-mono font-bold">{stat.count}</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                              <div className={`h-full rounded-full bg-gradient-to-r ${stat.color} ${stat.percent} group-hover:opacity-80 transition-opacity`}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Right: The 3D Globe */}
+                    <div className="w-full lg:w-2/3 flex justify-center items-center">
+                      <div className="w-full max-w-[450px]">
+                        <Globe3D />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {statsCards.map((s, i) => (
-                    <div key={i} className="bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl p-5 rounded-xl border border-indigo-200/60 dark:border-white/10 hover:border-indigo-300 dark:border-white/10 shadow-sm hover:shadow-indigo-100 dark:shadow-none transition">
-                      <p className="text-indigo-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-2">{s.title}</p>
-                      <p className={`text-3xl font-bold tracking-tighter ${s.color}`}>{s.value}</p>
+                    <div key={i} className="bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl p-5 rounded-xl border border-indigo-200/60 dark:border-white/10 hover:border-indigo-300 dark:border-white/10 shadow-sm hover:shadow-indigo-100 dark:shadow-none transition group">
+                      <p className="text-indigo-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-2 group-hover:text-indigo-600 dark:group-hover:text-gray-300 transition-colors">{s.title}</p>
+                      <p className={`text-3xl font-black tracking-tighter ${s.color} drop-shadow-sm`}>{s.value}</p>
                     </div>
                   ))}
                 </div>
