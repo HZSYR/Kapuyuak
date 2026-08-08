@@ -43,7 +43,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
                 return {
                   lat: parseFloat(data.latitude),
                   lng: parseFloat(data.longitude),
-                  label: `${data.city || 'Unknown'}, ${data.country}`,
+                  label: data.city ? `${data.city}, ${data.country}` : (data.region ? `${data.region}, ${data.country}` : data.country),
                   country: data.country,
                   count: counts[ip] || 1,
                   size: Math.min(0.1 + ((counts[ip] || 1) * 0.05), 0.3)
@@ -120,6 +120,42 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
       return () => controls.removeEventListener('change', handleZoom);
     }
   }, [GlobeComponent]);
+  const getTooltipHtml = (d) => `
+    <style>
+      @keyframes cyber-popup {
+        0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+        70% { transform: scale(1.05) translateY(-2px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .cyber-tooltip {
+        animation: cyber-popup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        background: rgba(10, 15, 30, 0.85);
+        border: 1px solid ${d.color || '#ff0033'};
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        color: #fff;
+        box-shadow: 0 0 15px ${d.color ? d.color + '80' : 'rgba(255, 0, 51, 0.5)'}, inset 0 0 10px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        position: relative;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .cyber-tooltip::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 2px;
+        background: ${d.color || '#ff0033'};
+        box-shadow: 0 0 10px ${d.color || '#ff0033'};
+      }
+    </style>
+    <div class="cyber-tooltip">
+      <b style="color:${d.color || '#ff4455'};font-size:15px;letter-spacing:1px;text-transform:uppercase;">${d.label}</b><br/>
+      <div style="margin-top:6px;font-size:13px;display:flex;align-items:center;gap:6px;">
+        ${d.count ? `<span style="color:#ffaa00;text-shadow:0 0 5px rgba(255,170,0,0.5)">⚡ ${d.count.toLocaleString()} ATTACKS BLOCKED</span>` : '<span style="color:#00ffff;text-shadow:0 0 5px rgba(0,255,255,0.5)">🛡️ SISTEM OJS TERLINDUNGI</span>'}
+      </div>
+    </div>
+  `;
 
   return (
     <div ref={containerRef} className="w-full h-full flex items-center justify-center cursor-move">
@@ -149,8 +185,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
 
           // ── Radar Rings ──
           ringsData={[
-            { lat: -0.9471, lng: 100.3511, maxR: 2, propagationSpeed: 1.5, repeatPeriod: 1000, color: '#00ffff' },
-            ...attackMarkers.map(m => ({ lat: m.lat, lng: m.lng, maxR: 1.2, propagationSpeed: 1, repeatPeriod: 1500, color: '#ff0033' }))
+            { lat: -0.9471, lng: 100.3511, maxR: 2, propagationSpeed: 1.5, repeatPeriod: 1000, color: '#00ffff', label: 'SERVER PUSAT (Padang, Indonesia)' },
+            ...attackMarkers.map(m => ({ lat: m.lat, lng: m.lng, maxR: 1.2, propagationSpeed: 1, repeatPeriod: 1500, color: '#ff0033', label: m.label, count: m.count }))
           ]}
           ringLat="lat"
           ringLng="lng"
@@ -159,13 +195,9 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           ringPropagationSpeed="propagationSpeed"
           ringRepeatPeriod="repeatPeriod"
 
-          // ── Label on hover ──
-          pointLabel={(d) => `
-            <div style="background:rgba(0,0,0,0.85);border:1px solid ${d.color || '#ff2233'};padding:8px 12px;border-radius:8px;font-size:12px;font-family:monospace;color:#fff;box-shadow: 0 0 10px ${d.color || 'rgba(255, 0, 0, 0.5)'};">
-              <b style="color:${d.color || '#ff4455'};font-size:14px;">${d.label}</b><br/>
-              ${d.count ? `<span style="color:#ffaa00">⚡ ${d.count.toLocaleString()} attacks blocked</span>` : '<span style="color:#00ffff">🛡️ Sistem OJS Terlindungi</span>'}
-            </div>
-          `}
+          // ── Label on hover (applied to both points and rings for easier hovering) ──
+          pointLabel={(d) => getTooltipHtml(d)}
+          ringLabel={(d) => getTooltipHtml(d)}
 
           // ── Atmosphere ──
           showAtmosphere={true}
