@@ -118,7 +118,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           backgroundColor="rgba(0,0,0,0)"
 
           // ── HD Earth textures for maximum realism ──
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
           bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           
           // ── Attack marker dots ──
