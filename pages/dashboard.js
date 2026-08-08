@@ -1173,7 +1173,8 @@ export default function Dashboard() {
 
         {/* ── FLOATING DETACHED SIDEBAR CARD (GAMBANG MELAYANG) ───────────────────────────────────────────────────── */}
         <aside className={`
-          fixed lg:sticky top-3 bottom-3 lg:top-0 lg:bottom-auto z-40 h-auto lg:h-full max-h-full
+          fixed lg:sticky top-3 lg:top-0 left-3 lg:left-auto z-40
+          h-[calc(100dvh-24px)] sm:h-[calc(100dvh-32px)] lg:h-full max-h-full
           w-64 bg-slate-900/95 dark:bg-[#0b101d]/95 backdrop-blur-2xl
           border border-slate-700/60 dark:border-cyan-500/20 rounded-3xl
           shadow-[0_10px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(6,182,212,0.1)]
