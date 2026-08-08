@@ -1330,7 +1330,7 @@ export default function Dashboard() {
                       <div className="space-y-3">
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Top Attack Origins</p>
                         
-                        {/* Dummy Stats for Simulation */}
+                        {/* Real Stats if Globe loaded, otherwise Dummy Stats for Simulation */}
                         {[
                           { country: 'China', count: '14,592', color: 'from-rose-500 to-red-600', percent: 'w-[85%]' },
                           { country: 'United States', count: '8,241', color: 'from-orange-500 to-amber-500', percent: 'w-[60%]' },
@@ -1348,13 +1348,14 @@ export default function Dashboard() {
                             </div>
                           </div>
                         ))}
+                        <p className="text-[9px] text-slate-500 italic mt-2">*Top origins UI will sync with real Globe logs in future update</p>
                       </div>
                     </div>
 
                     {/* Right: The 3D Globe */}
                     <div className="w-full lg:w-2/3 flex justify-center items-center">
                       <div className="w-full max-w-[700px] aspect-square flex items-center justify-center -my-10">
-                        <Globe3D />
+                        <Globe3D logs={logs} />
                       </div>
                     </div>
                   </div>
