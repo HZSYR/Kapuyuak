@@ -95,19 +95,21 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
     return () => window.removeEventListener('resize', measure);
   }, []);
 
-  // Auto-rotate the globe
+  // Auto-rotate and zoom limits
   useEffect(() => {
     if (!globeRef.current) return;
     const controls = globeRef.current.controls();
     if (controls) {
       controls.autoRotate = true;
       controls.autoRotateSpeed = 0.6;
-      controls.enableZoom = false;
+      controls.enableZoom = true;
+      controls.minDistance = 150; // Prevent zooming too close (inside the globe)
+      controls.maxDistance = 500; // Prevent zooming too far out
     }
   }, [GlobeComponent]);
 
   return (
-    <div ref={containerRef} className="w-full h-full flex items-center justify-center">
+    <div ref={containerRef} className="w-full h-full flex items-center justify-center cursor-move">
       {GlobeComponent ? (
         <GlobeComponent
           ref={globeRef}
@@ -115,10 +117,10 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           height={dimensions.height}
           backgroundColor="rgba(0,0,0,0)"
 
-          // ── Earth textures from three-globe's own CDN (reliable) ──
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-
+          // ── HD Earth textures for maximum realism ──
+          globeImageUrl="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg"
+          bumpImageUrl="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg"
+          
           // ── Attack marker dots ──
           pointsData={attackMarkers}
           pointLat="lat"
