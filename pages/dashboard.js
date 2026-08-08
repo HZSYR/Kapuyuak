@@ -744,13 +744,25 @@ export default function Dashboard() {
   const [isPrivacyMode, setIsPrivacyMode] = useState(false);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
 
-  // Load theme from localStorage on mount
+  // Load theme and privacy mode from localStorage on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('kpk4444_theme');
     if (savedTheme === 'light') {
       setIsDarkTheme(false);
     }
+    const savedPrivacy = localStorage.getItem('kpk4444_privacy');
+    if (savedPrivacy === 'true') {
+      setIsPrivacyMode(true);
+    }
   }, []);
+
+  const togglePrivacyMode = () => {
+    setIsPrivacyMode(prev => {
+      const next = !prev;
+      localStorage.setItem('kpk4444_privacy', String(next));
+      return next;
+    });
+  };
 
   // Sync theme to DOM and localStorage
   useEffect(() => {
@@ -1276,7 +1288,7 @@ export default function Dashboard() {
               <div className="flex items-center space-x-3 sm:space-x-4">
                 {/* Privacy Blur Toggle Button */}
                 <button
-                  onClick={() => setIsPrivacyMode(!isPrivacyMode)}
+                  onClick={togglePrivacyMode}
                   className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold font-mono transition-all duration-300 flex items-center space-x-1.5 shrink-0 ${
                     isPrivacyMode
                       ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.25)]'
@@ -1478,7 +1490,18 @@ export default function Dashboard() {
                           <span className="w-2 h-2 rounded-full bg-amber-500"></span>
                           Recent Threat Detections
                         </h3>
-                        <span className="text-[10px] text-slate-400 font-mono">{logs.length} TOTAL</span>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={togglePrivacyMode}
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition flex items-center gap-1 ${
+                              isPrivacyMode ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'bg-slate-200/70 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-white/10 hover:text-slate-200'
+                            }`}
+                            title="Click to toggle Privacy Blur for Domains & IPs"
+                          >
+                            {isPrivacyMode ? '🔒 BLUR: ON' : '👁️ BLUR: OFF'}
+                          </button>
+                          <span className="text-[10px] text-slate-400 font-mono">{logs.length} TOTAL</span>
+                        </div>
                       </div>
 
                       {logs.length === 0 ? (
@@ -1490,12 +1513,22 @@ export default function Dashboard() {
                               <div className="flex items-center space-x-2.5 min-w-0">
                                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
                                 <div className="min-w-0">
-                                  <p className={`text-xs font-bold text-slate-800 dark:text-white truncate ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.domain}</p>
+                                  <p
+                                    style={isPrivacyMode ? { filter: 'blur(8px)', WebkitFilter: 'blur(8px)', userSelect: 'none', transition: 'all 0.3s' } : {}}
+                                    className="text-xs font-bold text-slate-800 dark:text-white truncate hover:filter-none"
+                                  >
+                                    {l.domain}
+                                  </p>
                                   <p className="text-[10px] text-slate-400 font-mono">{new Date(l.timestamp).toLocaleTimeString()}</p>
                                 </div>
                               </div>
                               <div className="flex items-center space-x-2 flex-shrink-0">
-                                <span className={`font-mono text-[10px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-300/40 dark:border-white/10 ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.ipAddress}</span>
+                                <span
+                                  style={isPrivacyMode ? { filter: 'blur(8px)', WebkitFilter: 'blur(8px)', userSelect: 'none', transition: 'all 0.3s' } : {}}
+                                  className="font-mono text-[10px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-300/40 dark:border-white/10 hover:filter-none"
+                                >
+                                  {l.ipAddress}
+                                </span>
                                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${l.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : l.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>{l.category || 'THREAT'}</span>
                               </div>
                             </div>
