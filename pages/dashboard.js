@@ -2129,7 +2129,7 @@ export default function Dashboard() {
         </main>
       </div>
 
-      {/* ── ADVANCED DOMAIN SECURITY DASHBOARD (View Logs) ── */}
+      {/* ── ADVANCED DOMAIN SECURITY DASHBOARD (View Logs Modal) ── */}
       {viewKeyLogs && (() => {
         const domainLogs = logs.filter(l => l.domain === viewKeyLogs);
         const critCount = domainLogs.filter(l => l.severity === 'CRITICAL').length;
@@ -2146,206 +2146,175 @@ export default function Dashboard() {
         });
 
         return (
-          <div className="fixed inset-0 z-[100] flex flex-col bg-[#050912] text-slate-200 font-sans select-none overflow-hidden">
-            
-            {/* ── TOP EXECUTIVE HEADER ── */}
-            <div className="flex items-center justify-between px-6 py-3.5 bg-[#0a1224]/90 border-b border-cyan-500/20 backdrop-blur-xl shrink-0 shadow-lg">
-              <div className="flex items-center space-x-4">
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 via-cyan-500/20 to-emerald-500/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(0,200,255,0.15)]">
-                  <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="flex items-center space-x-3">
-                    <h2 className="text-lg font-black text-white tracking-tight uppercase font-mono drop-shadow-[0_0_10px_rgba(0,200,255,0.3)]">{viewKeyLogs}</h2>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
-                      SHIELD ACTIVE
-                    </span>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050914]/85 backdrop-blur-xl animate-fade-in">
+            <div className="relative bg-[#0c1427]/95 border border-slate-700/80 rounded-3xl shadow-[0_0_80px_rgba(0,180,255,0.15)] max-w-6xl w-full mx-auto overflow-hidden flex flex-col max-h-[85vh]">
+              
+              {/* ── TOP EXECUTIVE HEADER ── */}
+              <div className="flex items-center justify-between px-6 py-3.5 bg-[#091020]/90 border-b border-cyan-500/20 backdrop-blur-xl shrink-0">
+                <div className="flex items-center space-x-3.5">
+                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500/20 via-cyan-500/20 to-emerald-500/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(0,200,255,0.15)]">
+                    <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
                   </div>
-                  <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest mt-0.5">KPK4444 SECURITY SHIELD v3.5 — REALTIME THREAT STREAM</p>
+                  <div>
+                    <div className="flex items-center space-x-3">
+                      <h2 className="text-base font-black text-white tracking-tight uppercase font-mono">{viewKeyLogs}</h2>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/40">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
+                        SHIELD ACTIVE
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest mt-0.5">KPK4444 SECURITY SHIELD v3.5 — REALTIME THREAT STREAM</p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Close Button */}
-              <div className="flex items-center space-x-3">
+                {/* Close Button */}
                 <button 
                   onClick={() => setViewKeyLogs(null)} 
-                  className="flex items-center space-x-2 px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:border-rose-500/60 rounded-xl text-xs font-bold transition-all duration-200 shadow-lg shadow-rose-500/10"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl text-xs font-bold transition"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  <span>Close Dashboard</span>
+                  <span>Close</span>
                 </button>
               </div>
-            </div>
 
-            {/* ── TOP HORIZONTAL WIDGETS ROW (Glossy 4-Card HUD) ── */}
-            <div className="px-6 py-3.5 bg-[#070e1c] border-b border-slate-800/80 grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
-              
-              {/* Card 1: Total Threats */}
-              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 flex items-center justify-between shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all">
-                <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Threats</p>
-                  <div className="flex items-baseline space-x-2.5 mt-1">
-                    <span className="text-2xl font-black text-white font-mono drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">{total}</span>
-                    <span className="text-[10px] font-bold font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-md">99.9% Deflection</span>
-                  </div>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.2)]">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-6z" /></svg>
-                </div>
-              </div>
-
-              {/* Card 2: Severity Ratio */}
-              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all flex flex-col justify-between">
-                <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  <span>Severity Ratio</span>
-                  <span className="text-rose-400 font-mono font-black">{critCount} CRITICAL</span>
-                </div>
+              {/* ── TOP HORIZONTAL WIDGETS ROW (Glossy 4-Card HUD) ── */}
+              <div className="px-5 py-3 bg-[#070e1c] border-b border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
                 
-                {/* Segmented bar */}
-                <div className="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden flex my-1.5 border border-slate-700/50">
-                  <div className="h-full bg-rose-500 shadow-[0_0_8px_#f43f5e] transition-all duration-500" style={{ width: total > 0 ? (critCount / total * 100) + '%' : '0%' }}></div>
-                  <div className="h-full bg-amber-500 shadow-[0_0_8px_#f97316] transition-all duration-500" style={{ width: total > 0 ? (highCount / total * 100) + '%' : '0%' }}></div>
-                  <div className="h-full bg-yellow-500 shadow-[0_0_8px_#eab308] transition-all duration-500" style={{ width: total > 0 ? (medCount / total * 100) + '%' : '0%' }}></div>
+                {/* Card 1: Total Threats */}
+                <div className="bg-[#111d38]/80 border border-slate-700/60 rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total Threats</p>
+                    <div className="flex items-baseline space-x-2 mt-0.5">
+                      <span className="text-xl font-black text-white font-mono">{total}</span>
+                      <span className="text-[9px] font-bold font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">99.9% Deflection</span>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-6z" /></svg>
+                  </div>
                 </div>
 
-                <div className="flex justify-between items-center text-[10px] font-mono font-bold">
-                  <span className="text-rose-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]"></span>{critCount} Crit</span>
-                  <span className="text-amber-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_6px_#f97316]"></span>{highCount} High</span>
-                  <span className="text-yellow-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_6px_#eab308]"></span>{medCount} Med</span>
+                {/* Card 2: Severity Ratio */}
+                <div className="bg-[#111d38]/80 border border-slate-700/60 rounded-xl p-3 flex flex-col justify-between">
+                  <div className="flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                    <span>Severity Ratio</span>
+                    <span className="text-rose-400 font-mono font-black">{critCount} CRITICAL</span>
+                  </div>
+                  
+                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden flex my-1 border border-slate-700/50">
+                    <div className="h-full bg-rose-500" style={{ width: total > 0 ? (critCount / total * 100) + '%' : '0%' }}></div>
+                    <div className="h-full bg-amber-500" style={{ width: total > 0 ? (highCount / total * 100) + '%' : '0%' }}></div>
+                    <div className="h-full bg-yellow-500" style={{ width: total > 0 ? (medCount / total * 100) + '%' : '0%' }}></div>
+                  </div>
+
+                  <div className="flex justify-between items-center text-[9px] font-mono font-bold">
+                    <span className="text-rose-400">{critCount} Crit</span>
+                    <span className="text-amber-400">{highCount} High</span>
+                    <span className="text-yellow-400">{medCount} Med</span>
+                  </div>
                 </div>
+
+                {/* Card 3: Active Protection Modules */}
+                <div className="bg-[#111d38]/80 border border-slate-700/60 rounded-xl p-3 flex flex-col justify-between">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Active Protection</p>
+                  <div className="flex items-center justify-between text-[9px] font-mono mt-1">
+                    <span className="text-emerald-300 font-bold bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">OJS Guard</span>
+                    <span className="text-cyan-300 font-bold bg-cyan-500/10 border border-cyan-500/30 px-1.5 py-0.5 rounded">AI 12ms</span>
+                    <span className="text-rose-300 font-bold bg-rose-500/10 border border-rose-500/30 px-1.5 py-0.5 rounded">Auto-Kill</span>
+                  </div>
+                </div>
+
+                {/* Card 4: Server Telemetry */}
+                <div className="bg-[#111d38]/80 border border-slate-700/60 rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Telemetry</p>
+                    <p className="text-[10px] font-mono font-bold text-emerald-400 mt-0.5">CPU Load: 14.2%</p>
+                    <p className="text-[9px] font-mono text-cyan-400 font-bold mt-0.5">38 Rules Active</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                </div>
+
               </div>
 
-              {/* Card 3: Active Protection Modules */}
-              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all flex flex-col justify-between">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Protection Modules</p>
-                <div className="flex items-center justify-between text-[10px] font-mono mt-2">
-                  <div className="flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 rounded-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span className="text-emerald-300 font-bold">OJS Guard</span>
-                  </div>
-                  <div className="flex items-center space-x-1.5 bg-cyan-500/10 border border-cyan-500/30 px-2 py-1 rounded-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span className="text-cyan-300 font-bold">AI 12ms</span>
-                  </div>
-                  <div className="flex items-center space-x-1.5 bg-rose-500/10 border border-rose-500/30 px-2 py-1 rounded-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
-                    <span className="text-rose-300 font-bold">Auto-Kill</span>
-                  </div>
-                </div>
-              </div>
+              {/* ── MAIN SECURITY LOG TERMINAL (Scrollable List) ── */}
+              <div className="flex-1 overflow-hidden p-4 bg-[#050912] flex flex-col">
+                
+                <div className="flex-1 flex flex-col bg-[#091122]/90 border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
+                  
+                  {/* Log Terminal Header with Severity Filters */}
+                  <div className="px-4 py-2.5 bg-[#0d162d] border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-200 tracking-wider">LIVE INTELLIGENCE STREAM</span>
+                    </div>
 
-              {/* Card 4: Server Telemetry */}
-              <div className="bg-gradient-to-b from-[#111d38]/90 to-[#0b1326]/90 border border-slate-700/60 hover:border-cyan-500/40 rounded-2xl p-3.5 shadow-[0_0_20px_rgba(0,180,255,0.06)] transition-all flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Server Telemetry</p>
-                  <div className="flex items-center space-x-2 mt-1.5">
-                    <span className="text-[11px] font-mono font-bold text-emerald-400">CPU Load: 14.2%</span>
-                    <div className="flex gap-0.5">
-                      {[1,2,3,4,5,6].map(i => (
-                        <div key={i} className={'w-1.5 h-3 rounded-sm ' + (i <= 3 ? 'bg-emerald-400 animate-pulse shadow-[0_0_4px_#10b981]' : 'bg-slate-700')}></div>
+                    {/* Filter Pills */}
+                    <div className="flex items-center space-x-1.5 text-[10px] font-mono">
+                      {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM'].map(f => (
+                        <button
+                          key={f}
+                          onClick={() => setFilterLogs(f)}
+                          className={'px-2.5 py-0.5 rounded font-bold transition ' + (filterLogs === f ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/60' : 'bg-slate-800/60 text-slate-400 border border-slate-700/60')}
+                        >
+                          {f}
+                        </button>
                       ))}
                     </div>
                   </div>
-                  <p className="text-[10px] font-mono text-cyan-400 font-bold mt-1">Active Rules: 38 Rules</p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-              </div>
 
-            </div>
+                  {/* Log Feed List (Scrollable) */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar max-h-[320px]">
+                    {filteredLogs.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-slate-500 py-12">
+                        <div className="w-10 h-10 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center mb-2">
+                          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <p className="text-xs font-bold text-slate-300">No Security Events Found</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">No matching threat logs recorded for domain under filter [{filterLogs}].</p>
+                      </div>
+                    ) : filteredLogs.map((l) => (
+                      <div key={l._id} className="bg-[#0c1429]/90 border border-slate-800/90 hover:border-cyan-500/40 rounded-xl p-3 transition space-y-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className={'px-2 py-0.5 rounded text-[9px] font-bold uppercase ' + (
+                              l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' :
+                              l.severity === 'HIGH' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
+                              'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40'
+                            )}>
+                              {l.severity}
+                            </span>
+                            <span className="text-xs font-bold text-slate-200">{l.category}</span>
+                          </div>
 
-            {/* ── MAIN SECURITY LOG TERMINAL (Full Width & Height) ── */}
-            <div className="flex-1 flex flex-col min-h-0 p-5 bg-[#050912]">
-              
-              <div className="flex-1 flex flex-col min-h-0 bg-[#091122]/90 border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
-                
-                {/* Log Terminal Header with Severity Filters */}
-                <div className="px-5 py-3 bg-[#0d162d] border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex space-x-1.5">
-                      <div className="w-3 h-3 rounded-full bg-rose-500/80 shadow-[0_0_6px_#f43f5e]"></div>
-                      <div className="w-3 h-3 rounded-full bg-amber-500/80 shadow-[0_0_6px_#f97316]"></div>
-                      <div className="w-3 h-3 rounded-full bg-emerald-500/80 shadow-[0_0_6px_#10b981]"></div>
-                    </div>
-                    <span className="text-xs font-mono font-bold text-slate-200 tracking-wider">KPK4444 // LIVE SECURITY INCIDENT INTELLIGENCE FEED</span>
-                  </div>
+                          <div className="flex items-center space-x-2 text-[10px] font-mono">
+                            <span className="text-slate-400">{new Date(l.timestamp).toLocaleString()}</span>
+                            <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold">
+                              IP: {l.ipAddress}
+                            </span>
+                          </div>
+                        </div>
 
-                  {/* Filter Pills */}
-                  <div className="flex items-center space-x-2 text-[10px] font-mono">
-                    <span className="text-slate-400 font-sans mr-1 font-bold">Severity Filter:</span>
-                    {['ALL', 'CRITICAL', 'HIGH', 'MEDIUM'].map(f => (
-                      <button
-                        key={f}
-                        onClick={() => setFilterLogs(f)}
-                        className={'px-3.5 py-1 rounded-lg font-bold transition-all duration-200 ' + (filterLogs === f ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'bg-slate-800/60 text-slate-400 hover:text-slate-200 border border-slate-700/60')}
-                      >
-                        {f}
-                      </button>
+                        {l.snippet && (
+                          <div className="bg-[#040812] border border-slate-800/90 rounded-lg p-2 font-mono text-[11px]">
+                            <code className="text-rose-300 break-all">{l.snippet}</code>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
-                </div>
 
-                {/* Log Feed List (Full height scrollable) */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-3.5 custom-scrollbar">
-                  {filteredLogs.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-500 py-20">
-                      <div className="w-14 h-14 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center mb-3">
-                        <svg className="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <p className="text-sm font-bold text-slate-300">No Security Events Found</p>
-                      <p className="text-xs text-slate-500 mt-1">No matching threat logs recorded for domain under filter [{filterLogs}].</p>
-                    </div>
-                  ) : filteredLogs.map((l) => (
-                    <div key={l._id} className="bg-[#0c1429]/90 border border-slate-800/90 hover:border-cyan-500/40 rounded-xl p-4 transition duration-200 space-y-3 shadow-md hover:shadow-[0_0_15px_rgba(0,180,255,0.06)]">
-                      
-                      {/* Log Badge Row */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
-                        <div className="flex items-center space-x-2.5">
-                          <span className={'px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ' + (
-                            l.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.2)]' :
-                            l.severity === 'HIGH' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_8px_rgba(249,115,22,0.2)]' :
-                            'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40'
-                          )}>
-                            {l.severity}
-                          </span>
-                          <span className="text-xs font-bold text-slate-200">{l.category}</span>
-                        </div>
-
-                        <div className="flex items-center space-x-3 text-xs font-mono">
-                          <span className="text-slate-400">{new Date(l.timestamp).toLocaleString()}</span>
-                          <span className="px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold shadow-[0_0_8px_rgba(6,182,212,0.1)]">
-                            IP: {l.ipAddress}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Snippet / Code Payload Box */}
-                      {l.snippet && (
-                        <div className="bg-[#040812] border border-slate-800/90 rounded-xl p-3 font-mono text-xs overflow-x-auto relative group">
-                          <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1.5 font-sans font-bold flex items-center justify-between">
-                            <span>Attack Payload Snippet</span>
-                            <span className="text-rose-400 font-mono">MALICIOUS_CODE_DETECTED</span>
-                          </div>
-                          <code className="text-rose-300 break-all leading-relaxed">{l.snippet}</code>
-                        </div>
-                      )}
-
-                      {/* User Agent */}
-                      {l.userAgent && (
-                        <div className="text-[11px] font-mono text-slate-500 truncate">
-                          <span className="text-slate-600 font-sans font-bold">User-Agent:</span> {l.userAgent}
-                        </div>
-                      )}
-                    </div>
-                  ))}
                 </div>
 
               </div>
@@ -2362,58 +2331,58 @@ export default function Dashboard() {
 
       {/* ── NEW KEY TUTORIAL POPUP ── */}
       {showKeyTutorial && newKeyData && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050914]/80 backdrop-blur-xl animate-fade-in">
-          <div className="relative bg-[#0c1427]/95 border border-slate-700/80 rounded-3xl shadow-[0_0_80px_rgba(0,180,255,0.15)] max-w-6xl w-full mx-auto overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#050914]/85 backdrop-blur-xl animate-fade-in">
+          <div className="relative bg-[#0c1427]/95 border border-slate-700/80 rounded-3xl shadow-[0_0_80px_rgba(0,180,255,0.15)] max-w-5xl w-full mx-auto overflow-hidden flex flex-col max-h-[85vh]">
             
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-[#091020]/90 backdrop-blur-md">
-              <div className="flex items-center space-x-3.5">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <div className="px-6 py-3.5 border-b border-slate-800 flex justify-between items-center bg-[#091020]/90 backdrop-blur-md">
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
                   <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                  <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2">
                     <span>System Secured & License Generated</span>
-                    <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full uppercase">OJS {selectedOjsVersion}</span>
+                    <span className="text-[9px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full uppercase">OJS {selectedOjsVersion}</span>
                   </h3>
-                  <p className="text-[11px] text-slate-400 font-mono tracking-wider mt-0.5">KPK4444 SHIELD INTEGRATION ASSISTANT</p>
+                  <p className="text-[10px] text-slate-400 font-mono tracking-wider mt-0.5">KPK4444 SHIELD INTEGRATION ASSISTANT</p>
                 </div>
               </div>
               <button 
                 onClick={() => {setShowKeyTutorial(false); setNewKeyData(null);}} 
-                className="p-2 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-rose-500/20 hover:border-rose-500/40 border border-slate-700/60 rounded-xl transition-all"
+                className="p-1.5 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-rose-500/20 border border-slate-700/60 rounded-xl transition"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             
             {/* Modal Body: 2 Columns Side-by-Side */}
-            <div className="p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 custom-scrollbar">
+            <div className="p-5 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 custom-scrollbar">
               
               {/* Left Column (5 Cols): API Key & Quick Action */}
-              <div className="lg:col-span-5 flex flex-col space-y-5 justify-between">
+              <div className="lg:col-span-5 flex flex-col space-y-4 justify-between">
                 
                 {/* Secret Key Card */}
-                <div className="bg-[#111c35]/90 border border-slate-700/80 rounded-2xl p-4 shadow-lg space-y-2.5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                <div className="bg-[#111c35]/90 border border-slate-700/80 rounded-2xl p-3.5 shadow-lg space-y-2">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
                     <span>Your Secret API Key</span>
                     <span className="text-emerald-400 font-mono font-bold">READY</span>
                   </p>
-                  <div className="bg-[#060b17] p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-2">
-                    <code className="text-emerald-400 font-mono text-xs break-all leading-relaxed font-bold">{newKeyData.apiKey}</code>
+                  <div className="bg-[#060b17] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between gap-2">
+                    <code className="text-emerald-400 font-mono text-[11px] break-all leading-relaxed font-bold">{newKeyData.apiKey}</code>
                     <button 
                       onClick={handleCopyKey} 
-                      className={'px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shrink-0 flex items-center space-x-1.5 ' + (copiedKey ? 'bg-emerald-500 text-slate-950 font-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700')}
+                      className={'px-2.5 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition shrink-0 flex items-center space-x-1 ' + (copiedKey ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700')}
                     >
                       {copiedKey ? (
                         <>
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                           <span>Copied</span>
                         </>
                       ) : (
                         <>
-                          <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                          <span>Copy Key</span>
+                          <svg className="w-3 h-3 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                          <span>Copy</span>
                         </>
                       )}
                     </button>
@@ -2421,36 +2390,30 @@ export default function Dashboard() {
                 </div>
 
                 {/* 1-Click Download Button */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-[#0c1328] to-[#080d1c] border border-cyan-500/20 hover:border-cyan-400/50 rounded-2xl p-5 shadow-[0_0_25px_rgba(0,150,255,0.08)] space-y-4 transition-all duration-300 group/dl">
+                <div className="relative overflow-hidden bg-gradient-to-br from-[#0c1328] to-[#080d1c] border border-cyan-500/20 hover:border-cyan-400/50 rounded-2xl p-4 shadow-md space-y-3 transition group/dl">
                   
-                  {/* Decorative background glow */}
-                  <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover/dl:bg-cyan-500/20 transition-all duration-500"></div>
-
-                  <div className="flex items-center space-x-4 relative z-10">
-                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 border border-cyan-300/40 flex items-center justify-center text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] group-hover/dl:scale-110 transition-transform duration-300">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                  <div className="flex items-center space-x-3 relative z-10">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 border border-cyan-300/40 flex items-center justify-center text-white shadow-md">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </div>
                     <div>
-                      <h4 className="text-[13px] font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-100 tracking-wide drop-shadow-sm">INSTANT INSTALLATION FILE</h4>
-                      <p className="text-[10px] text-cyan-200/60 font-mono mt-0.5">Pre-configured index.php ready to upload</p>
+                      <h4 className="text-xs font-black text-white tracking-wide">INSTANT INSTALLATION FILE</h4>
+                      <p className="text-[9px] text-cyan-200/60 font-mono mt-0.5">Pre-configured index.php ready to upload</p>
                     </div>
                   </div>
 
                   <button 
                     onClick={downloadIndexPhp} 
-                    className={'relative overflow-hidden w-full py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2.5 z-10 ' + (downloaded ? 'bg-emerald-500 text-slate-950 shadow-[0_0_25px_rgba(16,185,129,0.5)] scale-[1.02]' : 'bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white border border-cyan-400/50 shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:shadow-[0_0_35px_rgba(6,182,212,0.5)] hover:scale-[1.02] group/btn')}
+                    className={'w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition flex items-center justify-center space-x-2 z-10 ' + (downloaded ? 'bg-emerald-500 text-slate-950 shadow-md' : 'bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white border border-cyan-400/50 shadow-md')}
                   >
-                    {/* Shimmer Effect */}
-                    {!downloaded && <div className="absolute inset-0 -translate-x-[150%] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover/btn:translate-x-[150%] transition-transform duration-1000 skew-x-12"></div>}
-                    
                     {downloaded ? (
                       <>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                         <span>index.php Downloaded!</span>
                       </>
                     ) : (
                       <>
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         <span>Download index.php</span>
                       </>
                     )}
@@ -2458,20 +2421,20 @@ export default function Dashboard() {
                 </div>
 
                 {/* Quick Steps Guide */}
-                <div className="bg-[#111c35]/90 border border-slate-700/80 rounded-2xl p-4 space-y-2.5">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">3-Step Quick Guide</p>
-                  <div className="space-y-2 text-xs text-slate-300">
-                    <div className="flex items-start space-x-2.5">
-                      <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold flex items-center justify-center shrink-0">1</span>
-                      <p className="text-[11px] leading-relaxed">Download or copy the pre-configured <code className="text-cyan-300 font-mono">index.php</code> file.</p>
+                <div className="bg-[#111c35]/90 border border-slate-700/80 rounded-2xl p-3.5 space-y-2">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">3-Step Quick Guide</p>
+                  <div className="space-y-1.5 text-xs text-slate-300">
+                    <div className="flex items-start space-x-2">
+                      <span className="w-4 h-4 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[9px] font-bold flex items-center justify-center shrink-0">1</span>
+                      <p className="text-[10px] leading-relaxed">Download or copy pre-configured <code className="text-cyan-300 font-mono">index.php</code>.</p>
                     </div>
-                    <div className="flex items-start space-x-2.5">
-                      <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold flex items-center justify-center shrink-0">2</span>
-                      <p className="text-[11px] leading-relaxed">Upload and replace <code className="text-cyan-300 font-mono">index.php</code> in your OJS root folder.</p>
+                    <div className="flex items-start space-x-2">
+                      <span className="w-4 h-4 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[9px] font-bold flex items-center justify-center shrink-0">2</span>
+                      <p className="text-[10px] leading-relaxed">Replace <code className="text-cyan-300 font-mono">index.php</code> in your OJS root folder.</p>
                     </div>
-                    <div className="flex items-start space-x-2.5">
-                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold flex items-center justify-center shrink-0">3</span>
-                      <p className="text-[11px] leading-relaxed">KPK4444 Security Shield is active instantly!</p>
+                    <div className="flex items-start space-x-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[9px] font-bold flex items-center justify-center shrink-0">3</span>
+                      <p className="text-[10px] leading-relaxed">Security Shield is active instantly!</p>
                     </div>
                   </div>
                 </div>
@@ -2479,40 +2442,40 @@ export default function Dashboard() {
               </div>
 
               {/* Right Column (7 Cols): Code Editor View */}
-              <div className="lg:col-span-7 flex flex-col bg-[#060b17] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl min-w-0">
+              <div className="lg:col-span-7 flex flex-col bg-[#060b17] border border-slate-800 rounded-2xl overflow-hidden shadow-xl min-w-0">
                 
                 {/* Code Terminal Header */}
-                <div className="px-4 py-3 bg-[#0d162a] border-b border-slate-800 flex items-center justify-between shrink-0">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex space-x-1.5">
-                      <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
-                      <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-                      <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                <div className="px-3.5 py-2.5 bg-[#0d162a] border-b border-slate-800 flex items-center justify-between shrink-0">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="flex space-x-1">
+                      <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
                     </div>
                     <span className="text-xs font-mono font-bold text-slate-200">index.php — OJS {selectedOjsVersion} Protection Code</span>
                   </div>
 
                   <button 
                     onClick={handleCopyCode} 
-                    className={'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all duration-300 flex items-center space-x-1.5 ' + (copiedCode ? 'bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700')}
+                    className={'px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider transition flex items-center space-x-1.5 ' + (copiedCode ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700')}
                   >
                     {copiedCode ? (
                       <>
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                        <span>Full Code Copied!</span>
+                        <span>Copied!</span>
                       </>
                     ) : (
                       <>
                         <svg className="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                        <span>Copy Full Code</span>
+                        <span>Copy Code</span>
                       </>
                     )}
                   </button>
                 </div>
 
                 {/* Code Body */}
-                <div className="p-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
-                  <pre className="text-[11px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap break-words">
+                <div className="p-3.5 flex-1 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar max-h-[350px]">
+                  <pre className="text-[10px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap break-words">
                     <code>
                       {selectedOjsVersion === '3.3' ? getFullIndexPhp(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL) : getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL)}
                     </code>
