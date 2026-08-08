@@ -122,20 +122,35 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           bumpImageUrl="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg"
           
           // ── Attack marker dots ──
-          pointsData={attackMarkers}
+          pointsData={[
+            { lat: -0.9471, lng: 100.3511, size: 2.0, color: '#00ffff', label: 'SERVER PUSAT (Padang, Indonesia)' },
+            ...attackMarkers
+          ]}
           pointLat="lat"
           pointLng="lng"
-          pointColor={() => '#ff0033'}
-          pointAltitude={0.03}
+          pointColor={(d) => d.color || '#ff0033'}
+          pointAltitude={(d) => d.color ? 0.05 : 0.03}
           pointRadius={(d) => d.size * 1.5}
           pointsMerge={false}
           pointResolution={32}
 
+          // ── Radar Rings ──
+          ringsData={[
+            { lat: -0.9471, lng: 100.3511, maxR: 8, propagationSpeed: 2, repeatPeriod: 800, color: '#00ffff' },
+            ...attackMarkers.map(m => ({ lat: m.lat, lng: m.lng, maxR: 4, propagationSpeed: 1, repeatPeriod: 1500, color: '#ff0033' }))
+          ]}
+          ringLat="lat"
+          ringLng="lng"
+          ringColor={(d) => d.color}
+          ringMaxRadius="maxR"
+          ringPropagationSpeed="propagationSpeed"
+          ringRepeatPeriod="repeatPeriod"
+
           // ── Label on hover ──
           pointLabel={(d) => `
-            <div style="background:rgba(0,0,0,0.85);border:1px solid #ff2233;padding:8px 12px;border-radius:8px;font-size:12px;font-family:monospace;color:#fff;box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);">
-              <b style="color:#ff4455;font-size:14px;">${d.label}</b><br/>
-              <span style="color:#ffaa00">⚡ ${d.count.toLocaleString()} attacks blocked</span>
+            <div style="background:rgba(0,0,0,0.85);border:1px solid ${d.color || '#ff2233'};padding:8px 12px;border-radius:8px;font-size:12px;font-family:monospace;color:#fff;box-shadow: 0 0 10px ${d.color || 'rgba(255, 0, 0, 0.5)'};">
+              <b style="color:${d.color || '#ff4455'};font-size:14px;">${d.label}</b><br/>
+              ${d.count ? `<span style="color:#ffaa00">⚡ ${d.count.toLocaleString()} attacks blocked</span>` : '<span style="color:#00ffff">🛡️ Sistem OJS Terlindungi</span>'}
             </div>
           `}
 
@@ -144,12 +159,12 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           atmosphereColor="#00bbff"
           atmosphereAltitude={0.25}
 
-          // ── Arcs (attack arcs from each origin to a "target" in SE Asia) ──
-          arcsData={attackMarkers.slice(0, 12)}
+          // ── Arcs (attack arcs from each origin to Padang) ──
+          arcsData={attackMarkers}
           arcStartLat={(d) => d.lat}
           arcStartLng={(d) => d.lng}
-          arcEndLat={-6.2088}
-          arcEndLng={106.8456}
+          arcEndLat={-0.9471}
+          arcEndLng={100.3511}
           arcColor={() => ['rgba(255,0,50,0)', 'rgba(255,0,50,1)', 'rgba(255,0,50,0)']}
           arcDashLength={0.5}
           arcDashGap={0.2}
