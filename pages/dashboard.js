@@ -1298,18 +1298,18 @@ export default function Dashboard() {
                 >
                   {isPrivacyMode ? (
                     <>
-                      <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
                       </svg>
-                      <span className="tracking-wider uppercase">PRIVACY BLUR: ON</span>
+                      <span className="tracking-widest uppercase">STEALTH</span>
                     </>
                   ) : (
                     <>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
-                      <span className="tracking-wider uppercase">PRIVACY BLUR: OFF</span>
+                      <span className="tracking-widest uppercase">PUBLIC</span>
                     </>
                   )}
                 </button>
@@ -1498,7 +1498,7 @@ export default function Dashboard() {
                             }`}
                             title="Click to toggle Privacy Blur for Domains & IPs"
                           >
-                            {isPrivacyMode ? '🔒 BLUR: ON' : '👁️ BLUR: OFF'}
+                            {isPrivacyMode ? '🔒 STEALTH' : '👁️ PUBLIC'}
                           </button>
                           <span className="text-[10px] text-slate-400 font-mono">{logs.length} TOTAL</span>
                         </div>
