@@ -741,6 +741,7 @@ export default function Dashboard() {
   const [isGeneratingKey, setIsGeneratingKey] = useState(false);
   const [selectedOjsVersion, setSelectedOjsVersion] = useState('3.3');
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isPrivacyMode, setIsPrivacyMode] = useState(false);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
 
   // Load theme from localStorage on mount
@@ -1272,7 +1273,35 @@ export default function Dashboard() {
                 </h2>
                 <p className="text-indigo-500/80 dark:text-gray-400 text-xs mt-0.5">Real-time threat monitoring</p>
               </div>
-              <div className="flex items-center space-x-4 sm:space-x-5">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                {/* Privacy Blur Toggle Button */}
+                <button
+                  onClick={() => setIsPrivacyMode(!isPrivacyMode)}
+                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold font-mono transition-all duration-300 flex items-center space-x-1.5 shrink-0 ${
+                    isPrivacyMode
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.25)]'
+                      : 'bg-slate-200/70 dark:bg-white/5 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-white/10 hover:bg-slate-300 dark:hover:bg-white/10'
+                  }`}
+                  title="Toggle Privacy Blur for IP & Domain addresses"
+                >
+                  {isPrivacyMode ? (
+                    <>
+                      <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                      </svg>
+                      <span className="tracking-wider uppercase">PRIVACY BLUR: ON</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <span className="tracking-wider uppercase">PRIVACY BLUR: OFF</span>
+                    </>
+                  )}
+                </button>
+
                 {/* Custom Theme Switch (Sun/Moon Slider) */}
                 <button
                   onClick={() => setIsDarkTheme(!isDarkTheme)}
@@ -1461,12 +1490,12 @@ export default function Dashboard() {
                               <div className="flex items-center space-x-2.5 min-w-0">
                                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
                                 <div className="min-w-0">
-                                  <p className="text-xs font-bold text-slate-800 dark:text-white truncate">{l.domain}</p>
+                                  <p className={`text-xs font-bold text-slate-800 dark:text-white truncate ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.domain}</p>
                                   <p className="text-[10px] text-slate-400 font-mono">{new Date(l.timestamp).toLocaleTimeString()}</p>
                                 </div>
                               </div>
                               <div className="flex items-center space-x-2 flex-shrink-0">
-                                <span className="font-mono text-[10px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-300/40 dark:border-white/10">{l.ipAddress}</span>
+                                <span className={`font-mono text-[10px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-300/40 dark:border-white/10 ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.ipAddress}</span>
                                 <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${l.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : l.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>{l.category || 'THREAT'}</span>
                               </div>
                             </div>
@@ -1594,14 +1623,14 @@ export default function Dashboard() {
                           <tr key={k._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
                             <td className="px-4 py-2.5 font-sans">
                               <div className="flex items-center gap-2">
-                                <p className="font-bold text-slate-800 dark:text-white text-xs">{k.domain}</p>
+                                <p className={`font-bold text-slate-800 dark:text-white text-xs ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{k.domain}</p>
                                 {k.ojsVersion && <span className="bg-blue-500/20 text-blue-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase border border-blue-500/30">V{k.ojsVersion}</span>}
                               </div>
                               <p className="text-[10px] text-slate-400 mt-0.5">{k.ownerName}</p>
                             </td>
                             <td className="px-4 py-2.5">
                               <div className="inline-flex items-center space-x-2 bg-slate-200/60 dark:bg-white/5 px-2 py-1 rounded border border-slate-300 dark:border-white/10 cursor-pointer hover:border-emerald-500/40 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
-                                <code className="text-emerald-400 font-mono text-[11px]">{k.apiKey.substring(0, 16)}...</code>
+                                <code className={`text-emerald-400 font-mono text-[11px] ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{k.apiKey.substring(0, 16)}...</code>
                                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">COPY</span>
                               </div>
                             </td>
@@ -1686,7 +1715,7 @@ export default function Dashboard() {
                   {logs.filter(l => filterLogs === 'ALL' || l.severity === 'CRITICAL').map(l => (
                     <div key={l._id} className="bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
-                        <p className="font-bold text-slate-800 dark:text-white text-sm">{l.domain}</p>
+                        <p className={`font-bold text-slate-800 dark:text-white text-sm ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.domain}</p>
                         <div className="flex items-center space-x-1.5">
                           <div className={`w-1.5 h-1.5 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-amber-500'}`} />
                           <span className={`text-[10px] font-bold ${l.severity === 'CRITICAL' ? 'text-rose-400' : l.severity === 'HIGH' ? 'text-orange-400' : 'text-amber-400'}`}>{l.severity}</span>
@@ -1694,7 +1723,7 @@ export default function Dashboard() {
                       </div>
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">{l.category}</p>
                       <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                        <span>{l.ipAddress}</span>
+                        <span className={isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}>{l.ipAddress}</span>
                         <span>{new Date(l.timestamp).toLocaleTimeString()}</span>
                       </div>
                     </div>
@@ -1718,7 +1747,7 @@ export default function Dashboard() {
                         {logs.filter(l => filterLogs === 'ALL' || l.severity === 'CRITICAL').map(l => (
                           <tr key={l._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
                             <td className="px-4 py-2.5 text-slate-400 text-[10px]">{new Date(l.timestamp).toLocaleString()}</td>
-                            <td className="px-4 py-2.5 font-bold text-slate-800 dark:text-white font-sans">{l.domain}</td>
+                            <td className={`px-4 py-2.5 font-bold text-slate-800 dark:text-white font-sans ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.domain}</td>
                             <td className="px-4 py-2.5">
                               <div className="flex items-center space-x-1.5">
                                 <div className={`w-1.5 h-1.5 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-amber-500'}`} />
@@ -1727,7 +1756,7 @@ export default function Dashboard() {
                             </td>
                             <td className="px-4 py-2.5 text-slate-300 text-[11px]">{l.category}</td>
                             <td className="px-4 py-2.5">
-                              <span className="font-mono text-cyan-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 text-[10px]">{l.ipAddress}</span>
+                              <span className={`font-mono text-cyan-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 text-[10px] ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{l.ipAddress}</span>
                             </td>
                           </tr>
                         ))}
@@ -2029,7 +2058,7 @@ export default function Dashboard() {
                             <div className="flex items-center justify-between text-xs">
                               <div className="flex items-center gap-2">
                                 <span className={`font-black text-xs ${rankColor}`}>#{idx + 1}</span>
-                                <span className="font-mono text-xs text-slate-200">{ip}</span>
+                                <span className={`font-mono text-xs text-slate-200 ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{ip}</span>
                               </div>
                               <span className="text-[10px] font-bold font-mono text-slate-400">{count.toLocaleString()}x attacks</span>
                             </div>
@@ -2093,12 +2122,12 @@ export default function Dashboard() {
                               <tr key={bip._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
                                 <td className="px-3 py-2 text-[11px]">
                                   {bip.username && bip.username !== 'unknown' ? (
-                                    <span className="text-rose-400 font-bold">@{bip.username}</span>
+                                    <span className={`text-rose-400 font-bold ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>@{bip.username}</span>
                                   ) : (
-                                    <span className="text-rose-400 font-bold">{bip.ip}</span>
+                                    <span className={`text-rose-400 font-bold ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{bip.ip}</span>
                                   )}
                                 </td>
-                                <td className="px-3 py-2 text-sky-400 text-[10px]">{bip.domain || 'unknown'}</td>
+                                <td className={`px-3 py-2 text-sky-400 text-[10px] ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{bip.domain || 'unknown'}</td>
                                 <td className="px-3 py-2 text-[10px] font-mono font-bold text-amber-400">
                                   {formatCountdown(bip.expiresAt)}
                                 </td>
@@ -2188,7 +2217,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <div className="flex items-center space-x-3">
-                      <h2 className="text-base font-black text-white tracking-tight uppercase font-mono">{viewKeyLogs}</h2>
+                      <h2 className={`text-base font-black text-white tracking-tight uppercase font-mono ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>{viewKeyLogs}</h2>
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/40">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1.5"></span>
                         SHIELD ACTIVE
@@ -2329,7 +2358,7 @@ export default function Dashboard() {
 
                           <div className="flex items-center space-x-2 text-[10px] font-mono">
                             <span className="text-slate-400">{new Date(l.timestamp).toLocaleString()}</span>
-                            <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold">
+                            <span className={`px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-bold ${isPrivacyMode ? 'filter blur-[4px] hover:blur-none select-none transition-all duration-300' : ''}`}>
                               IP: {l.ipAddress}
                             </span>
                           </div>
