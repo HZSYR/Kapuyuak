@@ -170,15 +170,19 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
           bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           
-          // ── Attack marker dots ──
+          // ── Attack marker dots & Invisible Hitboxes ──
           pointsData={[
-            { lat: -0.9471, lng: 100.3511, size: 0.2, color: '#00ffff', label: 'SERVER PUSAT (Padang, Indonesia)' },
-            ...attackMarkers
+            // Visual small dots
+            { lat: -0.9471, lng: 100.3511, size: 0.2, color: '#00ffff', label: 'SERVER PUSAT (Padang, Indonesia)', isHitbox: false },
+            ...attackMarkers.map(m => ({ ...m, isHitbox: false })),
+            // Invisible larger hitboxes for super easy hovering
+            { lat: -0.9471, lng: 100.3511, size: 2.0, color: 'rgba(0,0,0,0.01)', label: 'SERVER PUSAT (Padang, Indonesia)', isHitbox: true },
+            ...attackMarkers.map(m => ({ ...m, size: 2.0, color: 'rgba(0,0,0,0.01)', isHitbox: true }))
           ]}
           pointLat="lat"
           pointLng="lng"
-          pointColor={(d) => d.color || '#ff0033'}
-          pointAltitude={(d) => d.color ? 0.05 : 0.03}
+          pointColor={(d) => d.color || (d.isHitbox ? 'rgba(0,0,0,0.01)' : '#ff0033')}
+          pointAltitude={(d) => d.color && !d.isHitbox ? 0.05 : 0.03}
           pointRadius={(d) => d.size * 0.5}
           pointsMerge={false}
           pointResolution={64}
