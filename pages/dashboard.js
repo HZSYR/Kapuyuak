@@ -1149,14 +1149,15 @@ export default function Dashboard() {
           <title>KPK4444 — Dashboard</title>
           <style>{`
             * { font-family: 'Outfit', sans-serif; }
-            body { background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 50%, #fce7f3 100%); background-attachment: fixed; transition: background 0.3s; }
-            html.dark body { background-image: radial-gradient(circle at 50% 0%, #1e3a5f 0%, #1a2035 60%, #141920 100%); background-color: #141920; }
+            html, body, #__next { height: 100%; max-height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #030712; }
+            body { background: #030712; color: #f8fafc; }
+            html.dark body { background: #030712; background-color: #030712; }
             ::-webkit-scrollbar { width: 5px; height: 5px; }
             ::-webkit-scrollbar-track { background: transparent; }
-            ::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 3px; }
-            html.dark ::-webkit-scrollbar-thumb { background: #374151; }
-            select option { background: #eef2ff; color: #312e81; }
-            html.dark select option { background: #1a2035; color: white; }
+            ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+            html.dark ::-webkit-scrollbar-thumb { background: #1e293b; }
+            select option { background: #0f172a; color: white; }
+            html.dark select option { background: #0f172a; color: white; }
           `}</style>
         </Head>
 
@@ -1168,7 +1169,7 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="flex h-screen overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
+      <div className="flex h-screen w-screen overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
 
         {/* ── FLOATING DETACHED SIDEBAR CARD (GAMBANG MELAYANG) ───────────────────────────────────────────────────── */}
         <aside className={`
