@@ -1126,8 +1126,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkTheme ? 'dark' : ''}`}>
-      <div className="min-h-screen bg-transparent dark:bg-[#09090b] text-slate-900 dark:text-gray-300 text-[13px]">
+    <div className={`h-dvh min-h-0 transition-colors duration-300 ${isDarkTheme ? 'dark' : ''}`}>
+      <div className="h-full min-h-0 bg-transparent dark:bg-[#09090b] text-slate-900 dark:text-gray-300 text-[13px]">
         <Head>
           <script src="https://cdn.tailwindcss.com"></script>
           <script dangerouslySetInnerHTML={{__html: `
@@ -1169,15 +1169,15 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="flex min-h-screen overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
+      <div className="flex h-full min-h-0 overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
 
         {/* ── FLOATING DETACHED SIDEBAR CARD (GAMBANG MELAYANG) ───────────────────────────────────────────────────── */}
         <aside className={`
-          fixed lg:sticky top-3 sm:top-4 z-40 h-[calc(100vh-24px)] sm:h-[calc(100vh-32px)]
+          fixed lg:sticky top-3 bottom-3 lg:top-0 lg:bottom-auto z-40 h-auto lg:h-full max-h-full
           w-64 bg-slate-900/95 dark:bg-[#0b101d]/95 backdrop-blur-2xl
           border border-slate-700/60 dark:border-cyan-500/20 rounded-3xl
           shadow-[0_10px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(6,182,212,0.1)]
-          flex flex-col transition-transform duration-300 ease-in-out select-none overflow-hidden shrink-0
+          flex flex-col min-h-0 transition-transform duration-300 ease-in-out select-none overflow-hidden shrink-0
           ${sidebarOpen ? 'translate-x-0 inset-y-3 left-3' : '-translate-x-full lg:translate-x-0'}
         `}>
           {/* Brand Header */}
@@ -1253,7 +1253,7 @@ export default function Dashboard() {
         </aside>
 
         {/* ── MAIN CONTENT (FLOATING CONTAINER) ──────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto flex flex-col min-w-0 h-full rounded-3xl border border-slate-800/80 bg-[#070c18]/60 backdrop-blur-xl shadow-2xl">
+        <main className="flex-1 min-w-0 min-h-0 h-full overflow-y-auto overflow-x-hidden flex flex-col rounded-3xl border border-slate-800/80 bg-[#070c18]/60 backdrop-blur-xl shadow-2xl">
 
           {/* Top bar (visible on mobile) */}
           <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-700 to-blue-800 dark:bg-[#1e2640]/80 backdrop-blur border-b border-indigo-900/20 dark:border-white/10 lg:hidden">
@@ -1277,7 +1277,7 @@ export default function Dashboard() {
             </button>
           </header>
 
-          <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+          <div className="min-h-full p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
             {/* Page header */}
             <div className="flex justify-between items-center mb-6">
               <div>
