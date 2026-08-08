@@ -1169,7 +1169,7 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="flex h-full min-h-0 overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
+      <div className="flex h-[calc(100dvh-24px)] sm:h-[calc(100dvh-32px)] min-h-0 min-w-0 overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
 
         {/* ── FLOATING DETACHED SIDEBAR CARD (GAMBANG MELAYANG) ───────────────────────────────────────────────────── */}
         <aside className={`
