@@ -61,7 +61,17 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
 
         // Pass resolved real data back to dashboard for the Top Origins Sidebar
         if (onMarkersUpdate && typeof onMarkersUpdate === 'function') {
-           onMarkersUpdate(validMarkers);
+           // Aggregate by country for the sidebar
+           const countryMap = {};
+           validMarkers.forEach(m => {
+             if (countryMap[m.country]) {
+               countryMap[m.country].count += m.count;
+             } else {
+               countryMap[m.country] = { ...m };
+             }
+           });
+           const aggregated = Object.values(countryMap);
+           onMarkersUpdate(aggregated);
         }
         
       } catch (e) {
