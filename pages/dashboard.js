@@ -1417,8 +1417,8 @@ export default function Dashboard() {
                           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
-                          <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 tracking-wide">GLOBAL THREAT MAP</h3>
-                          <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest uppercase">Live Geo-Location Targeting</p>
+                          <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 tracking-wide font-mono">GLOBAL RADAR</h3>
+                          <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest uppercase">LIVE GEO-TARGETING</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full backdrop-blur">
@@ -1448,11 +1448,11 @@ export default function Dashboard() {
                     {/* Top Attack Origins Card */}
                     <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-5 shadow-sm">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2 font-mono">
                           <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                          Top Attack Origins
+                          TOP ORIGINS
                         </h3>
-                        <span className="text-[10px] text-slate-400 font-mono">REAL-TIME AGGREGATION</span>
+                        <span className="text-[10px] text-slate-400 font-mono">LIVE COUNT</span>
                       </div>
 
                       <div className="space-y-3">
@@ -1486,9 +1486,9 @@ export default function Dashboard() {
                     {/* Recent Threat Detections Card */}
                     <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-5 shadow-sm">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2 font-mono">
                           <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                          Recent Threat Detections
+                          RECENT THREATS
                         </h3>
                         <div className="flex items-center space-x-2">
                           <button
