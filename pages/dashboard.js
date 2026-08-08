@@ -1307,94 +1307,147 @@ export default function Dashboard() {
 
             {/* ── OVERVIEW ── */}
             {tab === 'OVERVIEW' && (
-              <div className="space-y-5">
+              <div className="space-y-6">
                 
-                {/* CYBER GLOBE SECTION (SafeLine WAF Style) */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-[#050811] dark:from-[#080d1a] dark:to-black border border-slate-700/50 dark:border-indigo-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
-                  {/* Grid overlay */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(0,200,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,200,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none"></div>
-                  
-                  <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-                    
-                    {/* Left: Stats & Top Countries */}
-                    <div className="w-full lg:w-1/3 space-y-6">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 tracking-wide">GLOBAL THREAT MAP</h3>
-                          <p className="text-[10px] text-cyan-500/70 font-mono tracking-widest uppercase">Live Geo-Location Targeting</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Top Attack Origins</p>
-                        
-                        {/* Real Stats if Globe loaded, otherwise Dummy Stats for Simulation */}
-                        {(topOrigins.length > 0 ? topOrigins : [
-                          { country: 'China', count: 14592, color: 'from-rose-500 to-red-600', percent: 'w-[85%]' },
-                          { country: 'United States', count: 8241, color: 'from-orange-500 to-amber-500', percent: 'w-[60%]' },
-                          { country: 'Singapore', count: 3105, color: 'from-cyan-500 to-blue-500', percent: 'w-[35%]' },
-                          { country: 'Russia', count: 1894, color: 'from-indigo-400 to-indigo-600', percent: 'w-[20%]' },
-                          { country: 'Indonesia', count: 943, color: 'from-slate-500 to-slate-700', percent: 'w-[10%]' }
-                        ]).sort((a,b) => b.count - a.count).slice(0, 5).map((stat, i) => (
-                          <div key={i} className="group flex flex-col gap-1.5">
-                            <div className="flex justify-between items-end">
-                              <span className="text-xs text-slate-300 font-semibold">{stat.country}</span>
-                              <span className="text-[10px] text-cyan-400 font-mono font-bold">{typeof stat.count === 'number' ? stat.count.toLocaleString() : stat.count}</span>
-                            </div>
-                            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                              <div className={`h-full rounded-full bg-gradient-to-r ${stat.color || (i === 0 ? 'from-rose-500 to-red-600' : i === 1 ? 'from-orange-500 to-amber-500' : i === 2 ? 'from-cyan-500 to-blue-500' : i === 3 ? 'from-indigo-400 to-indigo-600' : 'from-slate-500 to-slate-700')} group-hover:opacity-80 transition-opacity`} 
-                                   style={stat.percent ? {} : { width: `${Math.max(10, Math.min(100, (stat.count / (topOrigins[0]?.count || 14592)) * 100))}%` }}></div>
-                            </div>
-                          </div>
-                        ))}
-                        <p className="text-[9px] text-slate-500 italic mt-2">*Top origins UI will sync with real Globe logs in future update</p>
-                      </div>
-                    </div>
-
-                    {/* Right: The 3D Globe */}
-                    <div className="w-full lg:w-2/3 flex justify-center items-center">
-                      <div className="w-full max-w-[700px] aspect-square flex items-center justify-center -my-10">
-                        <Globe3D logs={logs} onMarkersUpdate={setTopOrigins} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
+                {/* 1. TOP METRICS GRID */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {statsCards.map((s, i) => (
-                    <div key={i} className="bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl p-5 rounded-xl border border-indigo-200/60 dark:border-white/10 hover:border-indigo-300 dark:border-white/10 shadow-sm hover:shadow-indigo-100 dark:shadow-none transition group">
-                      <p className="text-indigo-500 dark:text-gray-400 text-[10px] font-semibold uppercase tracking-wider mb-2 group-hover:text-indigo-600 dark:group-hover:text-gray-300 transition-colors">{s.title}</p>
-                      <p className={`text-3xl font-black tracking-tighter ${s.color} drop-shadow-sm`}>{s.value}</p>
+                    <div key={i} className="relative overflow-hidden bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl p-5 rounded-2xl border border-indigo-200/60 dark:border-white/10 shadow-sm hover:border-indigo-300 dark:hover:border-cyan-500/30 transition-all duration-300 group">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-indigo-500 dark:text-gray-400 text-[11px] font-bold uppercase tracking-wider mb-1">{s.title}</p>
+                          <p className={`text-3xl font-black tracking-tight ${s.color} drop-shadow-sm`}>{s.value}</p>
+                        </div>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${i === 0 ? 'bg-rose-500/10 text-rose-400' : i === 1 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                          {i === 0 ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                          ) : i === 1 ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-indigo-200/60 dark:border-white/10 shadow-sm p-5">
-                  <h3 className="text-sm font-semibold text-indigo-900 dark:text-white mb-4">Recent Threat Detections</h3>
-                  {logs.length === 0 ? (
-                    <p className="text-center py-8 text-indigo-500/70 dark:text-gray-500 text-sm">No recent threats detected.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {logs.slice(0, 5).map(l => (
-                        <div key={l._id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 rounded-lg bg-indigo-50/60 dark:bg-white/[0.02] border border-indigo-200/50 dark:border-white/10 hover:bg-indigo-100/50 dark:bg-[#1e2640]/50 transition">
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
-                            <div>
-                              <p className="text-xs font-semibold text-indigo-900 dark:text-white">{l.domain}</p>
-                              <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 font-mono mt-0.5">{new Date(l.timestamp).toLocaleString()}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2 ml-5 sm:ml-0">
-                            <span className="font-mono text-[10px] text-indigo-600/80 dark:text-gray-400 bg-indigo-50 dark:bg-[#1e2640]/80 px-2 py-0.5 rounded border border-indigo-200 dark:border-white/10 truncate max-w-[120px]">{l.ipAddress}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded border flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : l.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>{l.category}</span>
-                          </div>
+                {/* 2. MAIN 2-COLUMN GRID (GLOBE LEFT + PANELS RIGHT) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  
+                  {/* LEFT: 3D GLOBE THREAT MAP (lg:col-span-7) */}
+                  <div className="lg:col-span-7 relative overflow-hidden bg-gradient-to-br from-slate-900 via-[#070c18] to-black border border-slate-700/50 dark:border-cyan-500/20 rounded-3xl p-5 shadow-2xl flex flex-col justify-between min-h-[460px]">
+                    {/* Grid background overlay */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(0,200,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,200,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+
+                    {/* Card Header HUD */}
+                    <div className="relative z-10 flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                      ))}
+                        <div>
+                          <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 tracking-wide">GLOBAL THREAT MAP</h3>
+                          <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest uppercase">Live Geo-Location Targeting</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full backdrop-blur">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                        </span>
+                        <span className="text-[10px] font-mono text-cyan-300 font-bold uppercase tracking-wider">TARGET: PADANG (ID)</span>
+                      </div>
                     </div>
-                  )}
+
+                    {/* Globe Center Container */}
+                    <div className="relative z-10 w-full flex items-center justify-center h-[380px] my-auto">
+                      <Globe3D logs={logs} onMarkersUpdate={setTopOrigins} />
+                    </div>
+
+                    {/* Footer note */}
+                    <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-white/5">
+                      <span>INTERACTIVE 3D RADAR MONITOR</span>
+                      <span className="text-cyan-500/80">KPK4444 SHIELD v2.4</span>
+                    </div>
+                  </div>
+
+                  {/* RIGHT: TOP ORIGINS & RECENT THREATS (lg:col-span-5) */}
+                  <div className="lg:col-span-5 space-y-5">
+                    
+                    {/* Top Attack Origins Card */}
+                    <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                          Top Attack Origins
+                        </h3>
+                        <span className="text-[10px] text-slate-400 font-mono">REAL-TIME AGGREGATION</span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {(topOrigins.length > 0 ? topOrigins : [
+                          { country: 'Indonesia', count: 39 },
+                          { country: 'United States', count: 12 },
+                          { country: 'China', count: 8 },
+                          { country: 'Russia', count: 4 },
+                          { country: 'France', count: 1 }
+                        ]).sort((a,b) => b.count - a.count).slice(0, 5).map((stat, i) => {
+                          const maxCount = Math.max(...(topOrigins.length > 0 ? topOrigins : [{count: 39}]).map(o => o.count), 1);
+                          const pct = Math.min(100, Math.round((stat.count / maxCount) * 100));
+                          return (
+                            <div key={i} className="group flex flex-col gap-1">
+                              <div className="flex justify-between items-center text-xs">
+                                <span className="text-slate-700 dark:text-slate-200 font-semibold">{stat.country}</span>
+                                <span className="text-[11px] text-cyan-500 font-mono font-bold">{stat.count.toLocaleString()} attacks</span>
+                              </div>
+                              <div className="h-2 w-full bg-slate-200 dark:bg-slate-800/80 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full bg-gradient-to-r ${i === 0 ? 'from-rose-500 to-red-600' : i === 1 ? 'from-orange-500 to-amber-500' : i === 2 ? 'from-cyan-500 to-blue-500' : i === 3 ? 'from-indigo-400 to-indigo-600' : 'from-slate-500 to-slate-600'} transition-all duration-500`}
+                                  style={{ width: `${pct}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Recent Threat Detections Card */}
+                    <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                          Recent Threat Detections
+                        </h3>
+                        <span className="text-[10px] text-slate-400 font-mono">{logs.length} TOTAL</span>
+                      </div>
+
+                      {logs.length === 0 ? (
+                        <p className="text-center py-6 text-slate-400 text-xs">No recent threats detected.</p>
+                      ) : (
+                        <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
+                          {logs.slice(0, 6).map(l => (
+                            <div key={l._id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 hover:bg-slate-200/50 dark:hover:bg-white/[0.06] transition">
+                              <div className="flex items-center space-x-2.5 min-w-0">
+                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
+                                <div className="min-w-0">
+                                  <p className="text-xs font-bold text-slate-800 dark:text-white truncate">{l.domain}</p>
+                                  <p className="text-[10px] text-slate-400 font-mono">{new Date(l.timestamp).toLocaleTimeString()}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2 flex-shrink-0">
+                                <span className="font-mono text-[10px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-300/40 dark:border-white/10">{l.ipAddress}</span>
+                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${l.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : l.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>{l.category || 'THREAT'}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
                 </div>
               </div>
             )}
