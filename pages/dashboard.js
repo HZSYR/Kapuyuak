@@ -1287,72 +1287,12 @@ export default function Dashboard() {
                 <p className="text-indigo-500/80 dark:text-gray-400 text-xs mt-0.5">Real-time threat monitoring</p>
               </div>
               <div className="flex items-center space-x-3 sm:space-x-4">
-                {/* Privacy Blur Toggle Button */}
-                <button
-                  onClick={togglePrivacyMode}
-                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-bold font-mono transition-all duration-300 flex items-center space-x-1.5 shrink-0 ${
-                    isPrivacyMode
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.25)]'
-                      : 'bg-slate-200/70 dark:bg-white/5 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-white/10 hover:bg-slate-300 dark:hover:bg-white/10'
-                  }`}
-                  title="Toggle Privacy Blur for IP & Domain addresses"
-                >
-                  {isPrivacyMode ? (
-                    <>
-                      <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
-                      </svg>
-                      <span className="tracking-widest uppercase">STEALTH</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      <span className="tracking-widest uppercase">PUBLIC</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Custom Theme Switch (Sun/Moon Slider) */}
-                <button
-                  onClick={() => setIsDarkTheme(!isDarkTheme)}
-                  className={`relative w-[70px] h-[34px] rounded-full overflow-hidden transition-colors duration-500 flex items-center shrink-0 shadow-inner ${
-                    isDarkTheme ? 'bg-[#1a202c] border border-white/10' : 'bg-[#6bb5ff] border border-blue-400/30'
-                  }`}
-                  aria-label="Toggle Theme"
-                >
-                  {/* Clouds (Light mode) */}
-                  <div className={`absolute right-1 top-4 w-6 h-2 bg-white/80 rounded-full blur-[0.5px] transition-opacity duration-500 ${isDarkTheme ? 'opacity-0' : 'opacity-100'}`}></div>
-                  <div className={`absolute right-4 top-2 w-4 h-2 bg-white/90 rounded-full blur-[0.5px] transition-opacity duration-500 ${isDarkTheme ? 'opacity-0' : 'opacity-100'}`}></div>
-                  
-                  {/* Stars (Dark mode) */}
-                  <div className={`absolute left-2.5 top-2 w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_3px_#fff] transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}></div>
-                  <div className={`absolute left-5 top-5 w-[3px] h-[3px] bg-white rounded-full shadow-[0_0_4px_#fff] transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}></div>
-                  <div className={`absolute left-7 top-1.5 w-[2px] h-[2px] bg-white rounded-full shadow-[0_0_3px_#fff] transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}></div>
-
-                  {/* Slider Circle (Sun/Moon) */}
-                  <div
-                    className={`absolute top-1 left-1 w-[24px] h-[24px] rounded-full transition-transform duration-500 flex items-center justify-center overflow-hidden ${
-                      isDarkTheme ? 'transform translate-x-[36px] bg-[#cbd5e1] shadow-[inset_-3px_-2px_6px_rgba(0,0,0,0.3)]' : 'transform translate-x-0 bg-[#fbbf24] shadow-[0_0_10px_rgba(251,191,36,0.8)]'
-                    }`}
-                  >
-                    {/* Craters for Moon */}
-                    <div className={`absolute transition-opacity duration-500 ${isDarkTheme ? 'opacity-100' : 'opacity-0'}`}>
-                      <div className="absolute -top-1 -left-2 w-1.5 h-1.5 bg-[#94a3b8] rounded-full opacity-70"></div>
-                      <div className="absolute top-1 -right-3 w-2 h-2 bg-[#94a3b8] rounded-full opacity-70"></div>
-                      <div className="absolute bottom-1 -left-1 w-2 h-2 bg-[#94a3b8] rounded-full opacity-70"></div>
-                    </div>
-                  </div>
-                </button>
-
-                <div className="hidden sm:flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Online</span>
+                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest font-mono">Online</span>
                 </div>
               </div>
             </div>
