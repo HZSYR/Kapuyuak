@@ -1679,35 +1679,50 @@ export default function Dashboard() {
 
             {/* ── BLACKLIST ── */}
             {tab === 'BLACKLIST' && (
-              <div>
+              <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-6 shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                      Security Blacklist Patterns
+                    </h3>
+                    <p className="text-xs text-indigo-500/80 dark:text-gray-400 font-mono mt-0.5">AUTO-LEARNED & SYSTEM SIGNATURES</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold">
+                      {blacklists.length} PATTERNS ACTIVE
+                    </span>
+                  </div>
+                </div>
+
                 {/* Mobile cards */}
                 <div className="sm:hidden space-y-3">
-                  {blacklists.slice((blacklistPage - 1) * 15, blacklistPage * 15).map(b => (
-                    <div key={b._id} className="bg-white/80 dark:bg-[#1e2640]/60 border border-indigo-200/60 dark:border-white/10 rounded-xl p-4 space-y-2">
+                  {blacklists.slice((blacklistPage - 1) * 8, blacklistPage * 8).map(b => (
+                    <div key={b._id} className="bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
-                        <code className="text-rose-400 font-mono text-xs">{b.value}</code>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'}`}>{b.severity}</span>
+                        <code className="text-rose-400 font-mono text-xs font-bold">{b.value}</code>
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>{b.severity}</span>
                       </div>
                       <div className="flex justify-between text-[10px]">
-                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-[#1e2640]/50 rounded text-indigo-600/80 dark:text-gray-400 border border-slate-200 dark:border-white/10 uppercase font-semibold">{b.type}</span>
-                        <span className="text-indigo-600/80 dark:text-gray-400">{b.category}</span>
+                        <span className="px-2 py-0.5 bg-slate-200 dark:bg-white/5 rounded text-slate-400 border border-slate-300 dark:border-white/10 uppercase font-semibold">{b.type}</span>
+                        <span className="text-slate-300">{b.category}</span>
                       </div>
                       <div className="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-white/10 mt-2">
-                        <div className="text-[10px] text-indigo-500/70 dark:text-gray-500 flex items-center">
-                          <span className="mr-1">Added by:</span>
-                          <span className={b.addedBy === 'AI_AUTO_LEARNING' ? 'text-emerald-400 font-bold' : 'text-indigo-600/80 dark:text-gray-400'}>{b.addedBy}</span>
+                        <div className="text-[10px] text-slate-400 flex items-center">
+                          <span className="mr-1">Added:</span>
+                          <span className={b.addedBy === 'AI_AUTO_LEARNING' ? 'text-emerald-400 font-bold' : 'text-slate-300'}>{b.addedBy}</span>
                         </div>
-                        <button onClick={() => deleteBlacklist(b._id)} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[9px] font-bold uppercase tracking-widest border border-rose-500/20 transition">Delete</button>
+                        <button onClick={() => deleteBlacklist(b._id)} className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-[9px] font-bold uppercase tracking-wider border border-rose-500/20 transition">Del</button>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Desktop table */}
-                <div className="hidden sm:block bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-indigo-200/60 dark:border-white/10 shadow-sm overflow-hidden">
-                  <div className="overflow-x-auto">
+                {/* Desktop table with fixed scroll height */}
+                <div className="hidden sm:block bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
+                  <div className="max-h-[380px] overflow-y-auto">
                     <table className="w-full text-left text-xs whitespace-nowrap">
-                      <thead className="bg-indigo-50 dark:bg-[#1e2640]/80 text-indigo-700 dark:text-gray-400 border-b border-indigo-200/60 dark:border-white/10 text-[10px] font-semibold uppercase tracking-widest">
+                      <thead className="bg-slate-200/60 dark:bg-white/[0.03] text-slate-400 border-b border-slate-200 dark:border-white/10 text-[10px] font-bold uppercase tracking-widest sticky top-0 backdrop-blur z-10">
                         <tr>
                           <th className="px-4 py-3">Rule Type</th>
                           <th className="px-4 py-3">Pattern / Value</th>
@@ -1716,18 +1731,28 @@ export default function Dashboard() {
                           <th className="px-4 py-3 text-right">Added By / Action</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
-                        {blacklists.slice((blacklistPage - 1) * 15, blacklistPage * 15).map(b => (
-                          <tr key={b._id} className="hover:bg-slate-50/80 dark:bg-white/[0.02] transition">
-                            <td className="px-4 py-3 text-indigo-600/80 dark:text-gray-400"><span className="px-2 py-0.5 bg-slate-100 dark:bg-[#1e2640]/50 rounded text-[10px] font-semibold uppercase border border-slate-200 dark:border-white/10">{b.type}</span></td>
-                            <td className="px-4 py-3 font-mono text-rose-400 text-[11px]">{b.value}</td>
-                            <td className="px-4 py-3 text-slate-900 dark:text-gray-300 text-[11px]">{b.category}</td>
-                            <td className="px-4 py-3">
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'}`}>{b.severity}</span>
+                      <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
+                        {blacklists.slice((blacklistPage - 1) * 8, blacklistPage * 8).map(b => (
+                          <tr key={b._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
+                            <td className="px-4 py-2.5">
+                              <span className="px-2 py-0.5 bg-slate-200 dark:bg-white/5 rounded text-[9px] font-bold uppercase border border-slate-300 dark:border-white/10 text-slate-400">
+                                {b.type}
+                              </span>
                             </td>
-                            <td className="px-4 py-3 text-right space-x-2">
-                              <span className={`text-[10px] font-mono border px-2 py-0.5 rounded ${b.addedBy === 'AI_AUTO_LEARNING' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold' : 'bg-slate-100 dark:bg-[#1e2640]/50 border-slate-300 dark:border-white/10 text-indigo-600/80 dark:text-gray-400'}`}>{b.addedBy}</span>
-                              <button onClick={() => deleteBlacklist(b._id)} className="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[9px] font-bold uppercase tracking-widest border border-rose-500/20 transition">Del</button>
+                            <td className="px-4 py-2.5 font-bold text-rose-400 text-[11px]">{b.value}</td>
+                            <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300 text-[11px]">{b.category}</td>
+                            <td className="px-4 py-2.5">
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${b.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+                                {b.severity}
+                              </span>
+                            </td>
+                            <td className="px-4 py-2.5 text-right space-x-2">
+                              <span className={`text-[9px] font-mono border px-2 py-0.5 rounded ${b.addedBy === 'AI_AUTO_LEARNING' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold' : 'bg-white/5 border-white/10 text-slate-400'}`}>
+                                {b.addedBy}
+                              </span>
+                              <button onClick={() => deleteBlacklist(b._id)} className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-[9px] font-bold uppercase tracking-wider border border-rose-500/20 transition">
+                                Del
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -1737,21 +1762,23 @@ export default function Dashboard() {
                 </div>
 
                 {/* Pagination Controls */}
-                {blacklists.length > 15 && (
-                  <div className="flex items-center justify-between mt-4 px-2">
-                    <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 font-mono">Showing {(blacklistPage - 1) * 15 + 1} to {Math.min(blacklistPage * 15, blacklists.length)} of {blacklists.length}</p>
+                {blacklists.length > 8 && (
+                  <div className="flex items-center justify-between mt-4 px-1 text-xs">
+                    <p className="text-[10px] text-slate-400 font-mono">
+                      Showing {(blacklistPage - 1) * 8 + 1} to {Math.min(blacklistPage * 8, blacklists.length)} of {blacklists.length}
+                    </p>
                     <div className="flex space-x-2">
                       <button 
                         onClick={() => setBlacklistPage(p => Math.max(1, p - 1))}
                         disabled={blacklistPage === 1}
-                        className="px-3 py-1.5 bg-indigo-100 dark:bg-[#1e2640]/50 hover:bg-indigo-200 dark:bg-white/10 disabled:opacity-50 disabled:hover:bg-slate-100 dark:bg-[#1e2640]/50 border border-slate-300 dark:border-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition"
+                        className="px-3 py-1 bg-slate-200 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 disabled:opacity-40 border border-slate-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-300 uppercase tracking-wider transition"
                       >
                         Prev
                       </button>
                       <button 
                         onClick={() => setBlacklistPage(p => p + 1)}
-                        disabled={blacklistPage * 15 >= blacklists.length}
-                        className="px-3 py-1.5 bg-indigo-100 dark:bg-[#1e2640]/50 hover:bg-indigo-200 dark:bg-white/10 disabled:opacity-50 disabled:hover:bg-slate-100 dark:bg-[#1e2640]/50 border border-slate-300 dark:border-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition"
+                        disabled={blacklistPage * 8 >= blacklists.length}
+                        className="px-3 py-1 bg-slate-200 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 disabled:opacity-40 border border-slate-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-300 uppercase tracking-wider transition"
                       >
                         Next
                       </button>
@@ -1893,162 +1920,144 @@ export default function Dashboard() {
               </div>
             )}
 
-            
             {/* BANNED IPs TAB */}
             {tab === 'BANNED IPs' && (
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
-                {/* Advanced Analytics Dashboard Style for Top Attackers */}
-                <div className="relative overflow-hidden bg-gradient-to-b from-slate-900 to-[#0f0d1c] dark:from-[#0f0d1c] dark:to-black border border-slate-700/50 dark:border-indigo-500/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                {/* LEFT: Attack Vector Analytics (lg:col-span-5) */}
+                <div className="lg:col-span-5 relative overflow-hidden bg-gradient-to-b from-slate-900 via-[#0a0814] to-black border border-slate-700/50 dark:border-rose-500/20 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
                   {/* Background Grid Pattern */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
                   
                   {/* Header */}
-                  <div className="relative flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.4)]">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                  <div className="relative z-10 flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.4)]">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white tracking-wide uppercase">Attack Vector Analytics</h3>
-                        <p className="text-xs text-indigo-300/70 font-mono mt-1">Real-time threat intelligence</p>
+                        <h3 className="text-base font-black text-white tracking-wide uppercase">Attack Vectors</h3>
+                        <p className="text-[10px] text-indigo-300/70 font-mono">TOP IP REPEATER THREATS</p>
                       </div>
                     </div>
-                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20">
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.8)]"></span>
-                      <span className="text-[10px] font-bold text-rose-400 tracking-widest uppercase">Live Tracking</span>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20">
+                      <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                      <span className="text-[9px] font-bold text-rose-400 tracking-wider uppercase">Live</span>
                     </div>
                   </div>
 
                   {topAttackIps.length === 0 ? (
-                    <div className="relative py-12 flex flex-col items-center justify-center border border-dashed border-slate-700/50 rounded-2xl bg-white/5">
-                      <svg className="w-8 h-8 text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                      <span className="text-slate-400 text-sm font-mono">No threat data available.</span>
+                    <div className="relative z-10 py-10 flex flex-col items-center justify-center border border-dashed border-slate-700/50 rounded-xl bg-white/5">
+                      <span className="text-slate-400 text-xs font-mono">No attack vector data available.</span>
                     </div>
                   ) : (
-                    <div className="relative space-y-4">
-                      {topAttackIps.slice(0, 15).map(([ip, count], idx) => {
+                    <div className="relative z-10 space-y-3 max-h-[320px] overflow-y-auto pr-1">
+                      {topAttackIps.slice(0, 8).map(([ip, count], idx) => {
                         const maxCount = topAttackIps[0][1];
-                        const width = Math.max(2, (count / maxCount) * 100);
+                        const width = Math.max(4, (count / maxCount) * 100);
                         const isTop = idx === 0;
-                        const rankColor = isTop ? 'text-rose-400' : idx === 1 ? 'text-orange-400' : idx === 2 ? 'text-amber-400' : 'text-slate-500';
+                        const rankColor = isTop ? 'text-rose-400' : idx === 1 ? 'text-orange-400' : 'text-slate-400';
                         const barGradient = isTop 
-                          ? 'bg-gradient-to-r from-rose-600 via-rose-500 to-fuchsia-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]' 
+                          ? 'bg-gradient-to-r from-rose-600 to-fuchsia-500' 
                           : idx < 3 
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]'
-                          : 'bg-gradient-to-r from-indigo-500 to-cyan-500 shadow-[0_0_8px_rgba(99,102,241,0.2)]';
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500'
+                          : 'bg-gradient-to-r from-indigo-500 to-cyan-500';
                           
                         return (
-                          <div key={ip} className="group relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 rounded-xl hover:bg-white/[0.04] transition duration-300 border border-transparent hover:border-white/10">
-                            {/* Rank & IP */}
-                            <div className="flex items-center gap-3 w-44 shrink-0">
-                              <span className={`text-base font-black w-6 text-center ${rankColor}`}>#{idx + 1}</span>
-                              <span className="text-xs font-mono text-slate-300 bg-black/50 px-2 py-1.5 rounded-lg border border-white/5 group-hover:border-white/20 group-hover:text-white transition shadow-inner">{ip}</span>
-                            </div>
-                            
-                            {/* Bar Container */}
-                            <div className="flex-1 h-3 sm:h-4 bg-black/60 rounded-full overflow-hidden border border-white/5 relative">
-                              {/* Animated Bar */}
-                              <div 
-                                className={`h-full rounded-full ${barGradient} transition-all duration-1000 ease-out relative overflow-hidden`} 
-                                style={{ width: `${width}%` }}
-                              >
-                                {/* Shimmer Effect */}
-                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                          <div key={ip} className="group flex flex-col gap-1 p-2 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition">
+                            <div className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className={`font-black text-xs ${rankColor}`}>#{idx + 1}</span>
+                                <span className="font-mono text-xs text-slate-200">{ip}</span>
                               </div>
+                              <span className="text-[10px] font-bold font-mono text-slate-400">{count.toLocaleString()}x attacks</span>
                             </div>
-                            
-                            {/* Count Badge */}
-                            <div className="shrink-0 flex items-center justify-end w-20">
-                              <span className={`text-[11px] font-bold px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 shadow-sm ${isTop ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' : 'text-slate-300 group-hover:bg-white/10 group-hover:text-white'} transition`}>
-                                {count.toLocaleString()}x
-                              </span>
+                            <div className="h-1.5 w-full bg-black/60 rounded-full overflow-hidden">
+                              <div className={`h-full rounded-full ${barGradient} transition-all duration-500`} style={{ width: `${width}%` }}></div>
                             </div>
                           </div>
                         )
                       })}
                     </div>
                   )}
-                  <style dangerouslySetInnerHTML={{__html: `
-                    @keyframes shimmer {
-                      100% { transform: translateX(100%); }
-                    }
-                  `}} />
+
+                  <p className="relative z-10 text-[10px] text-slate-500 font-mono mt-3 pt-2 border-t border-white/5">
+                    *Aggregated attack frequency per IP address across all endpoints.
+                  </p>
                 </div>
 
-                {/* Main Banned IPs Table */}
-                <div className="bg-white dark:bg-[#13111f] border border-slate-100 dark:border-violet-900/20 rounded-2xl p-6 sm:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_30px_rgba(0,0,0,0.4)]">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">Banned Users & IPs</h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Users or IP addresses currently blocked from access.</p>
+                {/* RIGHT: Main Banned IPs Table (lg:col-span-7) */}
+                <div className="lg:col-span-7 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+                  <div>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                      <div>
+                        <h3 className="text-base font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                          Banned Users & IPs
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-0.5">CURRENTLY BLOCKED ADDRESSES</p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <div className="relative flex-1 sm:flex-none">
+                          <input 
+                            type="text" 
+                            placeholder="Search IP..."
+                            value={bannedIpSearch}
+                            onChange={(e) => { setBannedIpSearch(e.target.value); setBannedIpPage(1); }}
+                            className="w-full sm:w-36 bg-slate-100 dark:bg-[#090d16] border border-slate-300 dark:border-white/10 pl-8 pr-2 py-1.5 rounded-xl text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:border-rose-500"
+                          />
+                          <svg className="w-3.5 h-3.5 absolute left-2.5 top-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+
+                        <button onClick={unbanAllIPs} className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-[10px] font-bold transition flex items-center gap-1.5 tracking-wider uppercase whitespace-nowrap">
+                          UNBAN ALL
+                        </button>
+                      </div>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {/* Search Input */}
-                      <div className="relative">
-                        <input 
-                          type="text" 
-                          placeholder="Search IP..."
-                          value={bannedIpSearch}
-                          onChange={(e) => { setBannedIpSearch(e.target.value); setBannedIpPage(1); }}
-                          className="w-full sm:w-48 bg-slate-50 dark:bg-[#1a1728] border border-slate-200 dark:border-violet-900/30 pl-9 pr-3 py-2 rounded-xl text-slate-800 dark:text-slate-100 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition text-xs placeholder-slate-400 dark:placeholder-slate-500"
-                        />
-                        <svg className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                      </div>
-
-                      <button onClick={unbanAllIPs} className="px-4 py-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 tracking-widest uppercase">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                        UNBAN ALL
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white dark:bg-[#0f0d1c] rounded-xl border border-slate-200 dark:border-violet-900/20 overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
-                        <thead className="text-[10px] uppercase text-slate-500 dark:text-slate-500 bg-slate-50 dark:bg-[#151324] tracking-widest border-b border-slate-200 dark:border-violet-900/20">
-                          <tr>
-                            <th className="px-4 py-4 font-bold">IP Address</th>
-                            <th className="px-4 py-4 font-bold">Domain</th>
-                            <th className="px-4 py-4 font-bold">Username</th>
-                            <th className="px-4 py-4 font-bold">Reason</th>
-                            <th className="px-4 py-4 font-bold">Time Left</th>
-                            <th className="px-4 py-4 font-bold text-right">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-violet-900/10">
-                          {currentBannedIps.map(bip => (
-                            <tr key={bip._id} className="hover:bg-slate-50/80 dark:hover:bg-violet-900/10 transition">
-                              <td className="px-4 py-3 font-mono text-[12px]">
-                                {bip.username && bip.username !== 'unknown' 
-                                  ? <span className="text-slate-500 dark:text-slate-500 line-through">{bip.ip}</span> 
-                                  : <span className="text-rose-500 dark:text-rose-400 font-bold">{bip.ip}</span>}
-                              </td>
-                              <td className="px-4 py-3 font-mono text-sky-500 dark:text-sky-400 text-[11px]">{bip.domain || 'unknown'}</td>
-                              <td className="px-4 py-3 text-[11px]">
-                                {bip.username && bip.username !== 'unknown' 
-                                  ? <span className="text-rose-500 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-500/20">@{bip.username}</span> 
-                                  : <span className="text-violet-600 dark:text-violet-400 font-bold">unknown</span>}
-                              </td>
-                              <td className="px-4 py-3 text-[11px] text-slate-800 dark:text-slate-300">{bip.reason || 'Malicious Activity'}</td>
-                              <td className="px-4 py-3 text-[11px] font-mono font-bold text-orange-500 dark:text-orange-400">
-                                {formatCountdown(bip.expiresAt)}
-                              </td>
-                              <td className="px-4 py-3 text-right">
-                                <button onClick={() => unbanIp(bip.ip, bip.username)} className="text-[10px] px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg transition font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-500/20">Unban</button>
-                              </td>
-                            </tr>
-                          ))}
-                          {currentBannedIps.length === 0 && (
+                    <div className="bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
+                      <div className="max-h-[300px] overflow-y-auto">
+                        <table className="w-full text-left text-xs whitespace-nowrap">
+                          <thead className="text-[10px] uppercase text-slate-400 bg-slate-200/60 dark:bg-white/[0.03] tracking-widest border-b border-slate-200 dark:border-white/10 sticky top-0 backdrop-blur z-10">
                             <tr>
-                              <td colSpan="6" className="px-4 py-8 text-center text-slate-500 dark:text-slate-500 font-mono text-xs">
-                                {bannedIpSearch ? 'No IPs found matching your search.' : 'No IPs are currently banned.'}
-                              </td>
+                              <th className="px-3 py-2.5 font-bold">IP / User</th>
+                              <th className="px-3 py-2.5 font-bold">Domain</th>
+                              <th className="px-3 py-2.5 font-bold">Time Left</th>
+                              <th className="px-3 py-2.5 font-bold text-right">Action</th>
                             </tr>
-                          )}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
+                            {currentBannedIps.map(bip => (
+                              <tr key={bip._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
+                                <td className="px-3 py-2 text-[11px]">
+                                  {bip.username && bip.username !== 'unknown' ? (
+                                    <span className="text-rose-400 font-bold">@{bip.username}</span>
+                                  ) : (
+                                    <span className="text-rose-400 font-bold">{bip.ip}</span>
+                                  )}
+                                </td>
+                                <td className="px-3 py-2 text-sky-400 text-[10px]">{bip.domain || 'unknown'}</td>
+                                <td className="px-3 py-2 text-[10px] font-mono font-bold text-amber-400">
+                                  {formatCountdown(bip.expiresAt)}
+                                </td>
+                                <td className="px-3 py-2 text-right">
+                                  <button onClick={() => unbanIp(bip.ip, bip.username)} className="text-[9px] px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition font-bold uppercase border border-emerald-500/20">
+                                    Unban
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                            {currentBannedIps.length === 0 && (
+                              <tr>
+                                <td colSpan="4" className="px-3 py-6 text-center text-slate-400 font-mono text-xs">
+                                  {bannedIpSearch ? 'No IPs found matching search.' : 'No IPs currently banned.'}
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
 
