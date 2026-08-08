@@ -9,9 +9,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
   const [GlobeComponent, setGlobeComponent] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
   const [attackMarkers, setAttackMarkers] = useState([]);
-  const [polygons, setPolygons] = useState([]);
 
-  // ── Custom React tooltip state (no flickering) ─────────────────────────────
+  // ── Custom React tooltip state (lightweight & stable) ──────────────────────
   const [tooltip, setTooltip] = useState({ visible: false, data: null, x: 0, y: 0 });
   const tooltipTimer = useRef(null);
 
@@ -22,26 +21,12 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
     });
   }, []);
 
-  // ── Load GeoJSON country polygons from GitHub ──────────────────────────────
-  useEffect(() => {
-    fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
-      .then(r => r.json())
-      .then(data => setPolygons(data.features))
-      .catch(() => {
-        // fallback to natural-earth if primary fails
-        fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
-          .then(r => r.json())
-          .then(data => setPolygons(data.features))
-          .catch(console.error);
-      });
-  }, []);
-
   // ── Process logs into GeoIP markers ───────────────────────────────────────
   useEffect(() => {
     if (!logs || logs.length === 0) return;
     const uniqueIps = [...new Set(logs.map(l => l.ipAddress))]
       .filter(ip => ip && ip !== 'unknown' && ip !== '::1' && ip !== '127.0.0.1')
-      .slice(0, 20);
+      .slice(0, 15);
     if (uniqueIps.length === 0) return;
 
     const counts = logs.reduce((acc, log) => {
@@ -60,7 +45,6 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
                 const city = data.city || '';
                 const region = data.region || '';
                 const country = data.country || '';
-                // Build location label: "Kota, Provinsi, Negara" — skip empty parts
                 const parts = [city, region, country].filter(Boolean);
                 const label = parts.join(', ');
                 return {
@@ -69,7 +53,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
                   label,
                   city, region, country,
                   count: counts[ip] || 1,
-                  size: Math.min(0.1 + ((counts[ip] || 1) * 0.05), 0.3)
+                  size: Math.min(0.12 + ((counts[ip] || 1) * 0.04), 0.3)
                 };
               }
             }
@@ -113,7 +97,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
     return () => window.removeEventListener('resize', measure);
   }, []);
 
-  // ── Globe controls (auto-rotate + zoom) ───────────────────────────────────
+  // ── Globe controls (auto-rotate + zoom limits) ─────────────────────────────
   useEffect(() => {
     if (!globeRef.current) return;
     const controls = globeRef.current.controls();
@@ -145,67 +129,19 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
   const hideTooltip = useCallback(() => {
     tooltipTimer.current = setTimeout(() => {
       setTooltip(t => ({ ...t, visible: false }));
-    }, 120);
+    }, 150);
   }, []);
 
-  // ── Polygon hover: look up country name from GeoJSON properties ────────────
-  const handlePolygonHover = useCallback((polygon, prevPolygon, evt) => {
-    if (!polygon) { hideTooltip(); return; }
-    const props = polygon.properties || {};
-    const countryName = props.ADMIN || props.name || props.NAME || props.NAME_EN || 'Unknown';
-    showTooltip({ type: 'country', label: countryName }, evt || { clientX: 0, clientY: 0 });
-  }, [showTooltip, hideTooltip]);
-
-  // ── Point hover: show attack info ─────────────────────────────────────────
   const handlePointHover = useCallback((point, prevPoint, evt) => {
     if (!point) { hideTooltip(); return; }
-    showTooltip({ type: 'point', ...point }, evt || { clientX: 0, clientY: 0 });
+    showTooltip(point, evt || { clientX: 0, clientY: 0 });
   }, [showTooltip, hideTooltip]);
 
-  // ── All points data (no invisible hitboxes anymore — use polygon hover instead) ──
+  // ── All points (Padang server + attackers) ──────────────────────────────────
   const allPoints = [
-    { ...SERVER, size: 0.2, color: '#00ffff', type: 'server' },
+    { ...SERVER, size: 0.25, color: '#00ffff', type: 'server' },
     ...attackMarkers.map(m => ({ ...m, color: '#ff0033', type: 'attack' })),
   ];
-
-  // ── Tooltip content builder ────────────────────────────────────────────────
-  const renderTooltipContent = () => {
-    const d = tooltip.data;
-    if (!d) return null;
-    const isServer = d.type === 'server';
-    const isCountry = d.type === 'country';
-    const textColor = isServer ? '#00ffff' : '#ff0033';
-
-    if (isCountry) {
-      return (
-        <div style={{ color: '#aaa', fontSize: 13 }}>
-          <b style={{ color: '#ffffff', fontSize: 14 }}>{d.label}</b>
-        </div>
-      );
-    }
-    return (
-      <>
-        <div style={{ borderBottom: `1px solid ${textColor}30`, paddingBottom: 6, marginBottom: 6 }}>
-          <b style={{ color: textColor, fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>
-            {isServer ? '🛡️ SERVER PUSAT' : '🚨 ATTACK ORIGIN'}
-          </b>
-        </div>
-        {isServer ? (
-          <>
-            <div style={{ color: '#00ffff', fontSize: 12 }}>📍 Padang, Sumatera Barat</div>
-            <div style={{ color: '#00ffff', fontSize: 12 }}>🌏 Indonesia</div>
-            <div style={{ color: '#aaa', fontSize: 11, marginTop: 4 }}>✅ Sistem OJS Terlindungi</div>
-          </>
-        ) : (
-          <>
-            {d.city && <div style={{ color: '#fff', fontSize: 12 }}>📍 {d.city}{d.region ? `, ${d.region}` : ''}</div>}
-            {d.country && <div style={{ color: '#fff', fontSize: 12 }}>🌏 {d.country}</div>}
-            {d.count && <div style={{ color: '#ffaa00', fontSize: 12, marginTop: 4 }}>⚡ {d.count.toLocaleString()} attacks blocked</div>}
-          </>
-        )}
-      </>
-    );
-  };
 
   return (
     <div ref={containerRef} className="w-full h-full flex items-center justify-center cursor-move" style={{ position: 'relative' }}>
@@ -216,18 +152,9 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           height={dimensions.height}
           backgroundColor="rgba(0,0,0,0)"
 
-          // ── HD Earth textures ──
+          // ── Earth textures ──
           globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
           bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-
-          // ── Country polygons from GeoJSON ──
-          polygonsData={polygons}
-          polygonCapColor={() => 'rgba(0,0,0,0)'}
-          polygonSideColor={() => 'rgba(255,255,255,0.04)'}
-          polygonStrokeColor={() => 'rgba(100,200,255,0.15)'}
-          polygonAltitude={0.001}
-          onPolygonHover={handlePolygonHover}
-          polygonLabel={() => ''}
 
           // ── Attack marker dots ──
           pointsData={allPoints}
@@ -235,9 +162,9 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           pointLng="lng"
           pointColor="color"
           pointAltitude={0.02}
-          pointRadius={(d) => d.size * 0.5}
+          pointRadius={(d) => d.size * 0.8}
           pointsMerge={false}
-          pointResolution={64}
+          pointResolution={32}
           pointLabel={() => ''}
           onPointHover={handlePointHover}
 
@@ -258,7 +185,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           atmosphereColor="#00bbff"
           atmosphereAltitude={0.25}
 
-          // ── Attack arcs ──
+          // ── Attack Arcs ──
           arcsData={attackMarkers}
           arcStartLat="lat"
           arcStartLng="lng"
@@ -277,7 +204,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
         </div>
       )}
 
-      {/* ── Custom React Tooltip (no flickering!) ── */}
+      {/* ── Custom React Tooltip (ultra fast, no WebGL load, zero flicker) ── */}
       {tooltip.visible && tooltip.data && (
         <div
           style={{
@@ -287,27 +214,42 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
             pointerEvents: 'none',
             zIndex: 999,
             background: 'rgba(8, 12, 28, 0.92)',
-            border: `1px solid ${tooltip.data.type === 'server' ? '#00ffff' : (tooltip.data.type === 'country' ? 'rgba(100,200,255,0.4)' : '#ff0033')}`,
+            border: `1px solid ${tooltip.data.type === 'server' ? '#00ffff' : '#ff0033'}`,
             borderRadius: 8,
             padding: '10px 14px',
             fontFamily: "'Courier New', monospace",
             fontSize: 13,
             color: '#fff',
             backdropFilter: 'blur(8px)',
-            boxShadow: tooltip.data.type === 'server'
-              ? '0 0 20px rgba(0,255,255,0.4)'
-              : (tooltip.data.type === 'country' ? '0 4px 20px rgba(0,0,0,0.5)' : '0 0 20px rgba(255,0,51,0.4)'),
+            boxShadow: tooltip.data.type === 'server' ? '0 0 20px rgba(0,255,255,0.4)' : '0 0 20px rgba(255,0,51,0.4)',
             minWidth: 160,
-            transition: 'opacity 0.15s ease',
           }}
         >
-          {/* Top accent line */}
           <div style={{
             position: 'absolute', top: 0, left: 0, width: '100%', height: 2,
-            background: tooltip.data.type === 'server' ? '#00ffff' : (tooltip.data.type === 'country' ? 'rgba(100,200,255,0.4)' : '#ff0033'),
+            background: tooltip.data.type === 'server' ? '#00ffff' : '#ff0033',
             borderRadius: '8px 8px 0 0',
           }} />
-          {renderTooltipContent()}
+          
+          <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 4, marginBottom: 6 }}>
+            <b style={{ color: tooltip.data.type === 'server' ? '#00ffff' : '#ff0033', fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>
+              {tooltip.data.type === 'server' ? '🛡️ SERVER PUSAT' : '🚨 ATTACK ORIGIN'}
+            </b>
+          </div>
+
+          {tooltip.data.type === 'server' ? (
+            <>
+              <div style={{ color: '#00ffff', fontSize: 12 }}>📍 Padang, Sumatera Barat</div>
+              <div style={{ color: '#00ffff', fontSize: 12 }}>🌏 Indonesia</div>
+              <div style={{ color: '#aaa', fontSize: 11, marginTop: 4 }}>✅ Sistem OJS Terlindungi</div>
+            </>
+          ) : (
+            <>
+              {tooltip.data.city && <div style={{ color: '#fff', fontSize: 12 }}>📍 {tooltip.data.city}{tooltip.data.region ? `, ${tooltip.data.region}` : ''}</div>}
+              {tooltip.data.country && <div style={{ color: '#fff', fontSize: 12 }}>🌏 {tooltip.data.country}</div>}
+              {tooltip.data.count && <div style={{ color: '#ffaa00', fontSize: 12, marginTop: 4 }}>⚡ {tooltip.data.count.toLocaleString()} attacks blocked</div>}
+            </>
+          )}
         </div>
       )}
     </div>
