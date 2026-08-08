@@ -1228,20 +1228,6 @@ export default function Dashboard() {
             })}
           </nav>
 
-          {/* Sidebar Telemetry Mini Widget */}
-          <div className="mx-3 my-2 p-3 rounded-2xl bg-[#050811] border border-white/5 space-y-1.5">
-            <div className="flex justify-between items-center text-[9px] font-mono text-slate-400">
-              <span className="uppercase font-bold tracking-wider text-cyan-400 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                SHIELD ENGINE
-              </span>
-              <span className="text-emerald-400 font-bold">ACTIVE</span>
-            </div>
-            <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 w-full animate-pulse"></div>
-            </div>
-          </div>
-
           {/* Bottom Actions / Terminate Session */}
           <div className="p-3 border-t border-slate-800/80">
             <button
