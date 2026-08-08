@@ -1528,10 +1528,10 @@ export default function Dashboard() {
                   ))}
                 </div>
 
-                <div className="hidden sm:block bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-indigo-200/60 dark:border-white/10 shadow-sm overflow-hidden">
-                  <div className="overflow-x-auto">
+                <div className="hidden sm:block bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 shadow-sm overflow-hidden p-1">
+                  <div className="max-h-[360px] overflow-y-auto rounded-xl">
                     <table className="w-full text-left text-xs whitespace-nowrap">
-                      <thead className="bg-indigo-50 dark:bg-[#1e2640]/80 text-indigo-700 dark:text-gray-400 border-b border-indigo-200/60 dark:border-white/10 text-[10px] font-semibold uppercase tracking-widest">
+                      <thead className="bg-slate-200/60 dark:bg-white/[0.03] text-slate-400 border-b border-slate-200 dark:border-white/10 text-[10px] font-bold uppercase tracking-widest sticky top-0 backdrop-blur z-10">
                         <tr>
                           <th className="px-4 py-3">Domain / Owner</th>
                           <th className="px-4 py-3">Security Key</th>
@@ -1541,31 +1541,31 @@ export default function Dashboard() {
                           <th className="px-4 py-3 text-right">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
                         {keys.map(k => (
-                          <tr key={k._id} className="hover:bg-slate-50/80 dark:bg-white/[0.02] transition">
-                            <td className="px-4 py-3">
+                          <tr key={k._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
+                            <td className="px-4 py-2.5 font-sans">
                               <div className="flex items-center gap-2">
-                                <p className="font-bold text-indigo-900 dark:text-white">{k.domain}</p>
-                                {k.ojsVersion && <span className="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-md font-bold uppercase border border-blue-500/30 shadow-sm shadow-blue-500/10">V{k.ojsVersion}</span>}
+                                <p className="font-bold text-slate-800 dark:text-white text-xs">{k.domain}</p>
+                                {k.ojsVersion && <span className="bg-blue-500/20 text-blue-400 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase border border-blue-500/30">V{k.ojsVersion}</span>}
                               </div>
-                              <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 mt-0.5">{k.ownerName}</p>
+                              <p className="text-[10px] text-slate-400 mt-0.5">{k.ownerName}</p>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="inline-flex items-center space-x-2 bg-white dark:bg-[#1e2640]/80 px-2.5 py-1 rounded border border-slate-200 dark:border-white/10 cursor-pointer hover:border-emerald-500/30 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
+                            <td className="px-4 py-2.5">
+                              <div className="inline-flex items-center space-x-2 bg-slate-200/60 dark:bg-white/5 px-2 py-1 rounded border border-slate-300 dark:border-white/10 cursor-pointer hover:border-emerald-500/40 transition" onClick={() => navigator.clipboard.writeText(k.apiKey)}>
                                 <code className="text-emerald-400 font-mono text-[11px]">{k.apiKey.substring(0, 16)}...</code>
-                                <span className="text-[9px] text-indigo-500/70 dark:text-gray-500 group-hover:text-indigo-900 dark:text-white font-bold uppercase tracking-widest">COPY</span>
+                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">COPY</span>
                               </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${k.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : k.status === 'suspended' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-gray-500/10 text-indigo-600/80 dark:text-gray-400 border-gray-500/20'}`}>{k.status.toUpperCase()}</span>
+                            <td className="px-4 py-2.5">
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${k.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : k.status === 'suspended' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-white/5 text-slate-400 border-white/10'}`}>{k.status.toUpperCase()}</span>
                             </td>
-                            <td className="px-4 py-3 text-slate-900 dark:text-gray-300 font-mono text-[11px]">{k.requestCount.toLocaleString()}</td>
-                            <td className="px-4 py-3 text-indigo-600/80 dark:text-gray-400 text-[11px]">{new Date(k.expiredAt).toLocaleDateString()}</td>
-                            <td className="px-4 py-3 text-right space-x-2">
-                              <button onClick={() => { setNewKeyData(k); if (k.ojsVersion) setSelectedOjsVersion(k.ojsVersion); setShowKeyTutorial(true); }} className="px-3 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 rounded text-[10px] font-bold text-sky-400 uppercase tracking-widest transition border border-sky-500/20">View Code</button>
-                              <button onClick={() => setViewKeyLogs(k.domain)} className="px-3 py-1.5 bg-indigo-100 dark:bg-[#1e2640]/50 hover:bg-indigo-200 dark:bg-white/10 rounded text-[10px] font-bold text-slate-900 dark:text-gray-300 uppercase tracking-widest transition border border-slate-200 dark:border-white/10">View Logs</button>
-                              <button onClick={() => deleteKey(k._id)} className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[10px] font-bold uppercase tracking-widest transition border border-rose-500/20">Delete</button>
+                            <td className="px-4 py-2.5 text-slate-300 text-[11px]">{k.requestCount.toLocaleString()}</td>
+                            <td className="px-4 py-2.5 text-slate-400 text-[11px]">{new Date(k.expiredAt).toLocaleDateString()}</td>
+                            <td className="px-4 py-2.5 text-right space-x-1.5">
+                              <button onClick={() => { setNewKeyData(k); if (k.ojsVersion) setSelectedOjsVersion(k.ojsVersion); setShowKeyTutorial(true); }} className="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 rounded-lg text-[9px] font-bold text-sky-400 uppercase tracking-wider transition border border-sky-500/20">View Code</button>
+                              <button onClick={() => setViewKeyLogs(k.domain)} className="px-2.5 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-slate-300 uppercase tracking-wider transition border border-white/10">Logs</button>
+                              <button onClick={() => deleteKey(k._id)} className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-[9px] font-bold uppercase tracking-wider transition border border-rose-500/20">Del</button>
                             </td>
                           </tr>
                         ))}
@@ -1578,75 +1578,86 @@ export default function Dashboard() {
 
             {/* ── ATTACK LOGS ── */}
             {tab === 'ATTACK LOGS' && (
-              <div className="space-y-4">
-                <div className="flex flex-wrap gap-2 justify-between items-center">
-                  <div className="flex space-x-1.5">
-                    <span 
-                      onClick={() => setFilterLogs('ALL')}
-                      className={`px-2.5 py-1 rounded text-[10px] font-semibold border cursor-pointer uppercase tracking-wider transition ${filterLogs === 'ALL' ? 'bg-slate-200 dark:bg-white/10 text-indigo-900 dark:text-white border-white/20' : 'bg-slate-100 dark:bg-[#1e2640]/50 text-indigo-600/80 dark:text-gray-400 border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:bg-white/10'}`}
-                    >
-                      All Events
-                    </span>
-                    <span 
-                      onClick={() => setFilterLogs('CRITICAL')}
-                      className={`px-2.5 py-1 rounded text-[10px] font-semibold border cursor-pointer uppercase tracking-wider transition ${filterLogs === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border-rose-500/40' : 'bg-rose-500/5 text-rose-400/50 border-rose-500/10 hover:bg-rose-500/10'}`}
-                    >
-                      Critical Only
-                    </span>
+              <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-6 shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                      Real-time Threat Activity Logs
+                    </h3>
+                    <p className="text-xs text-indigo-500/80 dark:text-gray-400 font-mono mt-0.5">FILTER & EXPORT SECURITY INCIDENTS</p>
                   </div>
-                  <button 
-                    onClick={() => {
-                      if (logs.length === 0) return;
-                      const headers = ['Timestamp', 'Target Domain', 'Severity', 'Category', 'Attacker IP', 'Snippet'];
-                      const csvRows = logs.map(l => [
-                        new Date(l.timestamp).toLocaleString(),
-                        l.domain,
-                        l.severity,
-                        l.category,
-                        l.ipAddress,
-                        `"${(l.snippet || '').replace(/"/g, '""')}"`
-                      ].join(','));
-                      const csvContent = [headers.join(','), ...csvRows].join('\n');
-                      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                      const url = URL.createObjectURL(blob);
-                      const link = document.createElement('a');
-                      link.setAttribute('href', url);
-                      link.setAttribute('download', `KPK4444_Attack_Logs_${new Date().toISOString().slice(0, 10)}.csv`);
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                    }}
-                    className="px-2.5 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded text-[10px] font-bold text-blue-400 border border-blue-500/20 transition uppercase tracking-widest"
-                  >
-                    Export CSV
-                  </button>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="flex space-x-1.5">
+                      <span 
+                        onClick={() => setFilterLogs('ALL')}
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold border cursor-pointer uppercase tracking-wider transition ${filterLogs === 'ALL' ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'}`}
+                      >
+                        All Events
+                      </span>
+                      <span 
+                        onClick={() => setFilterLogs('CRITICAL')}
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold border cursor-pointer uppercase tracking-wider transition ${filterLogs === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400 border-rose-500/40' : 'bg-rose-500/5 text-rose-400/50 border-rose-500/10 hover:bg-rose-500/10'}`}
+                      >
+                        Critical Only
+                      </span>
+                    </div>
+                    
+                    <button 
+                      onClick={() => {
+                        if (logs.length === 0) return;
+                        const headers = ['Timestamp', 'Target Domain', 'Severity', 'Category', 'Attacker IP', 'Snippet'];
+                        const csvRows = logs.map(l => [
+                          new Date(l.timestamp).toLocaleString(),
+                          l.domain,
+                          l.severity,
+                          l.category,
+                          l.ipAddress,
+                          `"${(l.snippet || '').replace(/"/g, '""')}"`
+                        ].join(','));
+                        const csvContent = [headers.join(','), ...csvRows].join('\n');
+                        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.setAttribute('href', url);
+                        link.setAttribute('download', `KPK4444_Attack_Logs_${new Date().toISOString().slice(0, 10)}.csv`);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
+                      className="px-3 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded-full text-[10px] font-bold text-blue-400 border border-blue-500/20 transition uppercase tracking-wider"
+                    >
+                      Export CSV
+                    </button>
+                  </div>
                 </div>
 
                 {/* Mobile cards */}
                 <div className="sm:hidden space-y-3">
                   {logs.filter(l => filterLogs === 'ALL' || l.severity === 'CRITICAL').map(l => (
-                    <div key={l._id} className="bg-white/80 dark:bg-[#1e2640]/60 border border-indigo-200/60 dark:border-white/10 rounded-xl p-4 space-y-2">
+                    <div key={l._id} className="bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-xl p-4 space-y-2">
                       <div className="flex justify-between items-start">
-                        <p className="font-bold text-indigo-900 dark:text-white text-sm">{l.domain}</p>
+                        <p className="font-bold text-slate-800 dark:text-white text-sm">{l.domain}</p>
                         <div className="flex items-center space-x-1.5">
-                          <div className={`w-1.5 h-1.5 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
-                          <span className={`text-[10px] font-bold ${l.severity === 'CRITICAL' ? 'text-rose-400' : l.severity === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}`}>{l.severity}</span>
+                          <div className={`w-1.5 h-1.5 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-amber-500'}`} />
+                          <span className={`text-[10px] font-bold ${l.severity === 'CRITICAL' ? 'text-rose-400' : l.severity === 'HIGH' ? 'text-orange-400' : 'text-amber-400'}`}>{l.severity}</span>
                         </div>
                       </div>
-                      <p className="text-[10px] text-indigo-600/80 dark:text-gray-400 font-bold uppercase tracking-wide">{l.category}</p>
-                      <div className="flex justify-between text-[10px] text-indigo-500/70 dark:text-gray-500">
-                        <span className="font-mono">{l.ipAddress}</span>
-                        <span>{new Date(l.timestamp).toLocaleString()}</span>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">{l.category}</p>
+                      <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                        <span>{l.ipAddress}</span>
+                        <span>{new Date(l.timestamp).toLocaleTimeString()}</span>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Desktop table */}
-                <div className="hidden sm:block bg-white/80 dark:bg-[#1e2640]/60 backdrop-blur-xl rounded-xl border border-indigo-200/60 dark:border-white/10 shadow-sm overflow-hidden">
-                  <div className="overflow-x-auto">
+                {/* Desktop table with fixed scroll height */}
+                <div className="hidden sm:block bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
+                  <div className="max-h-[380px] overflow-y-auto">
                     <table className="w-full text-left text-xs whitespace-nowrap">
-                      <thead className="bg-indigo-50 dark:bg-[#1e2640]/80 text-indigo-700 dark:text-gray-400 border-b border-indigo-200/60 dark:border-white/10 text-[10px] font-semibold uppercase tracking-widest">
+                      <thead className="bg-slate-200/60 dark:bg-white/[0.03] text-slate-400 border-b border-slate-200 dark:border-white/10 text-[10px] font-bold uppercase tracking-widest sticky top-0 backdrop-blur z-10">
                         <tr>
                           <th className="px-4 py-3">Timestamp</th>
                           <th className="px-4 py-3">Target Domain</th>
@@ -1655,19 +1666,21 @@ export default function Dashboard() {
                           <th className="px-4 py-3">Attacker IP</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5">
+                      <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
                         {logs.filter(l => filterLogs === 'ALL' || l.severity === 'CRITICAL').map(l => (
-                          <tr key={l._id} className="hover:bg-slate-50/80 dark:bg-white/[0.02] transition">
-                            <td className="px-4 py-3 font-mono text-indigo-600/80 dark:text-gray-400 text-[10px]">{new Date(l.timestamp).toLocaleString()}</td>
-                            <td className="px-4 py-3 font-bold text-indigo-900 dark:text-white">{l.domain}</td>
-                            <td className="px-4 py-3">
+                          <tr key={l._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
+                            <td className="px-4 py-2.5 text-slate-400 text-[10px]">{new Date(l.timestamp).toLocaleString()}</td>
+                            <td className="px-4 py-2.5 font-bold text-slate-800 dark:text-white font-sans">{l.domain}</td>
+                            <td className="px-4 py-2.5">
                               <div className="flex items-center space-x-1.5">
-                                <div className={`w-1.5 h-1.5 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)]' : 'bg-yellow-500'}`} />
-                                <span className={`text-[10px] font-bold ${l.severity === 'CRITICAL' ? 'text-rose-400' : l.severity === 'HIGH' ? 'text-orange-400' : 'text-yellow-400'}`}>{l.severity}</span>
+                                <div className={`w-1.5 h-1.5 rounded-full ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-amber-500'}`} />
+                                <span className={`text-[10px] font-bold ${l.severity === 'CRITICAL' ? 'text-rose-400' : l.severity === 'HIGH' ? 'text-orange-400' : 'text-amber-400'}`}>{l.severity}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-slate-900 dark:text-gray-300 text-[11px]">{l.category}</td>
-                            <td className="px-4 py-3"><span className="font-mono text-indigo-600/80 dark:text-gray-400 bg-indigo-50 dark:bg-[#1e2640]/80 px-2 py-0.5 rounded border border-indigo-200 dark:border-white/10 text-[10px]">{l.ipAddress}</span></td>
+                            <td className="px-4 py-2.5 text-slate-300 text-[11px]">{l.category}</td>
+                            <td className="px-4 py-2.5">
+                              <span className="font-mono text-cyan-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 text-[10px]">{l.ipAddress}</span>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
