@@ -46,7 +46,7 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
                   label: `${data.city || 'Unknown'}, ${data.country}`,
                   country: data.country,
                   count: counts[ip] || 1,
-                  size: Math.min(0.4 + ((counts[ip] || 1) * 0.1), 1.0)
+                  size: Math.min(0.1 + ((counts[ip] || 1) * 0.05), 0.3)
                 };
               }
             }
@@ -118,26 +118,26 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           backgroundColor="rgba(0,0,0,0)"
 
           // ── HD Earth textures for maximum realism ──
-          globeImageUrl="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg"
-          bumpImageUrl="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg"
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           
           // ── Attack marker dots ──
           pointsData={[
-            { lat: -0.9471, lng: 100.3511, size: 2.0, color: '#00ffff', label: 'SERVER PUSAT (Padang, Indonesia)' },
+            { lat: -0.9471, lng: 100.3511, size: 0.2, color: '#00ffff', label: 'SERVER PUSAT (Padang, Indonesia)' },
             ...attackMarkers
           ]}
           pointLat="lat"
           pointLng="lng"
           pointColor={(d) => d.color || '#ff0033'}
           pointAltitude={(d) => d.color ? 0.05 : 0.03}
-          pointRadius={(d) => d.size * 1.5}
+          pointRadius={(d) => d.size * 0.5}
           pointsMerge={false}
-          pointResolution={32}
+          pointResolution={64}
 
           // ── Radar Rings ──
           ringsData={[
-            { lat: -0.9471, lng: 100.3511, maxR: 8, propagationSpeed: 2, repeatPeriod: 800, color: '#00ffff' },
-            ...attackMarkers.map(m => ({ lat: m.lat, lng: m.lng, maxR: 4, propagationSpeed: 1, repeatPeriod: 1500, color: '#ff0033' }))
+            { lat: -0.9471, lng: 100.3511, maxR: 2, propagationSpeed: 1.5, repeatPeriod: 1000, color: '#00ffff' },
+            ...attackMarkers.map(m => ({ lat: m.lat, lng: m.lng, maxR: 1.2, propagationSpeed: 1, repeatPeriod: 1500, color: '#ff0033' }))
           ]}
           ringLat="lat"
           ringLng="lng"
