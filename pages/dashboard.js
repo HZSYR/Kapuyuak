@@ -1168,16 +1168,15 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="flex h-screen overflow-hidden p-2 sm:p-3 lg:p-4 gap-3 lg:gap-4 bg-[#030712]">
+      <div className="flex h-screen overflow-hidden bg-[#030712] text-slate-100">
 
-        {/* ── FLOATING DETACHED SIDEBAR CARD (GAMBANG MELAYANG) ───────────────────────────────────────────────────── */}
+        {/* ── SIDEBAR ───────────────────────────────────────────────────── */}
         <aside className={`
-          fixed lg:relative z-40 my-auto h-[calc(100vh-1.5rem)] sm:h-[calc(100vh-2rem)]
-          w-64 bg-slate-900/95 dark:bg-[#0b101d]/90 backdrop-blur-2xl
-          border border-slate-700/60 dark:border-cyan-500/20 rounded-3xl
-          shadow-[0_10px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(6,182,212,0.1)]
+          fixed lg:relative inset-y-0 left-0 z-40 h-full
+          w-64 bg-slate-950/95 dark:bg-[#080c16] border-r border-slate-800/80
+          shadow-[4px_0_30px_rgba(0,0,0,0.5)]
           flex flex-col transition-transform duration-300 ease-in-out select-none overflow-hidden shrink-0
-          ${sidebarOpen ? 'translate-x-0 inset-y-2 left-2' : '-translate-x-full lg:translate-x-0'}
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}>
           {/* Brand Header */}
           <div className="p-4 sm:p-5 pb-4 flex items-center space-x-3 border-b border-slate-800/80 bg-white/[0.02]">
@@ -1200,7 +1199,7 @@ export default function Dashboard() {
                 <button
                   key={t}
                   onClick={() => handleTabChange(t)}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
                     isActive
                       ? 'bg-gradient-to-r from-cyan-500/25 via-blue-500/20 to-indigo-500/10 text-cyan-300 border-l-2 border-cyan-400 shadow-[inset_0_0_15px_rgba(6,182,212,0.15)]'
                       : 'text-slate-400 hover:bg-white/[0.05] hover:text-slate-200'
@@ -1240,10 +1239,10 @@ export default function Dashboard() {
           </nav>
 
           {/* Bottom Actions / Terminate Session */}
-          <div className="p-3 border-t border-slate-800/80">
+          <div className="p-3 border-t border-slate-800/80 mt-auto">
             <button
               onClick={() => { sessionStorage.clear(); window.location.reload(); }}
-              className="w-full py-2.5 rounded-2xl text-[11px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 transition-all duration-200 flex items-center justify-center space-x-2 uppercase tracking-wider shadow-sm hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]"
+              className="w-full py-2.5 rounded-xl text-[11px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 transition-all duration-200 flex items-center justify-center space-x-2 uppercase tracking-wider shadow-sm hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]"
             >
               <svg className="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
               <span>Terminate Session</span>
@@ -1251,8 +1250,8 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        {/* ── MAIN CONTENT (FLOATING CONTAINER) ──────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto flex flex-col min-w-0 h-[calc(100vh-1.5rem)] sm:h-[calc(100vh-2rem)] my-auto rounded-3xl border border-slate-800/80 bg-[#070c18]/60 backdrop-blur-xl shadow-2xl">
+        {/* ── MAIN CONTENT ──────────────────────────────────────────────── */}
+        <main className="flex-1 overflow-y-auto flex flex-col min-w-0 h-full">
 
           {/* Top bar (visible on mobile) */}
           <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-700 to-blue-800 dark:bg-[#1e2640]/80 backdrop-blur border-b border-indigo-900/20 dark:border-white/10 lg:hidden">
