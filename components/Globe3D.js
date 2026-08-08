@@ -105,6 +105,19 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
       controls.enableZoom = true;
       controls.minDistance = 150; // Prevent zooming too close (inside the globe)
       controls.maxDistance = 500; // Prevent zooming too far out
+      
+      // Stop rotation when zoomed all the way in
+      const handleZoom = () => {
+        // If distance is very close to minDistance (mentok habis), stop rotating
+        if (controls.getDistance() <= controls.minDistance + 5) {
+          controls.autoRotate = false;
+        } else {
+          controls.autoRotate = true;
+        }
+      };
+      
+      controls.addEventListener('change', handleZoom);
+      return () => controls.removeEventListener('change', handleZoom);
     }
   }, [GlobeComponent]);
 
