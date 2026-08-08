@@ -1380,7 +1380,7 @@ export default function Dashboard() {
                     {/* Footer note */}
                     <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-white/5">
                       <span>INTERACTIVE 3D RADAR MONITOR</span>
-                      <span className="text-cyan-500/80">KPK4444 SHIELD v2.4</span>
+
                     </div>
                   </div>
 
