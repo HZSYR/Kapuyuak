@@ -120,7 +120,9 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
       return () => controls.removeEventListener('change', handleZoom);
     }
   }, [GlobeComponent]);
-  const getTooltipHtml = (d) => `
+  const getTooltipHtml = (d) => {
+    const textColor = d.label.includes('SERVER PUSAT') ? '#00ffff' : '#ff0033';
+    return `
     <style>
       @keyframes cyber-popup {
         0% { opacity: 0; transform: scale(0.8) translateY(10px); }
@@ -130,12 +132,12 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
       .cyber-tooltip {
         animation: cyber-popup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         background: rgba(10, 15, 30, 0.85);
-        border: 1px solid ${d.color || '#ff0033'};
+        border: 1px solid ${textColor};
         padding: 10px 14px;
         border-radius: 8px;
         font-family: 'Courier New', monospace;
         color: #fff;
-        box-shadow: 0 0 15px ${d.color ? d.color + '80' : 'rgba(255, 0, 51, 0.5)'}, inset 0 0 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 15px ${textColor}80, inset 0 0 10px rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(4px);
         position: relative;
         overflow: hidden;
@@ -145,17 +147,17 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
         content: '';
         position: absolute;
         top: 0; left: 0; width: 100%; height: 2px;
-        background: ${d.color || '#ff0033'};
-        box-shadow: 0 0 10px ${d.color || '#ff0033'};
+        background: ${textColor};
+        box-shadow: 0 0 10px ${textColor};
       }
     </style>
     <div class="cyber-tooltip">
-      <b style="color:${d.color || '#ff4455'};font-size:15px;letter-spacing:1px;text-transform:uppercase;">${d.label}</b><br/>
+      <b style="color:${textColor};font-size:15px;letter-spacing:1px;text-transform:uppercase;">${d.label}</b><br/>
       <div style="margin-top:6px;font-size:13px;display:flex;align-items:center;gap:6px;">
         ${d.count ? `<span style="color:#ffaa00;text-shadow:0 0 5px rgba(255,170,0,0.5)">⚡ ${d.count.toLocaleString()} ATTACKS BLOCKED</span>` : '<span style="color:#00ffff;text-shadow:0 0 5px rgba(0,255,255,0.5)">🛡️ SISTEM OJS TERLINDUNGI</span>'}
       </div>
     </div>
-  `;
+  `};
 
   return (
     <div ref={containerRef} className="w-full h-full flex items-center justify-center cursor-move">
@@ -182,8 +184,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           pointLat="lat"
           pointLng="lng"
           pointColor={(d) => d.color || (d.isHitbox ? 'rgba(0,0,0,0.01)' : '#ff0033')}
-          pointAltitude={(d) => d.color && !d.isHitbox ? 0.05 : 0.03}
-          pointRadius={(d) => d.size * 0.5}
+          pointAltitude={(d) => d.isHitbox ? 0.08 : 0.02}
+          pointRadius={(d) => d.size * (d.isHitbox ? 1.5 : 0.5)}
           pointsMerge={false}
           pointResolution={64}
 
@@ -199,9 +201,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           ringPropagationSpeed="propagationSpeed"
           ringRepeatPeriod="repeatPeriod"
 
-          // ── Label on hover (applied to both points and rings for easier hovering) ──
+          // ── Label on hover (applied to points only to prevent raycaster flickering) ──
           pointLabel={(d) => getTooltipHtml(d)}
-          ringLabel={(d) => getTooltipHtml(d)}
 
           // ── Atmosphere ──
           showAtmosphere={true}
