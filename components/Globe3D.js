@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function Globe3D({ logs = [] }) {
+export default function Globe3D({ logs = [], onMarkersUpdate }) {
   const globeRef = useRef();
   const containerRef = useRef();
   const [GlobeComponent, setGlobeComponent] = useState(null);
@@ -20,39 +20,50 @@ export default function Globe3D({ logs = [] }) {
   useEffect(() => {
     if (!logs || logs.length === 0) return;
 
-    // Get up to 20 unique IPs from recent logs
-    const uniqueIps = [...new Set(logs.map(l => l.ipAddress))].filter(ip => ip !== 'unknown' && ip !== '::1' && ip !== '127.0.0.1').slice(0, 20);
+    // Get up to 15 unique IPs from recent logs
+    const uniqueIps = [...new Set(logs.map(l => l.ipAddress))].filter(ip => ip !== 'unknown' && ip !== '::1' && ip !== '127.0.0.1').slice(0, 15);
     
     if (uniqueIps.length === 0) return;
 
     const fetchGeoData = async () => {
       try {
-        // Free batch IP Geolocation API (ip-api.com)
-        const response = await fetch('http://ip-api.com/batch', {
-          method: 'POST',
-          body: JSON.stringify(uniqueIps),
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          
-          // Count occurrences of each IP in logs to determine size/count
-          const counts = logs.reduce((acc, log) => {
-            acc[log.ipAddress] = (acc[log.ipAddress] || 0) + 1;
-            return acc;
-          }, {});
+        // Count occurrences of each IP in logs to determine size/count
+        const counts = logs.reduce((acc, log) => {
+          acc[log.ipAddress] = (acc[log.ipAddress] || 0) + 1;
+          return acc;
+        }, {});
 
-          const markers = data.filter(d => d.status === 'success').map(d => ({
-            lat: d.lat,
-            lng: d.lon,
-            label: `${d.city}, ${d.country}`,
-            count: counts[d.query] || 1,
-            size: Math.min(0.4 + ((counts[d.query] || 1) * 0.1), 1.0)
-          }));
-          
-          setAttackMarkers(markers);
+        // Use HTTPS supported GeoJS API for real data without mixed-content errors
+        const promises = uniqueIps.map(async (ip) => {
+          try {
+            const res = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.latitude && data.longitude) {
+                return {
+                  lat: parseFloat(data.latitude),
+                  lng: parseFloat(data.longitude),
+                  label: `${data.city || 'Unknown'}, ${data.country}`,
+                  country: data.country,
+                  count: counts[ip] || 1,
+                  size: Math.min(0.4 + ((counts[ip] || 1) * 0.1), 1.0)
+                };
+              }
+            }
+          } catch(err) { }
+          return null;
+        });
+
+        const results = await Promise.all(promises);
+        const validMarkers = results.filter(m => m !== null);
+        
+        setAttackMarkers(validMarkers);
+
+        // Pass resolved real data back to dashboard for the Top Origins Sidebar
+        if (onMarkersUpdate && typeof onMarkersUpdate === 'function') {
+           onMarkersUpdate(validMarkers);
         }
+        
       } catch (e) {
         console.error("Failed to fetch GeoIP for Globe", e);
       }

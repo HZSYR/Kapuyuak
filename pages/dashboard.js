@@ -712,6 +712,7 @@ export default function Dashboard() {
   const [tab, setTab] = useState('OVERVIEW');
   const [keys, setKeys] = useState([]);
   const [logs, setLogs] = useState([]);
+  const [topOrigins, setTopOrigins] = useState([]);
   const [blacklists, setBlacklists] = useState([]);
   const [blacklistPage, setBlacklistPage] = useState(1);
   const [groqKeys, setGroqKeys] = useState([]);
@@ -1331,20 +1332,21 @@ export default function Dashboard() {
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Top Attack Origins</p>
                         
                         {/* Real Stats if Globe loaded, otherwise Dummy Stats for Simulation */}
-                        {[
-                          { country: 'China', count: '14,592', color: 'from-rose-500 to-red-600', percent: 'w-[85%]' },
-                          { country: 'United States', count: '8,241', color: 'from-orange-500 to-amber-500', percent: 'w-[60%]' },
-                          { country: 'Singapore', count: '3,105', color: 'from-cyan-500 to-blue-500', percent: 'w-[35%]' },
-                          { country: 'Russia', count: '1,894', color: 'from-indigo-400 to-indigo-600', percent: 'w-[20%]' },
-                          { country: 'Indonesia', count: '943', color: 'from-slate-500 to-slate-700', percent: 'w-[10%]' }
-                        ].map((stat, i) => (
+                        {(topOrigins.length > 0 ? topOrigins : [
+                          { country: 'China', count: 14592, color: 'from-rose-500 to-red-600', percent: 'w-[85%]' },
+                          { country: 'United States', count: 8241, color: 'from-orange-500 to-amber-500', percent: 'w-[60%]' },
+                          { country: 'Singapore', count: 3105, color: 'from-cyan-500 to-blue-500', percent: 'w-[35%]' },
+                          { country: 'Russia', count: 1894, color: 'from-indigo-400 to-indigo-600', percent: 'w-[20%]' },
+                          { country: 'Indonesia', count: 943, color: 'from-slate-500 to-slate-700', percent: 'w-[10%]' }
+                        ]).sort((a,b) => b.count - a.count).slice(0, 5).map((stat, i) => (
                           <div key={i} className="group flex flex-col gap-1.5">
                             <div className="flex justify-between items-end">
                               <span className="text-xs text-slate-300 font-semibold">{stat.country}</span>
-                              <span className="text-[10px] text-cyan-400 font-mono font-bold">{stat.count}</span>
+                              <span className="text-[10px] text-cyan-400 font-mono font-bold">{typeof stat.count === 'number' ? stat.count.toLocaleString() : stat.count}</span>
                             </div>
                             <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                              <div className={`h-full rounded-full bg-gradient-to-r ${stat.color} ${stat.percent} group-hover:opacity-80 transition-opacity`}></div>
+                              <div className={`h-full rounded-full bg-gradient-to-r ${stat.color || (i === 0 ? 'from-rose-500 to-red-600' : i === 1 ? 'from-orange-500 to-amber-500' : i === 2 ? 'from-cyan-500 to-blue-500' : i === 3 ? 'from-indigo-400 to-indigo-600' : 'from-slate-500 to-slate-700')} group-hover:opacity-80 transition-opacity`} 
+                                   style={stat.percent ? {} : { width: `${Math.max(10, Math.min(100, (stat.count / (topOrigins[0]?.count || 14592)) * 100))}%` }}></div>
                             </div>
                           </div>
                         ))}
@@ -1355,7 +1357,7 @@ export default function Dashboard() {
                     {/* Right: The 3D Globe */}
                     <div className="w-full lg:w-2/3 flex justify-center items-center">
                       <div className="w-full max-w-[700px] aspect-square flex items-center justify-center -my-10">
-                        <Globe3D logs={logs} />
+                        <Globe3D logs={logs} onMarkersUpdate={setTopOrigins} />
                       </div>
                     </div>
                   </div>
