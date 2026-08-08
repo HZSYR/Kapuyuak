@@ -123,35 +123,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
   const getTooltipHtml = (d) => {
     const textColor = d.label.includes('SERVER PUSAT') ? '#00ffff' : '#ff0033';
     return `
-    <style>
-      @keyframes cyber-popup {
-        0% { opacity: 0; transform: scale(0.8) translateY(10px); }
-        70% { transform: scale(1.05) translateY(-2px); }
-        100% { opacity: 1; transform: scale(1) translateY(0); }
-      }
-      .cyber-tooltip {
-        animation: cyber-popup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        background: rgba(10, 15, 30, 0.85);
-        border: 1px solid ${textColor};
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-family: 'Courier New', monospace;
-        color: #fff;
-        box-shadow: 0 0 15px ${textColor}80, inset 0 0 10px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        position: relative;
-        overflow: hidden;
-        pointer-events: none;
-      }
-      .cyber-tooltip::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 2px;
-        background: ${textColor};
-        box-shadow: 0 0 10px ${textColor};
-      }
-    </style>
-    <div class="cyber-tooltip">
+    <div class="cyber-tooltip" style="border-color: ${textColor}; box-shadow: 0 0 15px ${textColor}80, inset 0 0 10px rgba(0, 0, 0, 0.5);">
+      <div class="cyber-tooltip-line" style="background: ${textColor}; box-shadow: 0 0 10px ${textColor};"></div>
       <b style="color:${textColor};font-size:15px;letter-spacing:1px;text-transform:uppercase;">${d.label}</b><br/>
       <div style="margin-top:6px;font-size:13px;display:flex;align-items:center;gap:6px;">
         ${d.count ? `<span style="color:#ffaa00;text-shadow:0 0 5px rgba(255,170,0,0.5)">⚡ ${d.count.toLocaleString()} ATTACKS BLOCKED</span>` : '<span style="color:#00ffff;text-shadow:0 0 5px rgba(0,255,255,0.5)">🛡️ SISTEM OJS TERLINDUNGI</span>'}
@@ -161,6 +134,30 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
 
   return (
     <div ref={containerRef} className="w-full h-full flex items-center justify-center cursor-move">
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes cyber-popup {
+          0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+          70% { transform: scale(1.05) translateY(-2px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .cyber-tooltip {
+          animation: cyber-popup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          background: rgba(10, 15, 30, 0.85);
+          border: 1px solid transparent;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-family: 'Courier New', monospace;
+          color: #fff;
+          backdrop-filter: blur(4px);
+          position: relative;
+          overflow: hidden;
+          pointer-events: none;
+        }
+        .cyber-tooltip-line {
+          position: absolute;
+          top: 0; left: 0; width: 100%; height: 2px;
+        }
+      `}} />
       {GlobeComponent ? (
         <GlobeComponent
           ref={globeRef}
