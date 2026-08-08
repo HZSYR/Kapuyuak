@@ -60,7 +60,7 @@ export default function Globe3D() {
   }, [GlobeComponent]);
 
   return (
-    <div ref={containerRef} className="w-full aspect-square overflow-hidden rounded-full" style={{ maxWidth: 500, margin: '0 auto' }}>
+    <div ref={containerRef} className="w-full h-full flex items-center justify-center">
       {GlobeComponent ? (
         <GlobeComponent
           ref={globeRef}
@@ -76,40 +76,41 @@ export default function Globe3D() {
           pointsData={ATTACK_MARKERS}
           pointLat="lat"
           pointLng="lng"
-          pointColor={() => '#ff2233'}
-          pointAltitude={0.01}
-          pointRadius={(d) => d.size * 0.4}
+          pointColor={() => '#ff0033'}
+          pointAltitude={0.03}
+          pointRadius={(d) => d.size * 1.5}
           pointsMerge={false}
+          pointResolution={32}
 
           // ── Label on hover ──
           pointLabel={(d) => `
-            <div style="background:rgba(0,0,0,0.8);border:1px solid #ff2233;padding:6px 10px;border-radius:6px;font-size:11px;font-family:monospace;color:#fff;">
-              <b style="color:#ff4455">${d.label}</b><br/>
-              ⚡ ${d.count.toLocaleString()} attacks
+            <div style="background:rgba(0,0,0,0.85);border:1px solid #ff2233;padding:8px 12px;border-radius:8px;font-size:12px;font-family:monospace;color:#fff;box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);">
+              <b style="color:#ff4455;font-size:14px;">${d.label}</b><br/>
+              <span style="color:#ffaa00">⚡ ${d.count.toLocaleString()} attacks blocked</span>
             </div>
           `}
 
           // ── Atmosphere ──
           showAtmosphere={true}
-          atmosphereColor="#1a6dff"
-          atmosphereAltitude={0.15}
+          atmosphereColor="#00bbff"
+          atmosphereAltitude={0.25}
 
           // ── Arcs (attack arcs from each origin to a "target" in SE Asia) ──
-          arcsData={ATTACK_MARKERS.slice(0, 8)}
+          arcsData={ATTACK_MARKERS.slice(0, 12)}
           arcStartLat={(d) => d.lat}
           arcStartLng={(d) => d.lng}
           arcEndLat={-6.2088}
           arcEndLng={106.8456}
-          arcColor={() => ['rgba(255,50,50,0)', 'rgba(255,50,50,0.8)', 'rgba(255,50,50,0)']}
-          arcDashLength={0.4}
+          arcColor={() => ['rgba(255,0,50,0)', 'rgba(255,0,50,1)', 'rgba(255,0,50,0)']}
+          arcDashLength={0.5}
           arcDashGap={0.2}
-          arcDashAnimateTime={2500}
-          arcStroke={0.4}
-          arcAltitude={0.3}
+          arcDashAnimateTime={2000}
+          arcStroke={1.5}
+          arcAltitudeAutoScale={0.4}
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
     </div>

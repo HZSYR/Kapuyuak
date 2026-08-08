@@ -1353,7 +1353,7 @@ export default function Dashboard() {
 
                     {/* Right: The 3D Globe */}
                     <div className="w-full lg:w-2/3 flex justify-center items-center">
-                      <div className="w-full max-w-[450px]">
+                      <div className="w-full max-w-[700px] aspect-square flex items-center justify-center -my-10">
                         <Globe3D />
                       </div>
                     </div>
