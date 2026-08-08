@@ -1167,17 +1167,15 @@ export default function Dashboard() {
           ${sidebarOpen ? 'translate-x-0 inset-y-2 left-2' : '-translate-x-full lg:translate-x-0'}
         `}>
           {/* Brand Header */}
-          <div className="p-4 sm:p-5 pb-4 flex items-center space-x-3.5 border-b border-slate-800/80 bg-white/[0.02]">
-            <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-indigo-500/20 border border-cyan-500/40 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-              <img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse ring-2 ring-[#080c16]"></span>
+          <div className="p-4 sm:p-5 pb-4 flex items-center space-x-3 border-b border-slate-800/80 bg-white/[0.02]">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-700 shrink-0 shadow-md">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h1 className="text-base font-black text-white dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:via-cyan-200 dark:to-cyan-400 tracking-wide uppercase font-mono">kapuyuak</h1>
-                <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">v3.5</span>
+                <h1 className="text-base font-black text-white dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-slate-200 tracking-wide font-mono leading-none">kapuyuak</h1>
               </div>
-              <p className="text-[9px] text-slate-400 tracking-wider uppercase font-mono font-semibold">ENTERPRISE SOC SHIELD</p>
+              <p className="text-[9px] text-slate-400 tracking-widest uppercase font-mono font-medium mt-1">by.150141146151172150</p>
             </div>
           </div>
 
