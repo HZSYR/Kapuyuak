@@ -1,211 +1,117 @@
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { useEffect, useRef, useState } from 'react';
 
-// Attack marker locations [lat, lon, intensity]
-const ATTACK_LOCATIONS = [
-  [39.9042, 116.4074, 1.0],   // China (Beijing) - largest
-  [31.2304, 121.4737, 0.9],   // China (Shanghai)
-  [22.3964, 114.1095, 0.8],   // Hong Kong
-  [37.7749, -122.4194, 0.85], // USA (San Francisco)
-  [40.7128, -74.0060, 0.8],   // USA (New York)
-  [1.3521, 103.8198, 0.75],   // Singapore
-  [51.5074, -0.1278, 0.7],    // UK (London)
-  [55.7558, 37.6173, 0.8],    // Russia (Moscow)
-  [48.8566, 2.3522, 0.6],     // France (Paris)
-  [35.6762, 139.6503, 0.7],   // Japan (Tokyo)
-  [-6.2088, 106.8456, 0.65],  // Indonesia (Jakarta)
-  [52.3676, 4.9041, 0.6],     // Netherlands (Amsterdam)
-  [-23.5505, -46.6333, 0.65], // Brazil (São Paulo)
-  [28.6139, 77.2090, 0.7],    // India (New Delhi)
-  [37.5665, 126.9780, 0.65],  // South Korea (Seoul)
-  [52.5200, 13.4050, 0.6],    // Germany (Berlin)
-  [25.2048, 55.2708, 0.55],   // UAE (Dubai)
-  [19.0760, 72.8777, 0.6],    // India (Mumbai)
+// Attack marker data — real cities that generate attacks
+const ATTACK_MARKERS = [
+  { lat: 39.9042,  lng: 116.4074, label: 'Beijing, China',        count: 14592, size: 0.9 },
+  { lat: 31.2304,  lng: 121.4737, label: 'Shanghai, China',       count: 9810,  size: 0.8 },
+  { lat: 22.3964,  lng: 114.1095, label: 'Hong Kong',             count: 7230,  size: 0.7 },
+  { lat: 37.7749,  lng: -122.4194,label: 'San Francisco, USA',    count: 8241,  size: 0.75 },
+  { lat: 40.7128,  lng: -74.0060, label: 'New York, USA',         count: 6500,  size: 0.7 },
+  { lat: 1.3521,   lng: 103.8198, label: 'Singapore',             count: 3105,  size: 0.6 },
+  { lat: 51.5074,  lng: -0.1278,  label: 'London, UK',            count: 2890,  size: 0.58 },
+  { lat: 55.7558,  lng: 37.6173,  label: 'Moscow, Russia',        count: 1894,  size: 0.55 },
+  { lat: 48.8566,  lng: 2.3522,   label: 'Paris, France',         count: 1540,  size: 0.5 },
+  { lat: 35.6762,  lng: 139.6503, label: 'Tokyo, Japan',          count: 1720,  size: 0.52 },
+  { lat: -6.2088,  lng: 106.8456, label: 'Jakarta, Indonesia',    count: 943,   size: 0.45 },
+  { lat: 52.3676,  lng: 4.9041,   label: 'Amsterdam, NL',         count: 1100,  size: 0.47 },
+  { lat: -23.5505, lng: -46.6333, label: 'São Paulo, Brazil',     count: 870,   size: 0.44 },
+  { lat: 28.6139,  lng: 77.2090,  label: 'New Delhi, India',      count: 980,   size: 0.46 },
+  { lat: 37.5665,  lng: 126.9780, label: 'Seoul, South Korea',    count: 850,   size: 0.43 },
+  { lat: 52.5200,  lng: 13.4050,  label: 'Berlin, Germany',       count: 760,   size: 0.42 },
+  { lat: 25.2048,  lng: 55.2708,  label: 'Dubai, UAE',            count: 680,   size: 0.4 },
+  { lat: 19.0760,  lng: 72.8777,  label: 'Mumbai, India',         count: 790,   size: 0.43 },
 ];
 
-function latLonToXYZ(lat, lon, radius) {
-  const phi = (90 - lat) * (Math.PI / 180);
-  const theta = (lon + 180) * (Math.PI / 180);
-  return new THREE.Vector3(
-    -radius * Math.sin(phi) * Math.cos(theta),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta)
-  );
-}
-
 export default function Globe3D() {
-  const mountRef = useRef(null);
-  const animationRef = useRef(null);
+  const globeRef = useRef();
+  const containerRef = useRef();
+  const [GlobeComponent, setGlobeComponent] = useState(null);
+  const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
 
+  // Dynamically import react-globe.gl (client-side only, no SSR)
   useEffect(() => {
-    const container = mountRef.current;
-    if (!container) return;
-
-    const size = container.offsetWidth;
-    if (size <= 0) return;
-
-    // ── Scene ──
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.z = 2.5;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(size, size);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-
-    // ── Lighting ──
-    const ambientLight = new THREE.AmbientLight(0x333355, 1.5);
-    scene.add(ambientLight);
-
-    const sunLight = new THREE.DirectionalLight(0xffffff, 2.5);
-    sunLight.position.set(5, 3, 5);
-    scene.add(sunLight);
-
-    // ── Earth Globe ──
-    const textureLoader = new THREE.TextureLoader();
-
-    const earthGeo = new THREE.SphereGeometry(1, 64, 64);
-
-    // Use NASA Blue Marble texture (public CDN)
-    const earthTexture = textureLoader.load(
-      'https://unpkg.com/three-globe@2.26.4/example/img/earth-blue-marble.jpg'
-    );
-    const bumpTexture = textureLoader.load(
-      'https://unpkg.com/three-globe@2.26.4/example/img/earth-topology.png'
-    );
-    const cloudTexture = textureLoader.load(
-      'https://unpkg.com/three-globe@2.26.4/example/img/earth-water.png'
-    );
-
-    const earthMat = new THREE.MeshPhongMaterial({
-      map: earthTexture,
-      bumpMap: bumpTexture,
-      bumpScale: 0.05,
-      specularMap: cloudTexture,
-      specular: new THREE.Color(0x226688),
-      shininess: 15,
+    import('react-globe.gl').then((mod) => {
+      setGlobeComponent(() => mod.default);
     });
-
-    const earth = new THREE.Mesh(earthGeo, earthMat);
-    scene.add(earth);
-
-    // ── Cloud Layer ──
-    const cloudGeo = new THREE.SphereGeometry(1.01, 64, 64);
-    const cloudMat = new THREE.MeshPhongMaterial({
-      map: textureLoader.load('https://unpkg.com/three-globe@2.26.4/example/img/earth-water.png'),
-      transparent: true,
-      opacity: 0.25,
-    });
-    const clouds = new THREE.Mesh(cloudGeo, cloudMat);
-    scene.add(clouds);
-
-    // ── Atmosphere Glow ──
-    const atmGeo = new THREE.SphereGeometry(1.06, 64, 64);
-    const atmMat = new THREE.ShaderMaterial({
-      uniforms: {},
-      vertexShader: `
-        varying vec3 vNormal;
-        void main() {
-          vNormal = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        varying vec3 vNormal;
-        void main() {
-          float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
-          gl_FragColor = vec4(0.1, 0.5, 1.0, 1.0) * intensity;
-        }
-      `,
-      side: THREE.FrontSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-    });
-    const atmosphere = new THREE.Mesh(atmGeo, atmMat);
-    scene.add(atmosphere);
-
-    // ── Attack Markers (Red Glowing Dots) ──
-    const markerGroup = new THREE.Group();
-    scene.add(markerGroup);
-
-    ATTACK_LOCATIONS.forEach(([lat, lon, intensity]) => {
-      const pos = latLonToXYZ(lat, lon, 1.01);
-
-      // Outer glow ring
-      const ringGeo = new THREE.RingGeometry(0.012, 0.025, 16);
-      const ringMat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(1, 0.1, 0.1),
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.5 * intensity,
-      });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.copy(pos);
-      ring.lookAt(pos.clone().multiplyScalar(2));
-      markerGroup.add(ring);
-
-      // Core dot
-      const dotGeo = new THREE.CircleGeometry(0.012 * intensity, 16);
-      const dotMat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color(1, 0.15, 0.15),
-        side: THREE.DoubleSide,
-      });
-      const dot = new THREE.Mesh(dotGeo, dotMat);
-      dot.position.copy(pos);
-      dot.lookAt(pos.clone().multiplyScalar(2));
-      markerGroup.add(dot);
-    });
-
-    // ── Stars Background ──
-    const starsGeo = new THREE.BufferGeometry();
-    const starCount = 2000;
-    const starPositions = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i++) {
-      starPositions[i] = (Math.random() - 0.5) * 600;
-    }
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
-    const stars = new THREE.Points(starsGeo, starsMat);
-    scene.add(stars);
-
-    // ── Animation Loop ──
-    let pulse = 0;
-    const animate = () => {
-      animationRef.current = requestAnimationFrame(animate);
-      earth.rotation.y += 0.0015;
-      clouds.rotation.y += 0.0018;
-      markerGroup.rotation.y = earth.rotation.y;
-
-      // Pulse ring markers
-      pulse += 0.05;
-      markerGroup.children.forEach((child, i) => {
-        if (i % 2 === 0) { // rings only
-          child.scale.setScalar(1 + 0.3 * Math.abs(Math.sin(pulse + i)));
-          child.material.opacity = 0.3 + 0.3 * Math.abs(Math.sin(pulse + i));
-        }
-      });
-
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Cleanup
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      renderer.dispose();
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
-    };
   }, []);
 
+  // Measure container dimensions
+  useEffect(() => {
+    const measure = () => {
+      if (containerRef.current) {
+        const w = containerRef.current.offsetWidth;
+        setDimensions({ width: w, height: w });
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  // Auto-rotate the globe
+  useEffect(() => {
+    if (!globeRef.current) return;
+    const controls = globeRef.current.controls();
+    if (controls) {
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.6;
+      controls.enableZoom = false;
+    }
+  }, [GlobeComponent]);
+
   return (
-    <div
-      ref={mountRef}
-      className="w-full aspect-square"
-      style={{ maxWidth: '500px', margin: '0 auto' }}
-    />
+    <div ref={containerRef} className="w-full aspect-square overflow-hidden rounded-full" style={{ maxWidth: 500, margin: '0 auto' }}>
+      {GlobeComponent ? (
+        <GlobeComponent
+          ref={globeRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          backgroundColor="rgba(0,0,0,0)"
+
+          // ── Earth textures from three-globe's own CDN (reliable) ──
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+
+          // ── Attack marker dots ──
+          pointsData={ATTACK_MARKERS}
+          pointLat="lat"
+          pointLng="lng"
+          pointColor={() => '#ff2233'}
+          pointAltitude={0.01}
+          pointRadius={(d) => d.size * 0.4}
+          pointsMerge={false}
+
+          // ── Label on hover ──
+          pointLabel={(d) => `
+            <div style="background:rgba(0,0,0,0.8);border:1px solid #ff2233;padding:6px 10px;border-radius:6px;font-size:11px;font-family:monospace;color:#fff;">
+              <b style="color:#ff4455">${d.label}</b><br/>
+              ⚡ ${d.count.toLocaleString()} attacks
+            </div>
+          `}
+
+          // ── Atmosphere ──
+          showAtmosphere={true}
+          atmosphereColor="#1a6dff"
+          atmosphereAltitude={0.15}
+
+          // ── Arcs (attack arcs from each origin to a "target" in SE Asia) ──
+          arcsData={ATTACK_MARKERS.slice(0, 8)}
+          arcStartLat={(d) => d.lat}
+          arcStartLng={(d) => d.lng}
+          arcEndLat={-6.2088}
+          arcEndLng={106.8456}
+          arcColor={() => ['rgba(255,50,50,0)', 'rgba(255,50,50,0.8)', 'rgba(255,50,50,0)']}
+          arcDashLength={0.4}
+          arcDashGap={0.2}
+          arcDashAnimateTime={2500}
+          arcStroke={0.4}
+          arcAltitude={0.3}
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+    </div>
   );
 }
