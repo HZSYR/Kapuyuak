@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 
+const geoCache = new Map();
+const GEO_TIMEOUT_MS = 5000;
+
 // ─── SERVER LOCATION ─────────────────────────────────────────────────────────
 const SERVER = { lat: -0.9471, lng: 100.3511, label: 'SERVER PUSAT', city: 'Padang', region: 'Sumatera Barat', country: 'Indonesia' };
 
@@ -14,19 +17,31 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
   const [tooltip, setTooltip] = useState({ visible: false, data: null, x: 0, y: 0 });
   const tooltipTimer = useRef(null);
 
-  // ── Dynamic import (client-side only, no SSR) ──────────────────────────────
+  // ── Dynamic import (client-side only, deferred until browser is idle) ────────
   useEffect(() => {
-    import('react-globe.gl').then((mod) => {
-      setGlobeComponent(() => mod.default);
-    });
+    let cancelled = false;
+    const loadGlobe = () => {
+      import('react-globe.gl').then((mod) => {
+        if (!cancelled) setGlobeComponent(() => mod.default);
+      });
+    };
+    const idleId = window.requestIdleCallback
+      ? window.requestIdleCallback(loadGlobe, { timeout: 1200 })
+      : window.setTimeout(loadGlobe, 250);
+    return () => {
+      cancelled = true;
+      if (window.cancelIdleCallback && typeof idleId === 'number') window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+    };
   }, []);
 
   // ── Process logs into GeoIP markers ───────────────────────────────────────
   useEffect(() => {
     if (!logs || logs.length === 0) return;
+    let cancelled = false;
     const uniqueIps = [...new Set(logs.map(l => l.ipAddress))]
       .filter(ip => ip && ip !== 'unknown' && ip !== '::1' && ip !== '127.0.0.1')
-      .slice(0, 15);
+      .slice(0, 5);
     if (uniqueIps.length === 0) return;
 
     const counts = logs.reduce((acc, log) => {
@@ -36,53 +51,54 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
 
     const fetchGeoData = async () => {
       try {
-        const promises = uniqueIps.map(async (ip) => {
+        const results = await Promise.all(uniqueIps.map(async (ip) => {
+          if (geoCache.has(ip)) return { ...geoCache.get(ip), count: counts[ip] || 1 };
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), GEO_TIMEOUT_MS);
           try {
-            const res = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`);
-            if (res.ok) {
-              const data = await res.json();
-              if (data.latitude && data.longitude) {
-                const city = data.city || '';
-                const region = data.region || '';
-                const country = data.country || '';
-                const parts = [city, region, country].filter(Boolean);
-                const label = parts.join(', ');
-                return {
-                  lat: parseFloat(data.latitude),
-                  lng: parseFloat(data.longitude),
-                  label,
-                  city, region, country,
-                  count: counts[ip] || 1,
-                  size: Math.min(0.12 + ((counts[ip] || 1) * 0.04), 0.3)
-                };
-              }
-            }
-          } catch (e) {}
-          return null;
-        });
+            const res = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`, { signal: controller.signal });
+            if (!res.ok) return null;
+            const data = await res.json();
+            if (!data.latitude || !data.longitude) return null;
+            const city = data.city || '';
+            const region = data.region || '';
+            const country = data.country || '';
+            const marker = {
+              lat: parseFloat(data.latitude),
+              lng: parseFloat(data.longitude),
+              label: [city, region, country].filter(Boolean).join(', '),
+              city, region, country,
+              size: Math.min(0.12 + ((counts[ip] || 1) * 0.04), 0.3)
+            };
+            geoCache.set(ip, marker);
+            return { ...marker, count: counts[ip] || 1 };
+          } catch (e) {
+            return null;
+          } finally {
+            clearTimeout(timeoutId);
+          }
+        }));
 
-        const results = await Promise.all(promises);
-        const validMarkers = results.filter(m => m !== null);
+        if (cancelled) return;
+        const validMarkers = results.filter(Boolean);
         setAttackMarkers(validMarkers);
-
-        // Aggregate by country for sidebar
         if (onMarkersUpdate && typeof onMarkersUpdate === 'function') {
           const countryMap = {};
-          validMarkers.forEach(m => {
-            if (countryMap[m.country]) {
-              countryMap[m.country].count += m.count;
-            } else {
-              countryMap[m.country] = { ...m };
-            }
+          validMarkers.forEach(marker => {
+            countryMap[marker.country] = countryMap[marker.country]
+              ? { ...countryMap[marker.country], count: countryMap[marker.country].count + marker.count }
+              : { ...marker };
           });
           onMarkersUpdate(Object.values(countryMap));
         }
       } catch (e) {
-        console.error('GeoIP fetch error', e);
+        if (!cancelled) console.error('GeoIP fetch error', e);
       }
     };
+
     fetchGeoData();
-  }, [logs]);
+    return () => { cancelled = true; };
+  }, [logs, onMarkersUpdate]);
 
   // ── Measure container ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -153,8 +169,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           backgroundColor="rgba(0,0,0,0)"
 
           // ── Earth textures ──
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+          globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
 
           // ── Attack marker dots ──
           pointsData={allPoints}
@@ -163,8 +179,8 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
           pointColor="color"
           pointAltitude={0.02}
           pointRadius={(d) => d.size * 0.8}
-          pointsMerge={false}
-          pointResolution={32}
+          pointsMerge={true}
+          pointResolution={16}
           pointLabel={() => ''}
           onPointHover={handlePointHover}
 
