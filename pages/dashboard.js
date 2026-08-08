@@ -1763,96 +1763,130 @@ export default function Dashboard() {
 
             {/* AI SETTINGS TAB */}
             {tab === 'AI SETTINGS' && (
-              <div className="space-y-6">
-                <div className="bg-white dark:bg-[#1e2640]/80 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-indigo-900 dark:text-white tracking-tight mb-2">AI Scanner Configuration</h3>
-                      <p className="text-sm text-indigo-600/80 dark:text-gray-400">by.150141146151172150.</p>
-                    </div>
-                  </div>
-
-                  <form onSubmit={createGroqKey} className="flex flex-col sm:flex-row gap-4 mb-8">
-                    <input name="groqKey" required placeholder="gsk_xxxxxxxxxxxxxxxxxxxx" className="flex-1 bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-white/10 p-3 rounded-lg text-indigo-900 dark:text-white font-mono text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
-                    <button type="submit" className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-indigo-900 dark:text-white font-bold rounded-lg transition whitespace-nowrap">
-                      Add Key
-                    </button>
-                  </form>
-
-                  <div className="bg-white dark:bg-[#1e2a45]/60 rounded-xl border border-slate-200 dark:border-white/10 overflow-x-auto">
-                    <table className="w-full text-left text-sm text-indigo-600/80 dark:text-gray-400">
-                      <thead className="text-[10px] uppercase text-indigo-500/70 dark:text-gray-500 bg-slate-50/80 dark:bg-white/[0.02] tracking-widest border-b border-slate-200 dark:border-white/10">
-                        <tr>
-                          <th className="px-4 py-4 font-bold">API Key (Masked)</th>
-                          <th className="px-4 py-4 font-bold">Added On</th>
-                          <th className="px-4 py-4 font-bold text-right">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/5">
-                        {groqKeys.map(gk => (
-                          <tr key={gk._id} className="hover:bg-slate-50/80 dark:bg-white/[0.02] transition">
-                            <td className="px-4 py-3 font-mono text-emerald-400 text-[12px]">
-                              {gk.key.substring(0, 8)}...{gk.key.substring(gk.key.length - 4)}
-                            </td>
-                            <td className="px-4 py-3 text-[11px]">{new Date(gk.addedAt).toLocaleString()}</td>
-                            <td className="px-4 py-3 text-right">
-                              <button onClick={() => deleteGroqKey(gk._id)} className="text-[10px] px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded transition font-bold uppercase tracking-wider border border-rose-500/20">Remove</button>
-                            </td>
-                          </tr>
-                        ))}
-                        {groqKeys.length === 0 && (
-                          <tr>
-                            <td colSpan="3" className="px-4 py-8 text-center text-indigo-500/70 dark:text-gray-500 font-mono text-sm">No Groq keys configured. System will use manual scoring.</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* AI TERMINAL UI */}
-                <div className="bg-black border border-[#333] rounded-2xl overflow-hidden flex flex-col shadow-2xl">
-                  <div className="bg-[#111] px-4 py-3 border-b border-[#333] flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1.5">
-                        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                
+                {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
+                <div className="lg:col-span-6 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                          AI Scanner Configuration
+                        </h3>
+                        <p className="text-xs text-indigo-500/80 dark:text-gray-400 mt-0.5 font-mono">GROQ API INFRASTRUCTURE</p>
                       </div>
-                      <span className="ml-4 text-xs font-mono text-indigo-600/80 dark:text-gray-400 font-bold uppercase tracking-widest">KPK4444 AI Terminal v1.0</span>
-                      <span className="ml-3 flex items-center space-x-1">
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <span className="text-[9px] text-green-500 font-mono font-bold uppercase">LIVE</span>
+                      <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">
+                        {groqKeys.length} KEYS ACTIVE
                       </span>
                     </div>
-                    <div className="flex space-x-3">
-                      <span className="text-[9px] font-mono text-gray-600">refresh in: <span className="text-green-400 font-bold">{aiCountdown}s</span></span>
-                      <button onClick={clearAiLogs} className="text-xs font-mono text-rose-500 hover:text-rose-400 transition">clear()</button>
+
+                    <form onSubmit={createGroqKey} className="flex gap-2 mb-5">
+                      <input
+                        name="groqKey"
+                        required
+                        placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
+                        className="flex-1 bg-slate-100 dark:bg-[#090d16] border border-slate-300 dark:border-white/10 p-2.5 rounded-xl text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                      />
+                      <button type="submit" className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition text-xs shadow-md shadow-cyan-500/20 whitespace-nowrap uppercase tracking-wider">
+                        Add Key
+                      </button>
+                    </form>
+
+                    <div className="bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
+                      <div className="max-h-[220px] overflow-y-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="text-[10px] uppercase text-slate-400 bg-slate-200/60 dark:bg-white/[0.03] tracking-widest border-b border-slate-200 dark:border-white/10 sticky top-0 backdrop-blur">
+                            <tr>
+                              <th className="px-4 py-3 font-bold">API Key (Masked)</th>
+                              <th className="px-4 py-3 font-bold">Added On</th>
+                              <th className="px-4 py-3 font-bold text-right">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
+                            {groqKeys.map(gk => (
+                              <tr key={gk._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
+                                <td className="px-4 py-2.5 text-emerald-500 dark:text-emerald-400 text-[11px] font-bold">
+                                  {gk.key.substring(0, 8)}...{gk.key.substring(gk.key.length - 4)}
+                                </td>
+                                <td className="px-4 py-2.5 text-[10px] text-slate-500 dark:text-slate-400">
+                                  {new Date(gk.addedAt).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-2.5 text-right">
+                                  <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-bold uppercase tracking-wider border border-rose-500/20">
+                                    Remove
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                            {groqKeys.length === 0 && (
+                              <tr>
+                                <td colSpan="3" className="px-4 py-6 text-center text-slate-400 font-mono text-xs">
+                                  No Groq keys configured. System using fallback scoring.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4 h-[300px] overflow-y-auto font-mono text-[11px] sm:text-xs">
-                    {aiLogs.length === 0 ? (
-                      <div className="text-gray-600 italic">Waiting for AI events...</div>
-                    ) : (
-                      <div className="space-y-1.5">
-                        {aiLogs.map(log => {
-                          let color = 'text-indigo-600/80 dark:text-gray-400';
-                          if (log.level === 'INFO') color = 'text-blue-400';
-                          if (log.level === 'SUCCESS') color = 'text-emerald-400';
-                          if (log.level === 'BLOCKED') color = 'text-red-500';
-                          if (log.level === 'WARN') color = 'text-yellow-400';
-                          if (log.level === 'ERROR') color = 'text-rose-500';
 
-                          return (
-                            <div key={log._id} className="flex">
-                              <span className="text-gray-600 mr-3 shrink-0">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
-                              <span className={`${color} shrink-0 mr-2 font-bold`}>[{log.level}]</span>
-                              <span className="text-green-500/90 break-words">{log.message}</span>
-                            </div>
-                          );
-                        })}
+                  <p className="text-[10px] text-slate-400 font-mono mt-4 pt-3 border-t border-slate-200 dark:border-white/5">
+                    *Multiple Groq API keys will load-balance automatically for AI scans.
+                  </p>
+                </div>
+
+                {/* RIGHT: AI TERMINAL UI (lg:col-span-6) */}
+                <div className="lg:col-span-6 bg-gradient-to-b from-[#090d16] to-[#04060b] border border-slate-700/60 dark:border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl min-h-[380px]">
+                  {/* Terminal Bar Header */}
+                  <div className="bg-[#101726] px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
                       </div>
+                      <span className="ml-3 text-xs font-mono text-cyan-300 font-bold uppercase tracking-wider">KPK4444 AI TERMINAL v1.0</span>
+                      <span className="ml-2 flex items-center space-x-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span className="text-[9px] text-emerald-400 font-mono font-bold uppercase">LIVE</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-[9px] font-mono text-slate-400">sync in: <span className="text-emerald-400 font-bold">{aiCountdown}s</span></span>
+                      <button onClick={clearAiLogs} className="text-xs font-mono text-rose-400 hover:text-rose-300 transition">clear()</button>
+                    </div>
+                  </div>
+
+                  {/* Terminal Output */}
+                  <div className="p-4 flex-1 max-h-[310px] overflow-y-auto font-mono text-[11px] space-y-1.5 bg-black/40">
+                    {aiLogs.length === 0 ? (
+                      <div className="text-slate-500 italic py-8 text-center">Waiting for AI scanner logs...</div>
+                    ) : (
+                      aiLogs.map(log => {
+                        let color = 'text-slate-300';
+                        if (log.level === 'INFO') color = 'text-cyan-400';
+                        if (log.level === 'SUCCESS') color = 'text-emerald-400';
+                        if (log.level === 'BLOCKED') color = 'text-rose-500 font-bold';
+                        if (log.level === 'WARN') color = 'text-amber-400';
+                        if (log.level === 'ERROR') color = 'text-rose-400';
+
+                        return (
+                          <div key={log._id} className="flex items-start">
+                            <span className="text-slate-600 mr-2 shrink-0">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
+                            <span className={`${color} shrink-0 mr-2 font-bold`}>[{log.level}]</span>
+                            <span className="text-emerald-400/90 break-words">{log.message}</span>
+                          </div>
+                        );
+                      })
                     )}
+                  </div>
+
+                  {/* Terminal Footer */}
+                  <div className="px-4 py-2 bg-[#090d16] border-t border-slate-800 text-[10px] font-mono text-slate-500 flex justify-between">
+                    <span>STATUS: MONITORING THREAT ENGINE</span>
+                    <span className="text-cyan-400">GROQ-LLM ACTIVE</span>
                   </div>
                 </div>
 
