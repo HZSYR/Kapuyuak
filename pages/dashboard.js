@@ -1160,51 +1160,94 @@ export default function Dashboard() {
         {/* ── SIDEBAR ───────────────────────────────────────────────────── */}
         <aside className={`
           fixed lg:relative inset-y-0 left-0 z-40
-          w-60 bg-[#f1f5f9] dark:bg-[#0f1117] border-r border-slate-200 dark:border-white/[0.06] shadow-[2px_0_12px_rgba(0,0,0,0.06)] dark:shadow-[2px_0_20px_rgba(0,0,0,0.5)]
-          flex flex-col transition-transform duration-300 ease-in-out
+          w-64 bg-[#f8fafc] dark:bg-[#080c16] border-r border-slate-200 dark:border-white/[0.08] shadow-[4px_0_24px_rgba(0,0,0,0.06)] dark:shadow-[4px_0_30px_rgba(0,0,0,0.6)]
+          flex flex-col transition-transform duration-300 ease-in-out select-none
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}>
-          {/* Brand */}
-          <div className="p-5 pb-4 flex items-center space-x-3 border-b border-slate-200 dark:border-white/[0.06]">
-            <div className="w-9 h-9 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0 shadow-md">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+          {/* Brand Header */}
+          <div className="p-5 pb-4 flex items-center space-x-3.5 border-b border-slate-200 dark:border-white/[0.08] bg-slate-100/50 dark:bg-white/[0.01]">
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-indigo-500/20 border border-cyan-500/40 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+              <img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse ring-2 ring-[#080c16]"></span>
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <h1 className="text-base font-black text-slate-800 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-gray-400 leading-none">kapuyuak</h1>
-
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-base font-black text-slate-800 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:via-cyan-200 dark:to-cyan-400 tracking-wide uppercase font-mono">kapuyuak</h1>
+                <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">v3.5</span>
               </div>
-              <p className="text-[9px] text-slate-500 dark:text-slate-600 tracking-widest uppercase font-medium">by.150141146151172150</p>
+              <p className="text-[9px] text-slate-500 dark:text-slate-400 tracking-wider uppercase font-mono font-semibold">ENTERPRISE SOC SHIELD</p>
             </div>
           </div>
 
-          {/* Nav */}
-          <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
-            {TABS.map(t => (
-              <button
-                key={t}
-                onClick={() => handleTabChange(t)}
-                className={`w-full text-left px-4 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center group
-                  ${tab === t
-                    ? 'bg-slate-900 dark:bg-white/10 text-white dark:text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200'
+          {/* Nav Links */}
+          <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+            {TABS.map(t => {
+              const isActive = tab === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => handleTabChange(t)}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
+                    isActive
+                      ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/15 to-transparent text-cyan-300 dark:text-cyan-300 border-l-2 border-cyan-400 shadow-[inset_0_0_12px_rgba(6,182,212,0.1)]'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/[0.04] hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full mr-3 flex-shrink-0 transition-all
-                  ${tab === t ? 'bg-white dark:bg-violet-400 shadow-[0_0_8px_rgba(255,255,255,1)] dark:shadow-[0_0_10px_rgba(167,139,250,0.9)]' : 'bg-slate-300 dark:bg-slate-600 group-hover:bg-violet-400 dark:group-hover:bg-violet-500'}`}
-                />
-                {t}
-              </button>
-            ))}
+                >
+                  <div className="flex items-center space-x-3 z-10">
+                    {/* SVG Icons per Tab */}
+                    <div className={`transition-colors duration-200 ${isActive ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-200'}`}>
+                      {t === 'OVERVIEW' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                      )}
+                      {t === 'API KEYS' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                      )}
+                      {t === 'ATTACK LOGS' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-6z"></path></svg>
+                      )}
+                      {t === 'BLACKLIST' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                      )}
+                      {t === 'AI SETTINGS' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h-4a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                      )}
+                      {t === 'BANNED IPs' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                      )}
+                    </div>
+                    <span className="tracking-wide font-sans">{t}</span>
+                  </div>
+
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span>
+                  )}
+                </button>
+              );
+            })}
           </nav>
 
-          {/* Bottom Actions */}
-          <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-3">
+          {/* Sidebar Telemetry Mini Widget */}
+          <div className="mx-3 my-2 p-3 rounded-xl bg-slate-200/50 dark:bg-[#050811] border border-slate-300/60 dark:border-white/5 space-y-1.5">
+            <div className="flex justify-between items-center text-[9px] font-mono text-slate-400">
+              <span className="uppercase font-bold tracking-wider text-cyan-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                SHIELD ENGINE
+              </span>
+              <span className="text-emerald-400 font-bold">ACTIVE</span>
+            </div>
+            <div className="w-full h-1 bg-slate-300 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 w-full animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Bottom Actions / Terminate Session */}
+          <div className="p-3 border-t border-slate-200 dark:border-white/[0.08]">
             <button
               onClick={() => { sessionStorage.clear(); window.location.reload(); }}
-              className="w-full text-center py-2.5 rounded-lg text-[11px] font-bold text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-600 dark:hover:text-rose-300 transition uppercase tracking-widest"
+              className="w-full py-2.5 rounded-xl text-[11px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 transition-all duration-200 flex items-center justify-center space-x-2 uppercase tracking-wider shadow-sm hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]"
             >
-              Terminate Session
+              <svg className="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              <span>Terminate Session</span>
             </button>
           </div>
         </aside>
