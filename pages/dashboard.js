@@ -1978,60 +1978,66 @@ export default function Dashboard() {
                       )}
                     </div>
 
-                    <form onSubmit={createGroqKey} className="flex gap-2 mb-5">
-                      <input
-                        name="groqKey"
-                        required
-                        placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
-                        className="flex-1 bg-slate-100 dark:bg-[#090d16] border border-slate-300 dark:border-white/10 p-2.5 rounded-xl text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-                      />
-                      <button type="submit" className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition text-xs shadow-md shadow-cyan-500/20 whitespace-nowrap uppercase tracking-wider">
-                        Add Key
-                      </button>
-                    </form>
+                    {aiEngine === 'GROQ' && (
+                      <>
+                        <form onSubmit={createGroqKey} className="flex gap-2 mb-5">
+                          <input
+                            name="groqKey"
+                            required
+                            placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
+                            className="flex-1 bg-slate-100 dark:bg-[#090d16] border border-slate-300 dark:border-white/10 p-2.5 rounded-xl text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                          />
+                          <button type="submit" className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition text-xs shadow-md shadow-cyan-500/20 whitespace-nowrap uppercase tracking-wider">
+                            Add Key
+                          </button>
+                        </form>
 
-                    <div className="bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
-                      <div className="max-h-[220px] overflow-y-auto">
-                        <table className="w-full text-left text-xs">
-                          <thead className="text-[10px] uppercase text-slate-400 bg-slate-200/60 dark:bg-white/[0.03] tracking-widest border-b border-slate-200 dark:border-white/10 sticky top-0 backdrop-blur">
-                            <tr>
-                              <th className="px-4 py-3 font-bold">API Key (Masked)</th>
-                              <th className="px-4 py-3 font-bold">Added On</th>
-                              <th className="px-4 py-3 font-bold text-right">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
-                            {groqKeys.map(gk => (
-                              <tr key={gk._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
-                                <td className="px-4 py-2.5 text-emerald-500 dark:text-emerald-400 text-[11px] font-bold">
-                                  {gk.key.substring(0, 8)}...{gk.key.substring(gk.key.length - 4)}
-                                </td>
-                                <td className="px-4 py-2.5 text-[10px] text-slate-500 dark:text-slate-400">
-                                  {new Date(gk.addedAt).toLocaleDateString()}
-                                </td>
-                                <td className="px-4 py-2.5 text-right">
-                                  <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-bold uppercase tracking-wider border border-rose-500/20">
-                                    Remove
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                            {groqKeys.length === 0 && (
-                              <tr>
-                                <td colSpan="3" className="px-4 py-6 text-center text-slate-400 font-mono text-xs">
-                                  No Groq keys configured. System using fallback scoring.
-                                </td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+                        <div className="bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
+                          <div className="max-h-[220px] overflow-y-auto">
+                            <table className="w-full text-left text-xs">
+                              <thead className="text-[10px] uppercase text-slate-400 bg-slate-200/60 dark:bg-white/[0.03] tracking-widest border-b border-slate-200 dark:border-white/10 sticky top-0 backdrop-blur">
+                                <tr>
+                                  <th className="px-4 py-3 font-bold">API Key (Masked)</th>
+                                  <th className="px-4 py-3 font-bold">Added On</th>
+                                  <th className="px-4 py-3 font-bold text-right">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
+                                {groqKeys.map(gk => (
+                                  <tr key={gk._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
+                                    <td className="px-4 py-2.5 text-emerald-500 dark:text-emerald-400 text-[11px] font-bold">
+                                      {gk.key.substring(0, 8)}...{gk.key.substring(gk.key.length - 4)}
+                                    </td>
+                                    <td className="px-4 py-2.5 text-[10px] text-slate-500 dark:text-slate-400">
+                                      {new Date(gk.addedAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-4 py-2.5 text-right">
+                                      <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-bold uppercase tracking-wider border border-rose-500/20">
+                                        Remove
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                                {groqKeys.length === 0 && (
+                                  <tr>
+                                    <td colSpan="3" className="px-4 py-6 text-center text-slate-400 font-mono text-xs">
+                                      No Groq keys configured. System using fallback scoring.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
 
-                  <p className="text-[10px] text-slate-400 font-mono mt-4 pt-3 border-t border-slate-200 dark:border-white/5">
-                    *Multiple Groq API keys will load-balance automatically for AI scans.
-                  </p>
+                  {aiEngine === 'GROQ' && (
+                    <p className="text-[10px] text-slate-400 font-mono mt-4 pt-3 border-t border-slate-200 dark:border-white/5">
+                      *Multiple Groq API keys will load-balance automatically for AI scans.
+                    </p>
+                  )}
                 </div>
 
                 {/* RIGHT: AI TERMINAL UI (lg:col-span-6) */}
