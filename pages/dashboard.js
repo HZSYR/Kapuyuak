@@ -2002,68 +2002,93 @@ export default function Dashboard() {
                             </div>
                           </div>
                       ) : (
-                          <div className="flex justify-between items-center bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 p-3 rounded-xl mt-2">
-                              <span className="text-xs text-indigo-500/80 dark:text-gray-400 font-mono">GROQ API INFRASTRUCTURE</span>
-                              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">
-                                {groqKeys.length} KEYS ACTIVE
-                              </span>
+                          <div className="relative group mt-4">
+                            {/* Subtle Blue Glow for Groq */}
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                            
+                            <div className="relative bg-[#090d16]/90 backdrop-blur-xl border border-blue-500/30 p-6 rounded-2xl flex flex-col justify-between overflow-hidden shadow-2xl">
+                               {/* Tech Background Pattern */}
+                               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                               <div className="flex justify-between items-center mb-6 z-10 relative">
+                                  <div className="flex items-center gap-3">
+                                    <div className="relative flex h-3 w-3">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-[#090d16]"></span>
+                                    </div>
+                                    <h4 className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300 font-black text-lg uppercase tracking-widest drop-shadow-md">Cloud Engine Active</h4>
+                                  </div>
+                                  <div className="bg-[#04060b]/80 border border-blue-500/20 px-3 py-1.5 rounded-lg shadow-[inset_0_0_10px_rgba(59,130,246,0.1)] flex items-center gap-2">
+                                     <span className="text-xl font-black text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">{groqKeys.length}</span>
+                                     <span className="text-[9px] text-blue-400 uppercase font-bold tracking-widest">Active Keys</span>
+                                  </div>
+                               </div>
+
+                               {/* Form Area */}
+                               <form onSubmit={createGroqKey} className="flex gap-3 mb-6 z-10 relative">
+                                  <div className="relative flex-1">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                      <svg className="h-4 w-4 text-blue-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                                    </div>
+                                    <input
+                                      name="groqKey"
+                                      required
+                                      placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
+                                      className="w-full bg-[#04060b]/50 border border-blue-500/20 pl-9 pr-3 py-2.5 rounded-xl text-white font-mono text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 placeholder-slate-600 transition"
+                                    />
+                                  </div>
+                                  <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition text-xs shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] whitespace-nowrap uppercase tracking-widest">
+                                    Deploy Key
+                                  </button>
+                               </form>
+
+                               {/* Table Area */}
+                               <div className="bg-[#04060b]/60 rounded-xl border border-blue-500/10 overflow-hidden z-10 relative">
+                                 <div className="max-h-[180px] overflow-y-auto custom-scrollbar">
+                                   <table className="w-full text-left text-xs">
+                                     <thead className="text-[9px] uppercase text-blue-400/80 bg-blue-900/10 tracking-[0.2em] border-b border-blue-500/10 sticky top-0 backdrop-blur-md">
+                                       <tr>
+                                         <th className="px-4 py-3 font-bold">API Key Identity</th>
+                                         <th className="px-4 py-3 font-bold">Deployed On</th>
+                                         <th className="px-4 py-3 font-bold text-right">Action</th>
+                                       </tr>
+                                     </thead>
+                                     <tbody className="divide-y divide-blue-500/5 font-mono">
+                                       {groqKeys.map(gk => (
+                                         <tr key={gk._id} className="hover:bg-blue-500/5 transition duration-200">
+                                           <td className="px-4 py-3 text-cyan-400 text-[11px] font-bold">
+                                             <div className="flex items-center gap-2">
+                                               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 shadow-[0_0_5px_rgba(34,211,238,0.8)]"></span>
+                                               {gk.key.substring(0, 8)}<span className="text-slate-600">...</span>{gk.key.substring(gk.key.length - 4)}
+                                             </div>
+                                           </td>
+                                           <td className="px-4 py-3 text-[10px] text-slate-400">
+                                             {new Date(gk.addedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                           </td>
+                                           <td className="px-4 py-3 text-right">
+                                             <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-3 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded-lg transition-all duration-300 font-bold uppercase tracking-wider border border-rose-500/20 hover:shadow-[0_0_10px_rgba(244,63,94,0.4)]">
+                                               Revoke
+                                             </button>
+                                           </td>
+                                         </tr>
+                                       ))}
+                                       {groqKeys.length === 0 && (
+                                         <tr>
+                                           <td colSpan="3" className="px-4 py-8 text-center">
+                                              <div className="flex flex-col items-center justify-center gap-2">
+                                                <svg className="w-6 h-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                                <span className="text-slate-500 font-mono text-xs tracking-wider">No cloud keys deployed. Defense compromised.</span>
+                                              </div>
+                                           </td>
+                                         </tr>
+                                       )}
+                                     </tbody>
+                                   </table>
+                                 </div>
+                               </div>
+                            </div>
                           </div>
                       )}
-                    </div>
-
-                    {aiEngine === 'GROQ' && (
-                      <>
-                        <form onSubmit={createGroqKey} className="flex gap-2 mb-5">
-                          <input
-                            name="groqKey"
-                            required
-                            placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
-                            className="flex-1 bg-slate-100 dark:bg-[#090d16] border border-slate-300 dark:border-white/10 p-2.5 rounded-xl text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-                          />
-                          <button type="submit" className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-xl transition text-xs shadow-md shadow-cyan-500/20 whitespace-nowrap uppercase tracking-wider">
-                            Add Key
-                          </button>
-                        </form>
-
-                        <div className="bg-slate-100/70 dark:bg-[#090d16]/70 rounded-xl border border-slate-200/60 dark:border-white/10 overflow-hidden">
-                          <div className="max-h-[220px] overflow-y-auto">
-                            <table className="w-full text-left text-xs">
-                              <thead className="text-[10px] uppercase text-slate-400 bg-slate-200/60 dark:bg-white/[0.03] tracking-widest border-b border-slate-200 dark:border-white/10 sticky top-0 backdrop-blur">
-                                <tr>
-                                  <th className="px-4 py-3 font-bold">API Key (Masked)</th>
-                                  <th className="px-4 py-3 font-bold">Added On</th>
-                                  <th className="px-4 py-3 font-bold text-right">Action</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-slate-200/50 dark:divide-white/5 font-mono">
-                                {groqKeys.map(gk => (
-                                  <tr key={gk._id} className="hover:bg-slate-200/40 dark:hover:bg-white/[0.02] transition">
-                                    <td className="px-4 py-2.5 text-emerald-500 dark:text-emerald-400 text-[11px] font-bold">
-                                      {gk.key.substring(0, 8)}...{gk.key.substring(gk.key.length - 4)}
-                                    </td>
-                                    <td className="px-4 py-2.5 text-[10px] text-slate-500 dark:text-slate-400">
-                                      {new Date(gk.addedAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-4 py-2.5 text-right">
-                                      <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-bold uppercase tracking-wider border border-rose-500/20">
-                                        Remove
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))}
-                                {groqKeys.length === 0 && (
-                                  <tr>
-                                    <td colSpan="3" className="px-4 py-6 text-center text-slate-400 font-mono text-xs">
-                                      No Groq keys configured. System using fallback scoring.
-                                    </td>
-                                  </tr>
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </>
-                    )}
                   </div>
 
                   {aiEngine === 'GROQ' && (
@@ -2072,6 +2097,7 @@ export default function Dashboard() {
                     </p>
                   )}
                 </div>
+              </div>
 
                 {/* RIGHT: AI TERMINAL UI (lg:col-span-6) */}
                 <div className="lg:col-span-6 bg-gradient-to-b from-[#090d16] to-[#04060b] border border-slate-700/60 dark:border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl h-[380px] lg:h-auto">
