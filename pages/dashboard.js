@@ -1981,94 +1981,93 @@ export default function Dashboard() {
                              </div>
                           </div>
                       ) : (
-                          <div className="flex flex-col mt-4 bg-blue-500/[0.02] border border-blue-500/20 rounded-2xl overflow-hidden shadow-sm">
-                             {/* Unified Groq Header */}
-                             <div className="p-5 flex items-center justify-between border-b border-blue-500/10 bg-blue-500/[0.02]">
-                                <div>
-                                   <div className="flex items-center gap-2 mb-1.5">
-                                      <div className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                                      </div>
-                                      <h4 className="text-blue-400 font-bold text-sm tracking-wide uppercase">Cloud API Engine</h4>
+                          <div className="flex flex-col gap-4 mt-4">
+                             {/* Card 1: Cloud API Stats */}
+                             <div className="bg-gradient-to-r from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-xl p-5 flex items-center justify-between shadow-lg">
+                                <div className="flex items-center gap-4">
+                                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20">
+                                      <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
                                    </div>
-                                   <p className="text-slate-400 text-[11px] font-mono">
-                                     High-performance Groq cloud infrastructure.
-                                   </p>
+                                   <div>
+                                      <h4 className="text-blue-400 font-bold text-base tracking-wide uppercase drop-shadow-md">Cloud API Engine</h4>
+                                      <p className="text-blue-200/50 text-[11px] font-mono mt-0.5">
+                                        High-performance Groq infrastructure.
+                                      </p>
+                                   </div>
                                 </div>
-                                <div className="text-right flex flex-col justify-center">
-                                   <div className="text-2xl font-bold text-blue-400 font-mono tracking-tighter leading-none">
+                                <div className="text-right">
+                                   <div className="text-3xl font-bold text-blue-400 font-mono tracking-tighter leading-none drop-shadow-md">
                                      {groqKeys.length}
                                    </div>
-                                   <div className="text-[9px] text-blue-500/70 uppercase font-semibold tracking-widest mt-1">
+                                   <div className="text-[9px] text-blue-400/80 uppercase font-bold tracking-widest mt-1.5">
                                      Active Keys
                                    </div>
                                 </div>
                              </div>
 
-                             {/* Unified Body (Form + Table) */}
-                             <div className="p-5">
-                                 {/* Form Area */}
-                                 <form onSubmit={createGroqKey} className="flex gap-3 mb-5">
-                                    <div className="relative flex-1">
-                                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                        <svg className="h-4 w-4 text-blue-500/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
-                                      </div>
-                                      <input
-                                        name="groqKey"
-                                        required
-                                        placeholder="Enter your Groq API Key (gsk_...)"
-                                        className="w-full bg-[#04060b]/40 border border-blue-500/20 pl-10 pr-4 py-2.5 rounded-xl text-blue-100 font-mono text-xs focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/30 placeholder-slate-500 transition-all"
-                                      />
-                                    </div>
-                                    <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-colors text-[11px] uppercase tracking-wider shadow-sm flex items-center gap-2">
-                                      <span>Deploy Key</span>
-                                    </button>
-                                 </form>
+                             {/* Card 2: Key Management (Form + Table integrated tightly) */}
+                             <div className="bg-[#090d16]/80 border border-blue-900/50 rounded-xl overflow-hidden shadow-xl flex flex-col">
+                                 {/* Form Action Bar */}
+                                 <div className="bg-[#101726]/80 p-4 border-b border-blue-900/50">
+                                     <form onSubmit={createGroqKey} className="flex items-center gap-3">
+                                        <div className="relative flex-1">
+                                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                            <svg className="h-4 w-4 text-blue-500/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                                          </div>
+                                          <input
+                                            name="groqKey"
+                                            required
+                                            placeholder="Enter new Groq API Key (gsk_...)"
+                                            className="w-full bg-black/40 border border-blue-800/30 pl-10 pr-4 py-2.5 rounded-lg text-blue-100 font-mono text-xs focus:outline-none focus:border-blue-500 transition-colors"
+                                          />
+                                        </div>
+                                        <button type="submit" className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-colors text-[11px] uppercase tracking-wider shadow-md whitespace-nowrap">
+                                          Deploy Key
+                                        </button>
+                                     </form>
+                                 </div>
 
                                  {/* Table Area */}
-                                 <div className="bg-[#04060b]/30 rounded-xl border border-blue-500/10 overflow-hidden">
-                                   <div className="max-h-[160px] overflow-y-auto custom-scrollbar">
-                                     <table className="w-full text-left text-xs">
-                                       <thead className="text-[9px] uppercase text-blue-400/60 bg-blue-900/10 tracking-[0.15em] border-b border-blue-500/10 sticky top-0 backdrop-blur-md">
-                                         <tr>
-                                           <th className="px-4 py-3 font-semibold">API Key Identity</th>
-                                           <th className="px-4 py-3 font-semibold">Deployed On</th>
-                                           <th className="px-4 py-3 font-semibold text-right">Action</th>
+                                 <div className="max-h-[180px] overflow-y-auto custom-scrollbar bg-black/10">
+                                   <table className="w-full text-left text-xs">
+                                     <thead className="text-[10px] uppercase text-blue-300/50 bg-blue-950/20 tracking-wider sticky top-0 backdrop-blur-md">
+                                       <tr>
+                                         <th className="px-5 py-3 font-semibold border-b border-blue-900/50">API Key Identity</th>
+                                         <th className="px-5 py-3 font-semibold border-b border-blue-900/50">Deployed On</th>
+                                         <th className="px-5 py-3 font-semibold text-right border-b border-blue-900/50">Action</th>
+                                       </tr>
+                                     </thead>
+                                     <tbody className="divide-y divide-blue-900/30 font-mono">
+                                       {groqKeys.map(gk => (
+                                         <tr key={gk._id} className="hover:bg-blue-500/5 transition duration-150">
+                                           <td className="px-5 py-3 text-cyan-300 text-[11px]">
+                                             <div className="flex items-center gap-2.5">
+                                               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/80"></span>
+                                               {gk.key.substring(0, 8)}<span className="text-slate-600">...</span>{gk.key.substring(gk.key.length - 4)}
+                                             </div>
+                                           </td>
+                                           <td className="px-5 py-3 text-[10px] text-slate-400">
+                                             {new Date(gk.addedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                           </td>
+                                           <td className="px-5 py-3 text-right">
+                                             <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded-md transition-colors duration-200 font-semibold uppercase tracking-wider border border-rose-500/20">
+                                               Revoke
+                                             </button>
+                                           </td>
                                          </tr>
-                                       </thead>
-                                       <tbody className="divide-y divide-blue-500/5 font-mono">
-                                         {groqKeys.map(gk => (
-                                           <tr key={gk._id} className="hover:bg-blue-500/5 transition duration-150">
-                                             <td className="px-4 py-3 text-cyan-300 text-[11px]">
-                                               <div className="flex items-center gap-2.5">
-                                                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/80"></span>
-                                                 {gk.key.substring(0, 8)}<span className="text-slate-600">...</span>{gk.key.substring(gk.key.length - 4)}
-                                               </div>
-                                             </td>
-                                             <td className="px-4 py-3 text-[10px] text-slate-400">
-                                               {new Date(gk.addedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                             </td>
-                                             <td className="px-4 py-3 text-right">
-                                               <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded-md transition-colors duration-200 font-semibold uppercase tracking-wider border border-rose-500/20">
-                                                 Revoke
-                                               </button>
-                                             </td>
-                                           </tr>
-                                         ))}
-                                         {groqKeys.length === 0 && (
-                                           <tr>
-                                             <td colSpan="3" className="px-4 py-8 text-center">
-                                                <div className="flex flex-col items-center justify-center gap-2">
-                                                  <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                                  <span className="text-slate-500 font-mono text-[10px] tracking-wider uppercase">No active cloud keys found</span>
-                                                </div>
-                                             </td>
-                                           </tr>
-                                         )}
-                                       </tbody>
-                                     </table>
-                                   </div>
+                                       ))}
+                                       {groqKeys.length === 0 && (
+                                         <tr>
+                                           <td colSpan="3" className="px-5 py-8 text-center">
+                                              <div className="flex flex-col items-center justify-center gap-2">
+                                                <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                                <span className="text-slate-500 font-mono text-[10px] tracking-wider uppercase">No active cloud keys found</span>
+                                              </div>
+                                           </td>
+                                         </tr>
+                                       )}
+                                     </tbody>
+                                   </table>
                                  </div>
                              </div>
                           </div>
