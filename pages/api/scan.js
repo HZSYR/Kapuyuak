@@ -68,6 +68,51 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'Invalid or inactive license key' });
     }
     if (!content || (typeof content === 'string' && content.trim() === '')) return res.status(200).json({ blocked: false });
+    
+    // =========================================================================
+    // 🛡️ FAST MALWARE SIGNATURE SCANNER (STATIC ZERO-DAY)
+    // =========================================================================
+    const malwareSignatures = [
+      /eval\s*\(\s*base64_decode\s*\(/i,
+      /system\s*\(\s*\$_GET/i,
+      /system\s*\(\s*\$_POST/i,
+      /shell_exec\s*\(/i,
+      /passthru\s*\(/i,
+      /exec\s*\(\s*\$_/i,
+      /\$_POST\s*\[\s*['"]cmd['"]\s*\]/i,
+      /wscript\.shell/i
+    ];
+    
+    let signatureMatch = false;
+    if (typeof content === 'string') {
+        for (const sig of malwareSignatures) {
+            if (sig.test(content)) {
+                signatureMatch = true;
+                break;
+            }
+        }
+    }
+
+    if (signatureMatch) {
+        await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
+        const expireDate = new Date();
+        expireDate.setDate(expireDate.getDate() + 1); // Ban 24 jam
+        if (reqUsername !== 'unknown') {
+            await BannedIP.findOneAndUpdate(
+                { username: reqUsername },
+                { ip, username: reqUsername, reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
+                { upsert: true }
+            );
+        } else {
+            await BannedIP.findOneAndUpdate(
+                { ip, username: 'unknown' },
+                { ip, username: 'unknown', reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
+                { upsert: true }
+            );
+        }
+        return res.status(200).json({ blocked: true });
+    }
+
     // =========================================================================
     // 🧠 SUPER SMART AI SCANNER (GROQ - LLAMA 3)
     // Menggunakan GROQ yang super cepat dengan dukungan Multiple API Keys (Backup).

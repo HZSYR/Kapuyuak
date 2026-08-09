@@ -109,8 +109,19 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
+            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
             foreach ($_FILES as $fileKey => $file) {
                 if (isset($file['name'])) {
+                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
+                    foreach ($names as $n) {
+                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
+                        if (in_array($ext, $badExts)) {
+                            if ($username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
+                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time()); }
+                            header('HTTP/1.1 403 Forbidden');
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
+                        }
+                    }
                     $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
                 }
                 if (isset($file['tmp_name'])) {
@@ -312,8 +323,19 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
+            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
             foreach ($_FILES as $fileKey => $file) {
                 if (isset($file['name'])) {
+                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
+                    foreach ($names as $n) {
+                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
+                        if (in_array($ext, $badExts)) {
+                            if ($username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
+                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time()); }
+                            header('HTTP/1.1 403 Forbidden');
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
+                        }
+                    }
                     $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
                 }
                 if (isset($file['tmp_name'])) {
@@ -548,8 +570,19 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
+            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
             foreach ($_FILES as $fileKey => $file) {
                 if (isset($file['name'])) {
+                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
+                    foreach ($names as $n) {
+                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
+                        if (in_array($ext, $badExts)) {
+                            if ($username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
+                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time()); }
+                            header('HTTP/1.1 403 Forbidden');
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
+                        }
+                    }
                     $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
                 }
                 if (isset($file['tmp_name'])) {
