@@ -52,9 +52,9 @@ const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 export function generateMegaDataset() {
     const dataset = [];
 
-    // --- 1. GENERATE AMAN DATA (Target ~3500) ---
+    // --- 1. GENERATE AMAN DATA (Target ~35000) ---
     // Menggunakan permutasi Subjek + Verb + Object + Optional Keyword
-    for (let i = 0; i < 3500; i++) {
+    for (let i = 0; i < 35000; i++) {
         let text = `${getRandom(amanSubjects)} ${getRandom(amanVerbs)} ${getRandom(amanObjects)}.`;
         // Tambahkan keyword akademik secara acak 50% chance
         if (Math.random() > 0.5) {
@@ -63,9 +63,9 @@ export function generateMegaDataset() {
         dataset.push({ label: 'AMAN', text });
     }
 
-    // --- 2. GENERATE JUDOL DATA (Target ~4000) ---
+    // --- 2. GENERATE JUDOL DATA (Target ~40000) ---
     // Menggunakan permutasi Prefix + Game + Bait
-    for (let i = 0; i < 4000; i++) {
+    for (let i = 0; i < 40000; i++) {
         let text = `${getRandom(judolPrefix)} ${getRandom(judolGames)} ${getRandom(judolBait)}!`;
         // Bumbui dengan spam karakter alay
         if (Math.random() > 0.7) {
@@ -74,9 +74,9 @@ export function generateMegaDataset() {
         dataset.push({ label: 'JUDI', text: text.toUpperCase() }); // Judol spam often uses caps
     }
 
-    // --- 3. GENERATE HACK DATA (Target ~3500) ---
+    // --- 3. GENERATE HACK DATA (Target ~35000) ---
     // Menggunakan perakitan pola malware yang aman dari AV
-    for (let i = 0; i < 3500; i++) {
+    for (let i = 0; i < 35000; i++) {
         const action = getRandom(hackActions);
         const target = getRandom(hackTargets);
         let text = `${action}${target}`;
