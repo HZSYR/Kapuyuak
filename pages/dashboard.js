@@ -1970,23 +1970,22 @@ export default function Dashboard() {
                               <div className="flex justify-between items-start z-10 relative">
                                  <div>
                                     <div className="flex items-center gap-3">
-                                      <div className="relative flex h-4 w-4">
+                                      <div className="relative flex h-2.5 w-2.5">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#090d16]"></span>
+                                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                                       </div>
-                                      <h4 className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-300 font-black text-xl uppercase tracking-widest drop-shadow-md">Kapuyuak Super-Brain</h4>
+                                      <h4 className="text-emerald-400 font-semibold tracking-wide">Kapuyuak Engine</h4>
                                     </div>
-                                    <p className="text-slate-400 text-xs mt-3 pr-4 leading-relaxed font-mono max-w-[85%]">
-                                      Autonomous Neural Engine activated. System is running locally with <span className="text-emerald-400 font-bold">100% Data Privacy</span>. Zero-latency defense mechanism is online.
+                                    <p className="text-slate-400 text-xs mt-2 pr-4 leading-relaxed font-mono max-w-[85%]">
+                                      Local machine learning. <span className="text-emerald-500 font-medium">100% Data Privacy.</span>
                                     </p>
                                  </div>
-                                 <div className="text-right flex-shrink-0 bg-[#04060b]/80 border border-emerald-500/20 px-5 py-3 rounded-xl shadow-[inset_0_0_15px_rgba(16,185,129,0.1)]">
-                                    <div className="text-3xl font-black text-emerald-400 font-mono tracking-tighter drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">
+                                 <div className="text-right flex-shrink-0 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl">
+                                    <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tight">
                                       {aiTrainingSamples > 0 ? aiTrainingSamples.toLocaleString() : '110,000+'}
                                     </div>
-                                    <div className="text-[9px] text-cyan-400/80 uppercase font-bold tracking-[0.2em] whitespace-nowrap mt-1 flex items-center justify-end gap-1.5">
-                                      <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                      SYNAPSES LOADED
+                                    <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
+                                      Trained Data
                                     </div>
                                  </div>
                               </div>
@@ -2012,15 +2011,15 @@ export default function Dashboard() {
 
                                <div className="flex justify-between items-center mb-6 z-10 relative">
                                   <div className="flex items-center gap-3">
-                                    <div className="relative flex h-3 w-3">
+                                    <div className="relative flex h-2.5 w-2.5">
                                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                      <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-[#090d16]"></span>
+                                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
                                     </div>
-                                    <h4 className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300 font-black text-lg uppercase tracking-widest drop-shadow-md">Cloud Engine Active</h4>
+                                    <h4 className="text-blue-400 font-semibold tracking-wide">Cloud LLM Active</h4>
                                   </div>
-                                  <div className="bg-[#04060b]/80 border border-blue-500/20 px-3 py-1.5 rounded-lg shadow-[inset_0_0_10px_rgba(59,130,246,0.1)] flex items-center gap-2">
-                                     <span className="text-xl font-black text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">{groqKeys.length}</span>
-                                     <span className="text-[9px] text-blue-400 uppercase font-bold tracking-widest">Active Keys</span>
+                                  <div className="bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                                     <span className="text-lg font-bold text-blue-400 font-mono">{groqKeys.length}</span>
+                                     <span className="text-[9px] text-blue-500/70 uppercase font-semibold tracking-widest">Active Keys</span>
                                   </div>
                                </div>
 
