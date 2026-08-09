@@ -7,6 +7,7 @@ import GroqKey from '../../kpk4444-models/GroqKey';
 import AILog from '../../kpk4444-models/AILog';
 import { rateLimitMiddleware } from '../../kpk4444-middleware/rateLimit';
 import crypto from 'crypto';
+import { getKapuyuakConfig, predict, trainAI } from '../../kpk4444-lib/kapuyuakAI';
 
 export const config = {
   api: {
@@ -114,9 +115,39 @@ export default async function handler(req, res) {
     }
 
     // =========================================================================
-    // 🧠 SUPER SMART AI SCANNER (GROQ - LLAMA 3)
-    // Menggunakan GROQ yang super cepat dengan dukungan Multiple API Keys (Backup).
+    // 🧠 SUPER SMART AI SCANNER (GROQ OR KAPUYUAK AI)
     // =========================================================================
+    const aiConfig = await getKapuyuakConfig();
+
+    if (aiConfig.activeEngine === 'KAPUYUAK' && content.length > 5) {
+        await AILog.create({ message: `Initiating Kapuyuak Local AI Scan for ${domain}...`, level: 'INFO' });
+        const mlResult = await predict(content);
+        await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
+
+        if (mlResult === 'JUDI' || mlResult === 'HACK') {
+            await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
+            const expireDate = new Date();
+            expireDate.setDate(expireDate.getDate() + 1);
+            const category = mlResult === 'JUDI' ? 'AI_DETECTED_SPAM' : 'AI_DETECTED_MALWARE';
+            
+            await AttackLog.create({
+                apiKey, domain, category: category, severity: 'CRITICAL',
+                field: field || 'unknown', snippet: `[KAPUYUAK AI] ${content.substring(0, 100)}`,
+                ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
+            });
+
+            if (reqUsername !== 'unknown') {
+                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+            } else {
+                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+            }
+            return res.status(200).json({ blocked: true });
+        }
+        
+        await AILog.create({ message: `Kapuyuak AI Complete: Content is SAFE.`, level: 'INFO' });
+        return res.status(200).json({ blocked: false });
+    }
+
     const groqKeyDocs = await GroqKey.find();
     
     if (groqKeyDocs.length > 0 && content.length > 5) {
@@ -218,6 +249,9 @@ ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan f
                 return res.status(200).json({ blocked: false });
               } else if (status === 'JUDI' || status === 'HACK') {
                 const category = status === 'JUDI' ? 'SPAM_CONTENT' : 'MALWARE';
+                
+                // Kapuyuak AI Self-Training dari konfirmasi GROQ
+                trainAI(content, status).catch(() => {});
                 
                 try {
                     await AILog.create({ message: `AI Detected ${status}: ${reason}`, level: 'BLOCKED' });

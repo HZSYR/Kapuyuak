@@ -767,6 +767,8 @@ export default function Dashboard() {
   const [bannedIpSearch, setBannedIpSearch] = useState('');
   const [bannedIpPage, setBannedIpPage] = useState(1);
   const [now, setNow] = useState(Date.now());
+  const [aiEngine, setAiEngine] = useState('GROQ');
+  const [aiTrainingSamples, setAiTrainingSamples] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -922,15 +924,16 @@ export default function Dashboard() {
     setApiError(null);
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const [lRes, bRes, kRes, gRes, alRes, bipRes] = await Promise.all([
+      const [lRes, bRes, kRes, gRes, alRes, bipRes, aicRes] = await Promise.all([
         fetch('/api/logs', { headers }),
         fetch('/api/blacklist', { headers }),
         fetch('/api/generate-key', { headers }),
         fetch('/api/groq-keys', { headers }),
         fetch('/api/ai-logs', { headers }),
-        fetch('/api/banned-ips', { headers })
+        fetch('/api/banned-ips', { headers }),
+        fetch('/api/ai-config', { headers })
       ]);
-      const [l, b, k, g, al, bip] = await Promise.all([lRes.json(), bRes.json(), kRes.json(), gRes.json(), alRes.json(), bipRes.json()]);
+      const [l, b, k, g, al, bip, aic] = await Promise.all([lRes.json(), bRes.json(), kRes.json(), gRes.json(), alRes.json(), bipRes.json(), aicRes.json()]);
       if (!lRes.ok || !bRes.ok || !kRes.ok || !gRes.ok || !alRes.ok || !bipRes.ok) {
         const errMsg = k.error || b.error || l.error || g.error || al.error || bip.error || 'Unknown API error';
         const errStatus = !kRes.ok ? kRes.status : !bRes.ok ? bRes.status : !lRes.ok ? lRes.status : !gRes.ok ? gRes.status : !alRes.ok ? alRes.status : bipRes.status;
@@ -942,10 +945,27 @@ export default function Dashboard() {
       setGroqKeys(Array.isArray(g) ? g : []);
       setAiLogs(Array.isArray(al) ? al : []);
       setBannedIps(Array.isArray(bip) ? bip : []);
+      
+      if (aic && aic.activeEngine) {
+        setAiEngine(aic.activeEngine);
+        setAiTrainingSamples(aic.trainingSamples || 0);
+      }
     } catch (err) {
       setApiError(`Network Error: ${err.message}`);
     }
     if (showLoading) setIsLoading(false);
+  };
+
+  const handleToggleEngine = async (engine) => {
+    try {
+      const r = await fetch('/api/ai-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
+        body: JSON.stringify({ action: 'TOGGLE_ENGINE', engine })
+      });
+      const d = await r.json();
+      if (d.success) { setAiEngine(d.activeEngine); }
+    } catch (e) {}
   };
 
   const login = async (e) => {
@@ -1922,17 +1942,40 @@ export default function Dashboard() {
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
                 <div className="lg:col-span-6 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
                   <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                          AI Scanner Configuration
-                        </h3>
-                        <p className="text-xs text-indigo-500/80 dark:text-gray-400 mt-0.5 font-mono">GROQ API INFRASTRUCTURE</p>
+                    <div className="flex flex-col gap-4 mb-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                            AI Scanner Configuration
+                          </h3>
+                          <p className="text-xs text-indigo-500/80 dark:text-gray-400 mt-0.5 font-mono">Select Classification Engine</p>
+                        </div>
+                        <div className="flex bg-slate-200 dark:bg-[#090d16] p-1 rounded-xl">
+                            <button onClick={() => handleToggleEngine('GROQ')} className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${aiEngine === 'GROQ' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}>GROQ LLM</button>
+                            <button onClick={() => handleToggleEngine('KAPUYUAK')} className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${aiEngine === 'KAPUYUAK' ? 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}>KAPUYUAK AI</button>
+                        </div>
                       </div>
-                      <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">
-                        {groqKeys.length} KEYS ACTIVE
-                      </span>
+                      
+                      {aiEngine === 'KAPUYUAK' ? (
+                          <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl flex items-center justify-between mt-2">
+                             <div>
+                                <h4 className="text-emerald-500 font-bold text-sm">Local Machine Learning Active</h4>
+                                <p className="text-slate-600 dark:text-gray-400 text-[10px] mt-1 pr-4">Incremental learning with Naive Bayes algorithms. Super fast response & offline capable.</p>
+                             </div>
+                             <div className="text-right">
+                                <div className="text-2xl font-black text-emerald-400">{aiTrainingSamples}</div>
+                                <div className="text-[10px] text-emerald-500/80 uppercase font-mono tracking-wider whitespace-nowrap">Trained Samples</div>
+                             </div>
+                          </div>
+                      ) : (
+                          <div className="flex justify-between items-center bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 p-3 rounded-xl mt-2">
+                              <span className="text-xs text-indigo-500/80 dark:text-gray-400 font-mono">GROQ API INFRASTRUCTURE</span>
+                              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">
+                                {groqKeys.length} KEYS ACTIVE
+                              </span>
+                          </div>
+                      )}
                     </div>
 
                     <form onSubmit={createGroqKey} className="flex gap-2 mb-5">
