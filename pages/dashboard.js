@@ -1940,7 +1940,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
-                <div className="lg:col-span-6 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+                <div className="lg:col-span-6 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 shadow-sm h-fit">
                   <div>
                     <div className="flex flex-col gap-4 mb-4">
                       <div className="flex justify-between items-start">
@@ -2041,7 +2041,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* RIGHT: AI TERMINAL UI (lg:col-span-6) */}
-                <div className="lg:col-span-6 bg-gradient-to-b from-[#090d16] to-[#04060b] border border-slate-700/60 dark:border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl min-h-[380px]">
+                <div className="lg:col-span-6 bg-gradient-to-b from-[#090d16] to-[#04060b] border border-slate-700/60 dark:border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl h-[380px] lg:h-auto">
                   {/* Terminal Bar Header */}
                   <div className="bg-[#101726] px-4 py-3 border-b border-slate-800 flex justify-between items-center">
                     <div className="flex items-center space-x-2">
