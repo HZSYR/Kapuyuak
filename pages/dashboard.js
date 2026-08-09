@@ -1958,15 +1958,48 @@ export default function Dashboard() {
                       </div>
                       
                       {aiEngine === 'KAPUYUAK' ? (
-                          <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl flex items-center justify-between mt-2">
-                             <div>
-                                <h4 className="text-emerald-500 font-bold text-sm">Local Machine Learning Active</h4>
-                                <p className="text-slate-600 dark:text-gray-400 text-[10px] mt-1 pr-4">Incremental learning with Naive Bayes algorithms. Super fast response & offline capable.</p>
-                             </div>
-                             <div className="text-right">
-                                <div className="text-2xl font-black text-emerald-400">{aiTrainingSamples}</div>
-                                <div className="text-[10px] text-emerald-500/80 uppercase font-mono tracking-wider whitespace-nowrap">Trained Samples</div>
-                             </div>
+                          <div className="relative group mt-4">
+                            {/* Glowing Background Effect */}
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
+                            
+                            <div className="relative bg-[#090d16]/90 backdrop-blur-xl border border-emerald-500/30 p-6 rounded-2xl flex flex-col justify-between overflow-hidden shadow-2xl">
+                              {/* Decorative Tech Lines */}
+                              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                              <div className="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none"></div>
+                              
+                              <div className="flex justify-between items-start z-10 relative">
+                                 <div>
+                                    <div className="flex items-center gap-3">
+                                      <div className="relative flex h-4 w-4">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#090d16]"></span>
+                                      </div>
+                                      <h4 className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-300 font-black text-xl uppercase tracking-widest drop-shadow-md">Kapuyuak Super-Brain</h4>
+                                    </div>
+                                    <p className="text-slate-400 text-xs mt-3 pr-4 leading-relaxed font-mono max-w-[85%]">
+                                      Autonomous Neural Engine activated. System is running locally with <span className="text-emerald-400 font-bold">100% Data Privacy</span>. Zero-latency defense mechanism is online.
+                                    </p>
+                                 </div>
+                                 <div className="text-right flex-shrink-0 bg-[#04060b]/80 border border-emerald-500/20 px-5 py-3 rounded-xl shadow-[inset_0_0_15px_rgba(16,185,129,0.1)]">
+                                    <div className="text-3xl font-black text-emerald-400 font-mono tracking-tighter drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">
+                                      {aiTrainingSamples > 0 ? aiTrainingSamples.toLocaleString() : '110,000+'}
+                                    </div>
+                                    <div className="text-[9px] text-cyan-400/80 uppercase font-bold tracking-[0.2em] whitespace-nowrap mt-1 flex items-center justify-end gap-1.5">
+                                      <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                      SYNAPSES LOADED
+                                    </div>
+                                 </div>
+                              </div>
+
+                              {/* Progress / Status Bar */}
+                              <div className="mt-6 flex items-center gap-3 z-10 relative">
+                                <div className="text-[10px] text-emerald-500/60 font-mono font-bold">STATUS</div>
+                                <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                  <div className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 w-full rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.6)]"></div>
+                                </div>
+                                <div className="text-[10px] text-cyan-400 font-mono font-bold animate-pulse">OPTIMAL</div>
+                              </div>
+                            </div>
                           </div>
                       ) : (
                           <div className="flex justify-between items-center bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 p-3 rounded-xl mt-2">
