@@ -2083,34 +2083,34 @@ export default function Dashboard() {
               </div>
 
                 {/* RIGHT: AI TERMINAL UI (lg:col-span-6) */}
-                <div className="lg:col-span-6 bg-gradient-to-b from-[#090d16] to-[#04060b] border border-slate-700/60 dark:border-cyan-500/20 rounded-2xl overflow-hidden flex flex-col justify-between shadow-2xl h-[380px] lg:h-auto">
+                <div className="lg:col-span-6 bg-[#030409] border border-slate-800 rounded-2xl overflow-hidden flex flex-col shadow-2xl lg:h-full min-h-[380px]">
                   {/* Terminal Bar Header */}
-                  <div className="bg-[#101726] px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+                  <div className="bg-[#0b101a] px-4 py-3 border-b border-slate-800 flex justify-between items-center">
                     <div className="flex items-center space-x-2">
                       <div className="flex space-x-1.5">
                         <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></div>
                         <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div>
                         <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div>
                       </div>
-                      <span className="ml-3 text-xs font-mono text-cyan-300 font-bold uppercase tracking-wider">KPK4444 AI TERMINAL v1.0</span>
+                      <span className="ml-3 text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">KPK4444 AI TERMINAL v1.0</span>
                       <span className="ml-2 flex items-center space-x-1">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span className="text-[9px] text-emerald-400 font-mono font-bold uppercase">LIVE</span>
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <span className="text-[9px] font-mono text-slate-400">sync in: <span className="text-emerald-400 font-bold">{aiCountdown}s</span></span>
-                      <button onClick={clearAiLogs} className="text-xs font-mono text-rose-400 hover:text-rose-300 transition">clear()</button>
+                      <span className="text-[9px] font-mono text-slate-500">sync in: <span className="text-emerald-400 font-bold">{aiCountdown}s</span></span>
+                      <button onClick={clearAiLogs} className="text-xs font-mono text-rose-500 hover:text-rose-400 transition">clear()</button>
                     </div>
                   </div>
 
                   {/* Terminal Output */}
-                  <div className="p-4 flex-1 max-h-[310px] overflow-y-auto font-mono text-[11px] space-y-1.5 bg-black/40">
+                  <div className="p-4 flex-1 h-[310px] overflow-y-auto font-mono text-[11px] flex flex-col justify-start space-y-2">
                     {aiLogs.length === 0 ? (
-                      <div className="text-slate-500 italic py-8 text-center">Waiting for AI scanner logs...</div>
+                      <div className="text-slate-600 italic py-8 text-center m-auto">Waiting for AI scanner logs...</div>
                     ) : (
                       aiLogs.map(log => {
-                        let color = 'text-slate-300';
+                        let color = 'text-slate-400';
                         if (log.level === 'INFO') color = 'text-cyan-400';
                         if (log.level === 'SUCCESS') color = 'text-emerald-400';
                         if (log.level === 'BLOCKED') color = 'text-rose-500 font-bold';
@@ -2129,9 +2129,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Terminal Footer */}
-                  <div className="px-4 py-2 bg-[#090d16] border-t border-slate-800 text-[10px] font-mono text-slate-500 flex justify-between">
+                  <div className="px-4 py-2.5 bg-[#0b101a] border-t border-slate-800 text-[10px] font-mono text-slate-500 flex justify-between items-center mt-auto">
                     <span>STATUS: MONITORING THREAT ENGINE</span>
-                    <span className="text-cyan-400">GROQ-LLM ACTIVE</span>
+                    <span className="text-cyan-400 font-bold tracking-wider">GROQ-LLM ACTIVE</span>
                   </div>
                 </div>
 
