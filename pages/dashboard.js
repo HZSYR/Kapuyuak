@@ -1958,72 +1958,55 @@ export default function Dashboard() {
                       </div>
                       
                       {aiEngine === 'KAPUYUAK' ? (
-                          <div className="relative group mt-4">
-                            {/* Glowing Background Effect */}
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-                            
-                            <div className="relative bg-[#090d16]/90 backdrop-blur-xl border border-emerald-500/30 p-6 rounded-2xl flex flex-col justify-between overflow-hidden shadow-2xl">
-                              {/* Decorative Tech Lines */}
-                              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
-                              <div className="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none"></div>
-                              
-                              <div className="flex justify-between items-start z-10 relative">
-                                 <div>
-                                    <div className="flex items-center gap-3">
-                                      <div className="relative flex h-2.5 w-2.5">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                                      </div>
-                                      <h4 className="text-emerald-400 font-semibold tracking-wide">Kapuyuak Engine</h4>
-                                    </div>
-                                    <p className="text-slate-400 text-xs mt-2 pr-4 leading-relaxed font-mono max-w-[85%]">
-                                      Local machine learning. <span className="text-emerald-500 font-medium">100% Data Privacy.</span>
-                                    </p>
-                                 </div>
-                                 <div className="text-right flex-shrink-0 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl">
-                                    <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tight">
-                                      {aiTrainingSamples > 0 ? aiTrainingSamples.toLocaleString() : '110,000+'}
-                                    </div>
-                                    <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
-                                      Trained Data
-                                    </div>
-                                 </div>
-                              </div>
-
-                              {/* Progress / Status Bar */}
-                              <div className="mt-6 flex items-center gap-3 z-10 relative">
-                                <div className="text-[10px] text-emerald-500/60 font-mono font-bold">STATUS</div>
-                                <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                  <div className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 w-full rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.6)]"></div>
+                          <div className="bg-emerald-500/[0.04] border border-emerald-500/20 p-5 rounded-2xl mt-4 flex items-center justify-between shadow-sm">
+                             <div>
+                                <div className="flex items-center gap-2 mb-1.5">
+                                   <div className="relative flex h-2 w-2">
+                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                   </div>
+                                   <h4 className="text-emerald-400 font-bold text-sm tracking-wide uppercase">Kapuyuak Local Engine</h4>
                                 </div>
-                                <div className="text-[10px] text-cyan-400 font-mono font-bold animate-pulse">OPTIMAL</div>
-                              </div>
-                            </div>
+                                <p className="text-slate-400 text-[11px] font-mono">
+                                  Autonomous machine learning with 100% data privacy.
+                                </p>
+                             </div>
+                             <div className="text-right flex flex-col justify-center">
+                                <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tighter">
+                                  {aiTrainingSamples > 0 ? aiTrainingSamples.toLocaleString() : '110,000+'}
+                                </div>
+                                <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
+                                  Data Samples
+                                </div>
+                             </div>
                           </div>
                       ) : (
-                          <div className="relative group mt-4">
-                            {/* Subtle Blue Glow for Groq */}
-                            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                            
-                            <div className="relative bg-[#090d16]/90 backdrop-blur-xl border border-blue-500/30 p-6 rounded-2xl flex flex-col justify-between overflow-hidden shadow-2xl">
-                               {/* Tech Background Pattern */}
-                               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                          <div className="flex flex-col mt-4">
+                             {/* Minimalist Groq Header */}
+                             <div className="bg-blue-500/[0.04] border border-blue-500/20 p-5 rounded-2xl flex items-center justify-between shadow-sm mb-5">
+                                <div>
+                                   <div className="flex items-center gap-2 mb-1.5">
+                                      <div className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                      </div>
+                                      <h4 className="text-blue-400 font-bold text-sm tracking-wide uppercase">Cloud API Engine</h4>
+                                   </div>
+                                   <p className="text-slate-400 text-[11px] font-mono">
+                                     High-performance Groq cloud infrastructure.
+                                   </p>
+                                </div>
+                                <div className="text-right flex flex-col justify-center">
+                                   <div className="text-2xl font-bold text-blue-400 font-mono tracking-tighter">
+                                     {groqKeys.length}
+                                   </div>
+                                   <div className="text-[9px] text-blue-500/70 uppercase font-semibold tracking-widest mt-0.5">
+                                     Active Keys
+                                   </div>
+                                </div>
+                             </div>
 
-                               <div className="flex justify-between items-center mb-6 z-10 relative">
-                                  <div className="flex items-center gap-3">
-                                    <div className="relative flex h-2.5 w-2.5">
-                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
-                                    </div>
-                                    <h4 className="text-blue-400 font-semibold tracking-wide">Cloud LLM Active</h4>
-                                  </div>
-                                  <div className="bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                     <span className="text-lg font-bold text-blue-400 font-mono">{groqKeys.length}</span>
-                                     <span className="text-[9px] text-blue-500/70 uppercase font-semibold tracking-widest">Active Keys</span>
-                                  </div>
-                               </div>
-
-                               {/* Form Area */}
+                             {/* Form Area */}
                                <form onSubmit={createGroqKey} className="flex gap-3 mb-6 z-10 relative">
                                   <div className="relative flex-1">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -2086,7 +2069,6 @@ export default function Dashboard() {
                                  </div>
                                </div>
                             </div>
-                          </div>
                       )}
                   </div>
 
