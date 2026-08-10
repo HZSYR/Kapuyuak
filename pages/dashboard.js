@@ -221,7 +221,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $p,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.($_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown')],
                 CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
-                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
             ]);
             $res = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -461,7 +461,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $p,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.($_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown')],
                 CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
-                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
             ]);
             $res = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -562,6 +562,14 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     }
     
     if (!$shouldSkip) {
+        $ipCache = __DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt';
+        if (file_exists($ipCache)) {
+            if (time() - filemtime($ipCache) < 300) {
+                header('HTTP/1.1 403 Forbidden');
+                header('Location: https://www.google.com');
+                exit;
+            } else { @unlink($ipCache); }
+        }
         $c = "";
         
         $rawInput = file_get_contents('php://input');
@@ -579,7 +587,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                         if (in_array($ext, $badExts)) {
                             $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>'unknown']);
                             $cx = curl_init(KPK4444_API_URL . '/api/scan');
-                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false]);
+                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
                             @curl_exec($cx); @curl_close($cx);
                             
                             if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
@@ -705,7 +713,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $p,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.($_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown')],
                 CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
-                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
             ]);
             $res = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -803,6 +811,14 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     }
     
     if (!$shouldSkip) {
+        $ipCache = __DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt';
+        if (file_exists($ipCache)) {
+            if (time() - filemtime($ipCache) < 300) {
+                header('HTTP/1.1 403 Forbidden');
+                header('Location: https://www.google.com');
+                exit;
+            } else { @unlink($ipCache); }
+        }
         $c = "";
         
         $rawInput = file_get_contents('php://input');
@@ -820,7 +836,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                         if (in_array($ext, $badExts)) {
                             $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp, 'username'=>'unknown']);
                             $cx = curl_init(KPK4444_API_URL . '/api/scan');
-                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false]);
+                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
                             @curl_exec($cx); @curl_close($cx);
 
                             @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
@@ -902,7 +918,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $p,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp],
                 CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
-                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
             ]);
             $res = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
