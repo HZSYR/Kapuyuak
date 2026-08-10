@@ -96,17 +96,17 @@ export default async function handler(req, res) {
     if (signatureMatch) {
         await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
         const expireDate = new Date();
-        expireDate.setDate(expireDate.getDate() + 1); // Ban 24 jam
+        expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
         if (reqUsername !== 'unknown') {
             await BannedIP.findOneAndUpdate(
                 { username: reqUsername },
-                { ip, username: reqUsername, reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
+                { ip, username: reqUsername, domain, reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
                 { upsert: true }
             );
         } else {
             await BannedIP.findOneAndUpdate(
                 { ip, username: 'unknown' },
-                { ip, username: 'unknown', reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
+                { ip, username: 'unknown', domain, reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
                 { upsert: true }
             );
         }
@@ -137,7 +137,7 @@ export default async function handler(req, res) {
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
             await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
             const expireDate = new Date();
-            expireDate.setMinutes(expireDate.getMinutes() + 5);
+            expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
             const category = mlResult === 'JUDI' ? 'AI_DETECTED_SPAM' : 'AI_DETECTED_MALWARE';
             
             await AttackLog.create({
@@ -147,9 +147,9 @@ export default async function handler(req, res) {
             });
 
             if (reqUsername !== 'unknown') {
-                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
             } else {
-                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
             }
             return res.status(200).json({ blocked: true });
         }
@@ -217,7 +217,7 @@ export default async function handler(req, res) {
 
       await BannedIP.findOneAndUpdate(
         { ip, username: username || 'unknown' },
-        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
         { upsert: true }
       );
 
