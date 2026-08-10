@@ -758,6 +758,10 @@ const getFullIndexPhp34 = (apiKey, url) => {
   
   // Remove Anti-Inspect Shield for OJS 3.4 because ob_start conflicts with Laravel/Symfony response emitter
   content = content.replace(/\/\/ Anti-Inspect Shield[\s\S]*?\}\n/s, '');
+
+  // Remove hardcoded headers because they cause "Headers already sent" exception in Laravel response emitter in OJS 3.4
+  const regexHeaders = /header\("X-Frame-Options: SAMEORIGIN"\);\s*header\("X-XSS-Protection: 1; mode=block"\);\s*header\("X-Content-Type-Options: nosniff"\);\s*header\("Strict-Transport-Security: max-age=31536000; includeSubDomains"\);\s*/g;
+  content = content.replace(regexHeaders, '');
   
   return content;
 };
