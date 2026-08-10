@@ -751,6 +751,8 @@ APP\\core\\Application::get()->execute();
 // Protected by Kapuyuak Security System
 `;
 
+const getFullIndexPhp34 = getFullIndexPhp35;
+
 export default function Dashboard() {
   const [secret, setSecret] = useState('');
   const [recaptchaToken, setRecaptchaToken] = useState(null);
