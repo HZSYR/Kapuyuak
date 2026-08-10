@@ -751,7 +751,12 @@ APP\\core\\Application::get()->execute();
 // Protected by Kapuyuak Security System
 `;
 
-const getFullIndexPhp34 = getFullIndexPhp35;
+const getFullIndexPhp34 = (apiKey, url) => {
+  let content = getFullIndexPhp35(apiKey, url);
+  content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
+  content = content.replace("APP\\core\\Application::get()->execute();", "Application::get()->execute();");
+  return content;
+};
 
 export default function Dashboard() {
   const [secret, setSecret] = useState('');
