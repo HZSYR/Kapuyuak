@@ -8,6 +8,9 @@ const amanVerbs = ["membahas tentang", "meneliti", "mengkaji ulang", "menganalis
 const amanObjects = ["sistem informasi", "teknologi pendidikan", "metode pembelajaran", "ekonomi makro", "keperawatan medis", "kesehatan masyarakat", "open journal systems", "pengembangan software", "analisis statistik spss", "validitas dan reliabilitas", "kebijakan publik", "dampak sosial", "daftar pustaka", "referensi akademik"];
 const amanKeywords = ["DOI: 10.1234/", "Vol 1 No 2 (2025)", "ISSN", "e-ISSN", "Peer-reviewed", "Open Access", "Scopus indexed", "Sinta 2", "Corresponding author", "Under review", "Accepted for publication"];
 
+// Kamus Pengetahuan OJS Bahasa Inggris & Payload JSON Form (Sangat Penting untuk OJS 3.x Submissions)
+const amanOjsEnglish = ["test", "testing", "submission", "guidelines", "title", "privacy statement", "consent", "checklist", "I agree to have my data collected", "previously published", "references", "upload", "file", "document", "pdf", "docx", "application/json", "true", "false", "null", "undefined", "session", "token", "requirements", "author", "article", "begin submission"];
+
 // Kamus Pengetahuan Judol (Gambling Spam)
 const judolPrefix = ["situs", "link alternatif", "daftar", "login", "bocoran", "bandar", "agen", "situs resmi", "link", "info", "pola", "trik", "grup telegram", "kumpulan", "rekomendasi"];
 const judolGames = ["slot gacor", "rtp live olympus", "judi bola sbobet", "casino online terpercaya", "togel macau hongkong singapore sydney", "idn poker ceme domino qq", "mahjong ways 2 scatter hitam", "tembak ikan", "baccarat", "sabung ayam", "joker123 pragmatic play pg soft", "slot88", "pkv games", "bandarqq", "capsa susun"];
@@ -59,6 +62,10 @@ export function generateMegaDataset() {
         // Tambahkan keyword akademik secara acak 50% chance
         if (Math.random() > 0.5) {
             text += ` [${getRandom(amanKeywords)}]`;
+        }
+        // Tambahkan kosaka bahasa Inggris & JSON OJS Submission (OJS 3.x False Positive Fixes)
+        if (Math.random() > 0.4) {
+            text += ` ${getRandom(amanOjsEnglish)} ${getRandom(amanOjsEnglish)}`;
         }
         dataset.push({ label: 'AMAN', text });
     }
