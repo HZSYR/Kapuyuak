@@ -3,11 +3,20 @@ import BannedIP from '../kpk4444-models/BannedIP';
 
 const rateLimitCache = new Map();
 
+const hardwareBanCache = new Map();
+
 export async function rateLimitMiddleware(req, res, limit, windowMs = 60000) {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
-  const apiKey = req.body?.apiKey || 'none';
-  const identifier = req.url.includes('/scan') ? apiKey : ip;
   const now = Date.now();
+  
+  if (hardwareBanCache.has(ip) && now < hardwareBanCache.get(ip)) {
+      res.status(403).json({ error: 'L7 SHIELD: IP banned at edge layer due to flood.' });
+      return false;
+  }
+  if (hardwareBanCache.has(ip) && now >= hardwareBanCache.get(ip)) hardwareBanCache.delete(ip);
+
+  const apiKey = req.body?.apiKey || 'none';
+  const identifier = `${ip}_${apiKey}`;
 
   try {
     await connectDB();
@@ -39,11 +48,13 @@ export async function rateLimitMiddleware(req, res, limit, windowMs = 60000) {
     record.violations += 1;
     rateLimitCache.set(identifier, record);
     
-    if (record.violations >= 5) {
+    if (record.violations >= 3) {
+      hardwareBanCache.set(ip, now + (15 * 60 * 1000)); 
       try {
+        await connectDB();
         await BannedIP.findOneAndUpdate(
           { ip },
-          { reason: 'Rate limit violation threshold exceeded', expiresAt: new Date(now + 10 * 60 * 1000) },
+          { reason: 'L7 DDoS Flood / API Rate Limit Exceeded', expiresAt: new Date(now + 15 * 60 * 1000) },
           { upsert: true }
         );
       } catch(e) {}
