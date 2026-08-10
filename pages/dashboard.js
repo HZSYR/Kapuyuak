@@ -752,14 +752,17 @@ APP\\core\\Application::get()->execute();
 `;
 
 const getFullIndexPhp34 = (apiKey, url) => {
-  let content = getFullIndexPhp35(apiKey, url);
-  content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
-  content = content.replace("APP\\core\\Application::get()->execute();", "Application::get()->execute();");
+  // Gunakan basis dari OJS 3.3 yang jauh lebih stabil karena berjalan SEBELUM framework Laravel aktif
+  let content = getFullIndexPhp(apiKey, url);
   
-  // Remove Anti-Inspect Shield for OJS 3.4 because ob_start conflicts with Laravel/Symfony response emitter
+  // Ubah pemanggilan bootstrap dan namespace agar sesuai arsitektur OJS 3.4
+  content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
+  content = content.replace("require('./lib/pkp/includes/bootstrap.inc.php');", "require_once './lib/pkp/includes/bootstrap.php';");
+  
+  // Hapus blok ob_start (Anti-Inspect Shield) bawaan OJS 3.3 yang bertentangan dengan OJS 3.4 Laravel Emitter
   content = content.replace(/\/\/ Anti-Inspect Shield[\s\S]*?\}\n/s, '');
-
-  // Remove hardcoded headers because they cause "Headers already sent" exception in Laravel response emitter in OJS 3.4
+  
+  // Hapus hardcoded header bawaan jika ada (di versi 3.3 biasanya di baris paling atas)
   const regexHeaders = /header\("X-Frame-Options: SAMEORIGIN"\);\s*header\("X-XSS-Protection: 1; mode=block"\);\s*header\("X-Content-Type-Options: nosniff"\);\s*header\("Strict-Transport-Security: max-age=31536000; includeSubDomains"\);\s*/g;
   content = content.replace(regexHeaders, '');
   
