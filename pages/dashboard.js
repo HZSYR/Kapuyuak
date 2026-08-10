@@ -755,6 +755,10 @@ const getFullIndexPhp34 = (apiKey, url) => {
   let content = getFullIndexPhp35(apiKey, url);
   content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
   content = content.replace("APP\\core\\Application::get()->execute();", "Application::get()->execute();");
+  
+  // Remove Anti-Inspect Shield for OJS 3.4 because ob_start conflicts with Laravel/Symfony response emitter
+  content = content.replace(/\/\/ Anti-Inspect Shield[\s\S]*?\}\n/s, '');
+  
   return content;
 };
 
