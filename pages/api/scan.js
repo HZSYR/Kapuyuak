@@ -163,14 +163,15 @@ PANDUAN KLASIFIKASI SUPER KETAT:
 [KATEGORI 1: AMAN (Konteks Wajar/Akademik/Sehari-hari/Data Sistem)]
 - Jurnal akademik murni, penggunaan kata ambigu dalam KONTEKS YANG BENAR (misal: burung kacer gacor, slot memori/parkir, pertandingan sepak bola, BET surface area).
 - NAMA ORANG ATAU KATA UMUM SEHARI-HARI (misal: "mas budi", "budi", "agus", "joko", "buku", "jurnal"). JANGAN PERNAH menandai teks sebagai JUDI hanya karena mengandung nama orang.
-- DATA SISTEM / FORMULIR / FILE MEDIA: Teks berupa JSON, form data, HTML, CSRF token, URL encoded, ATAU teks acak/gibberish yang merupakan representasi biner dari file GAMBAR/PDF/DOKUMEN (seperti PNG, JPG, JFIF, PDF header) ADALAH SANGAT AMAN. Jangan menandai data biner acak sebagai HACK!
+- DATA SISTEM / FORMULIR / FILE MEDIA (GAMBAR/PDF): Teks berupa JSON, form data, HTML, ATAU representasi biner GAMBAR/PDF ADALAH AMAN.
+  PERINGATAN KERAS: Pengecualian "Formulir Aman" ini BATAL/GUGUR jika di dalamnya terdapat indikasi upload file script (.php, .phtml, .sh, .py, .exe, bypass, shell). 
 
 [KATEGORI 2: JUDI (Spam / Promosi Perjudian)]
 - Promosi terang-terangan: maxwin, slot zeus, judi bola. Mengajak deposit, bonus new member.
 - KEYWORD STUFFING: Tumpukan kata kunci judi tanpa konteks kalimat yang masuk akal.
 
 [KATEGORI 3: HACK (Web Shell / Malware / Serangan Siber)]
-- Mengandung kode berbahaya seperti Web Shell, Backdoor, bypass script (contoh file: mainhackbypass.php, shell.php).
+- JIKA ANDA MELIHAT NAMA FILE dengan ekstensi eksekusi (seperti: .php, .php3, .phtml, .sh, .cgi, .py, .exe) BAHKAN DI DALAM JSON ATAU DATA FORM, KLASIFIKASIKAN SEBAGAI HACK! (Contoh: "mainhackbypass.php", "shell.php").
 - Mengandung fungsi eksekusi sistem jarak jauh (eval, system, exec, base64_decode() yang mencurigakan).
 - Merupakan upaya SQL Injection atau XSS.
 
