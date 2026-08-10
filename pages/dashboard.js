@@ -2201,8 +2201,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Terminal Output */}
-                  <div className="p-4 flex-1 min-h-0 overflow-y-auto font-mono text-[11px] flex flex-col justify-start space-y-2">
+                  <div className="p-4 h-[310px] overflow-y-auto font-mono text-[11px] flex flex-col justify-start space-y-2">
                     {!Array.isArray(aiLogs) || aiLogs.length === 0 ? (
                       <div className="text-slate-600 italic py-8 text-center m-auto">Waiting for AI scanner logs...</div>
                     ) : (
