@@ -47,7 +47,14 @@ const hackActions = [
     'f' + 'ile_g' + 'et_c' + 'onte' + 'nts(',
     'p' + 'hp://' + 'input',
     'a' + 'ss' + 'ert(',
-    'c' + 'reate' + '_fun' + 'ctio' + 'n('
+    'c' + 'reate' + '_fun' + 'ctio' + 'n(',
+    'p' + 'hp://' + 'filter/c' + 'onve' + 'rt.i' + 'con' + 'v.',
+    '{ph' + 'p}s' + 'yste' + 'm({/p' + 'hp}',
+    'e' + 'xif_' + 'read' + '_da' + 'ta(',
+    '__h' + 'alt_c' + 'omp' + 'ile' + 'r()',
+    'p' + 'har:' + '//',
+    's' + 'pli' + 'ce(',
+    'a' + 'rray_m' + 'ap("s' + 'yst' + 'em"'
 ];
 const hackTargets = [
     '$_P' + 'OST["c' + 'md"]',
@@ -65,7 +72,13 @@ const hackTargets = [
     'u' + 'rld' + 'eco' + 'de(',
     'ch' + 'mo' + 'd(',
     '07' + '77',
-    'b' + 'ase6' + '4_e' + 'nco' + 'de('
+    'b' + 'ase6' + '4_e' + 'nco' + 'de(',
+    '16' + '9.25' + '4.16' + '9.25' + '4',
+    'fi' + 'le.p' + 'har',
+    's' + 'hell.p' + 'ht',
+    'l' + 'oc' + 'alh' + 'ost:2' + '2',
+    'd' + 'a' + 'ta://t' + 'ext/p' + 'lai' + 'n;b' + 'as' + 'e64',
+    '.a' + 'ws/cr' + 'eden' + 'tials'
 ];
 
 // Helper: Ambil elemen acak dari array
