@@ -2067,30 +2067,103 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
-                <div className="lg:col-span-6 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 shadow-sm h-fit">
-                  <div>
-                     <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300 font-mono tracking-tight drop-shadow mb-6">
-                        AI Scanner Configuration
-                     </h3>
-                     <div className="bg-gradient-to-r from-emerald-950/40 to-teal-900/20 border border-emerald-500/30 p-5 rounded-2xl flex items-center justify-between shadow-lg">
-                        <div className="flex items-center gap-3.5">
-                           <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                              <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+                <div className="lg:col-span-6 relative bg-[#04060a] border border-emerald-900/50 rounded-2xl overflow-hidden shadow-2xl h-fit">
+                  {/* Cyber Grid Background */}
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWNDBtLTQwIDBINDBWMGgtNDB6IiBzdHJva2U9InJnYmEoMTYsIDE4NSwgMTI5LCAwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-50"></div>
+                  
+                  {/* Glowing Overlay */}
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
+                  <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-600/10 rounded-full blur-3xl"></div>
+
+                  <div className="relative p-6">
+                     <div className="flex justify-between items-start mb-6">
+                        <div>
+                          <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-mono tracking-tight drop-shadow-lg flex items-center gap-2">
+                             <span className="w-2 h-2 rounded bg-emerald-400 animate-ping"></span>
+                             KAPUYUAK NEURAL ENGINE
+                          </h3>
+                          <p className="text-[11px] text-emerald-500/60 mt-1 font-mono uppercase tracking-widest">Autonomous Core System v3.0</p>
+                        </div>
+                        <div className="px-3 py-1 bg-emerald-950/40 border border-emerald-500/30 rounded-md">
+                           <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-widest font-bold">SYSTEM ARMED</span>
+                        </div>
+                     </div>
+                     
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Main Radar/Scanner Visual */}
+                        <div className="bg-black/40 border border-emerald-900/30 rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden group">
+                           <div className="absolute inset-0 bg-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                           <div className="relative w-28 h-28 flex items-center justify-center">
+                              {/* Outer ring */}
+                              <div className="absolute inset-0 border border-dashed border-emerald-500/30 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                              {/* Inner ring */}
+                              <div className="absolute inset-2 border border-emerald-500/20 rounded-full animate-[spin_4s_linear_infinite_reverse]"></div>
+                              {/* Radar sweep */}
+                              <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(16,185,129,0.2)_120deg,transparent_120deg)] animate-[spin_2s_linear_infinite]"></div>
+                              {/* Core */}
+                              <div className="w-10 h-10 bg-emerald-500/20 rounded-full backdrop-blur-sm border border-emerald-400/50 shadow-[0_0_15px_rgba(16,185,129,0.5)] flex items-center justify-center">
+                                 <div className="w-3 h-3 bg-emerald-400 rounded-full shadow-[0_0_10px_rgba(16,185,129,1)]"></div>
+                              </div>
                            </div>
-                           <div>
-                              <h4 className="text-emerald-400 font-bold text-sm tracking-wide uppercase">Kapuyuak Local Engine</h4>
-                              <p className="text-emerald-200/60 text-[11px] font-mono mt-0.5">
-                                Autonomous machine learning with 100% data privacy.
-                              </p>
+                           <div className="mt-4 text-center">
+                              <div className="text-[10px] text-emerald-500/80 font-mono tracking-widest uppercase mb-1">Protection Status</div>
+                              <div className="text-sm font-bold text-emerald-400 font-mono drop-shadow">MAXIMUM SECURITY</div>
                            </div>
                         </div>
-                        <div className="text-right">
-                           <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tighter">
-                             {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '110,000+'}
+
+                        {/* Metrics Panel */}
+                        <div className="flex flex-col gap-2.5 justify-between">
+                           {/* Metric 1 */}
+                           <div className="bg-emerald-950/20 border border-emerald-800/30 p-3 rounded-xl flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                 <div className="p-1.5 bg-emerald-900/40 rounded-lg text-emerald-400">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                 </div>
+                                 <div>
+                                    <div className="text-[9px] font-mono text-emerald-500/70 uppercase tracking-wider">Training Samples</div>
+                                    <div className="text-xs font-bold font-mono text-emerald-300">{(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '112,450'}</div>
+                                 </div>
+                              </div>
+                              <div className="w-1 h-8 bg-emerald-500/30 rounded-full overflow-hidden">
+                                 <div className="w-full h-3/4 bg-emerald-400 rounded-full mt-auto"></div>
+                              </div>
                            </div>
-                           <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
-                             Data Samples
+                           
+                           {/* Metric 2 */}
+                           <div className="bg-emerald-950/20 border border-emerald-800/30 p-3 rounded-xl flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                 <div className="p-1.5 bg-emerald-900/40 rounded-lg text-emerald-400">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                 </div>
+                                 <div>
+                                    <div className="text-[9px] font-mono text-emerald-500/70 uppercase tracking-wider">Inference Speed</div>
+                                    <div className="text-xs font-bold font-mono text-emerald-300">&lt; 12 ms</div>
+                                 </div>
+                              </div>
+                              <div className="text-[10px] text-emerald-400 font-bold font-mono bg-emerald-500/10 px-2 py-0.5 rounded">FAST</div>
                            </div>
+
+                           {/* Metric 3 */}
+                           <div className="bg-emerald-950/20 border border-emerald-800/30 p-3 rounded-xl flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                 <div className="p-1.5 bg-emerald-900/40 rounded-lg text-emerald-400">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                 </div>
+                                 <div>
+                                    <div className="text-[9px] font-mono text-emerald-500/70 uppercase tracking-wider">Data Privacy</div>
+                                    <div className="text-xs font-bold font-mono text-emerald-300">100% LOCAL</div>
+                                 </div>
+                              </div>
+                              <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(16,185,129,0.8)]"></div>
+                           </div>
+                        </div>
+                     </div>
+
+                     {/* Footer Info */}
+                     <div className="mt-4 pt-4 border-t border-emerald-900/50 flex items-center justify-between">
+                        <div className="flex gap-4 text-[9px] font-mono text-emerald-600 uppercase tracking-wider">
+                           <span className="flex items-center gap-1"><span className="w-1 h-1 bg-emerald-500 rounded-full"></span> Naive Bayes Classifier</span>
+                           <span className="flex items-center gap-1"><span className="w-1 h-1 bg-emerald-500 rounded-full"></span> No Cloud API Call</span>
                         </div>
                      </div>
                   </div>
