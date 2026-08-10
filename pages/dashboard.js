@@ -91,7 +91,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $skipPaths = []; // Scan everything (login, register, upload)
     $shouldSkip = false;
     foreach ($skipPaths as $path) {
         if (stripos($uri, $path) !== false) {
@@ -106,7 +106,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         $rawInput = file_get_contents('php://input');
         if ($rawInput) { $c .= $rawInput . " "; }
         
-        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
+        if (!empty($p)) $c .= json_encode($p, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
             $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
@@ -305,7 +306,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $skipPaths = []; // Scan everything (login, register, upload)
     $shouldSkip = false;
     foreach ($skipPaths as $path) {
         if (stripos($uri, $path) !== false) {
@@ -320,7 +321,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         $rawInput = file_get_contents('php://input');
         if ($rawInput) { $c .= $rawInput . " "; }
         
-        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
+        if (!empty($p)) $c .= json_encode($p, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
             $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
@@ -625,7 +627,7 @@ if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache)
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $skipPaths = []; // Scan everything (login, register, upload)
     $shouldSkip = false;
     foreach ($skipPaths as $path) {
         if (stripos($uri, $path) !== false) {
@@ -640,7 +642,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         $rawInput = file_get_contents('php://input');
         if ($rawInput) { $c .= $rawInput . " "; }
         
-        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
+        if (!empty($p)) $c .= json_encode($p, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
             $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
@@ -843,7 +846,7 @@ if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache)
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $skipPaths = []; // Scan everything (login, register, upload)
     $shouldSkip = false;
     foreach ($skipPaths as $path) {
         if (stripos($uri, $path) !== false) {
@@ -858,7 +861,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         $rawInput = file_get_contents('php://input');
         if ($rawInput) { $c .= $rawInput . " "; }
         
-        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
+        if (!empty($p)) $c .= json_encode($p, 256 | 512) . " ";
         if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
         if (!empty($_FILES)) {
             $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
