@@ -574,63 +574,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     }
     
     if (!$shouldSkip) {
-        $c = "";
-        
-        $rawInput = file_get_contents('php://input');
-        if ($rawInput) { $c .= $rawInput . " "; }
-        
-        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
-        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
-        if (!empty($_FILES)) {
-            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
-            foreach ($_FILES as $fileKey => $file) {
-                if (isset($file['name'])) {
-                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
-                    foreach ($names as $n) {
-                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
-                        if (in_array($ext, $badExts)) {
-                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>'unknown']);
-                            $cx = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
-                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_FOLLOWLOCATION => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
-                            @curl_exec($cx); @curl_close($cx);
-                            
-                            if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
-                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt', time()); }
-                            header('HTTP/1.1 403 Forbidden');
-                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
-                        }
-                    }
-                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
-                }
-                if (isset($file['tmp_name'])) {
-                    $tmpFiles = is_array($file['tmp_name']) ? $file['tmp_name'] : [$file['tmp_name']];
-                    foreach ($tmpFiles as $tmp) {
-                        if (!empty($tmp) && file_exists($tmp)) {
-                            $fsize = filesize($tmp);
-                            if ($fsize > 10000) {
-                                $head = file_get_contents($tmp, false, null, 0, 5000);
-                                $tail = file_get_contents($tmp, false, null, $fsize - 5000, 5000);
-                                $c .= $head . "\\\\n...[TRUNCATED]...\\\\n" . $tail . " ";
-                            } else {
-                                $c .= file_get_contents($tmp) . " ";
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Strip non-ASCII (binary) characters that break json_encode
-        $cleanContent = "";
-        $len = strlen($c);
-        for ($i = 0; $i < $len; $i++) {
-            $ord = ord($c[$i]);
-            if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
-                $cleanContent .= $c[$i];
-            }
-        }
-        $c = $cleanContent;
-        
         $username = "unknown";
         if (isset($_COOKIE['OJSSID'])) {
             try {
@@ -684,6 +627,77 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 }
             } catch (Exception $e) {}
         }
+        
+        if ($username !== "unknown") {
+            $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
+            if (file_exists($userCache)) {
+                if (time() - filemtime($userCache) < 300) {
+                    header('HTTP/1.1 403 Forbidden');
+                    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+                    if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: User Account is BANNED!'])); }
+                    echo "<script>window.location.href='https://www.google.com';</script>";
+                    header('Location: https://www.google.com');
+                    exit;
+                } else { @unlink($userCache); }
+            }
+        }
+        
+        $c = "";
+        
+        $rawInput = file_get_contents('php://input');
+        if ($rawInput) { $c .= $rawInput . " "; }
+        
+        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
+        if (!empty($_FILES)) {
+            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
+            foreach ($_FILES as $fileKey => $file) {
+                if (isset($file['name'])) {
+                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
+                    foreach ($names as $n) {
+                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
+                        if (in_array($ext, $badExts)) {
+                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username??'unknown']);
+                            $cx = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
+                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_FOLLOWLOCATION => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
+                            @curl_exec($cx); @curl_close($cx);
+                            
+                            if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
+                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt', time()); }
+                            header('HTTP/1.1 403 Forbidden');
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
+                        }
+                    }
+                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
+                }
+                if (isset($file['tmp_name'])) {
+                    $tmpFiles = is_array($file['tmp_name']) ? $file['tmp_name'] : [$file['tmp_name']];
+                    foreach ($tmpFiles as $tmp) {
+                        if (!empty($tmp) && file_exists($tmp)) {
+                            $fsize = filesize($tmp);
+                            if ($fsize > 10000) {
+                                $head = file_get_contents($tmp, false, null, 0, 5000);
+                                $tail = file_get_contents($tmp, false, null, $fsize - 5000, 5000);
+                                $c .= $head . "\\\\n...[TRUNCATED]...\\\\n" . $tail . " ";
+                            } else {
+                                $c .= file_get_contents($tmp) . " ";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Strip non-ASCII (binary) characters that break json_encode
+        $cleanContent = "";
+        $len = strlen($c);
+        for ($i = 0; $i < $len; $i++) {
+            $ord = ord($c[$i]);
+            if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
+                $cleanContent .= $c[$i];
+            }
+        }
+        $c = $cleanContent;
         
         $isBanned = false;
         $banFileUser = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
@@ -827,46 +841,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     }
     
     if (!$shouldSkip) {
-        $c = "";
-        
-        $rawInput = file_get_contents('php://input');
-        if ($rawInput) { $c .= $rawInput . " "; }
-        
-        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
-        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
-        if (!empty($_FILES)) {
-            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
-            foreach ($_FILES as $fileKey => $file) {
-                if (isset($file['name'])) {
-                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
-                    foreach ($names as $n) {
-                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
-                        if (in_array($ext, $badExts)) {
-                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp, 'username'=>'unknown']);
-                            $cx = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
-                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_FOLLOWLOCATION => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
-                            @curl_exec($cx); @curl_close($cx);
-
-                            @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
-                            header('HTTP/1.1 403 Forbidden');
-                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
-                        }
-                    }
-                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
-                }
-            }
-        }
-        
-        $cleanContent = "";
-        $len = strlen($c);
-        for ($i = 0; $i < $len; $i++) {
-            $ord = ord($c[$i]);
-            if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
-                $cleanContent .= $c[$i];
-            }
-        }
-        $c = $cleanContent;
-        
         $username = "unknown";
         if (isset($_COOKIE['OJSSID'])) {
             try {
@@ -902,6 +876,61 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 }
             } catch (Exception $e) {}
         }
+        
+        if ($username !== "unknown") {
+            $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
+            if (file_exists($userCache)) {
+                if (time() - filemtime($userCache) < 300) {
+                    header('HTTP/1.1 403 Forbidden');
+                    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+                    if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: User Account is BANNED!'])); }
+                    echo "<script>window.location.href='https://www.google.com';</script>";
+                    header('Location: https://www.google.com');
+                    exit;
+                } else { @unlink($userCache); }
+            }
+        }
+        
+        $c = "";
+        
+        $rawInput = file_get_contents('php://input');
+        if ($rawInput) { $c .= $rawInput . " "; }
+        
+        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
+        if (!empty($_FILES)) {
+            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
+            foreach ($_FILES as $fileKey => $file) {
+                if (isset($file['name'])) {
+                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
+                    foreach ($names as $n) {
+                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
+                        if (in_array($ext, $badExts)) {
+                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp, 'username'=>$username??'unknown']);
+                            $cx = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
+                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_FOLLOWLOCATION => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
+                            @curl_exec($cx); @curl_close($cx);
+
+                            if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
+                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time()); }
+                            header('HTTP/1.1 403 Forbidden');
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
+                        }
+                    }
+                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
+                }
+            }
+        }
+        
+        $cleanContent = "";
+        $len = strlen($c);
+        for ($i = 0; $i < $len; $i++) {
+            $ord = ord($c[$i]);
+            if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
+                $cleanContent .= $c[$i];
+            }
+        }
+        $c = $cleanContent;
         
         $isBanned = false;
         $banFileIp = __DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt';
