@@ -124,7 +124,7 @@ export default async function handler(req, res) {
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
             await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
             const expireDate = new Date();
-            expireDate.setDate(expireDate.getDate() + 1);
+            expireDate.setMinutes(expireDate.getMinutes() + 5);
             const category = mlResult === 'JUDI' ? 'AI_DETECTED_SPAM' : 'AI_DETECTED_MALWARE';
             
             await AttackLog.create({
