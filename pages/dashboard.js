@@ -758,7 +758,7 @@ const getFullIndexPhp34 = (apiKey, url) => {
   
   // REMOVE bootstrap from the top because we will place it at the bottom BEFORE Application::execute()
   // This is the true fix for HTTP 500 in OJS 3.4 because Laravel Exception Handler was hijacking warnings from our shield.
-  content = content.replace("require('./lib/pkp/includes/bootstrap.inc.php');", "");
+  content = content.replace("require_once './lib/pkp/includes/bootstrap.php';", "");
   
   // OJS 3.3 template has APP\\core\\Application, we need to replace it so it uses the 'use' statement.
   // Note: in template literal it has 1 backslash, so we search for 1 backslash
