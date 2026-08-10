@@ -12,9 +12,9 @@ const amanKeywords = ["DOI: 10.1234/", "Vol 1 No 2 (2025)", "ISSN", "e-ISSN", "P
 const amanOjsEnglish = ["test", "testing", "submission", "guidelines", "title", "privacy statement", "consent", "checklist", "I agree to have my data collected", "previously published", "references", "upload", "file", "document", "pdf", "docx", "application/json", "true", "false", "null", "undefined", "session", "token", "requirements", "author", "article", "begin submission"];
 
 // Kamus Pengetahuan Judol (Gambling Spam)
-const judolPrefix = ["situs", "link alternatif", "daftar", "login", "bocoran", "bandar", "agen", "situs resmi", "link", "info", "pola", "trik", "grup telegram", "kumpulan", "rekomendasi"];
-const judolGames = ["slot gacor", "rtp live olympus", "judi bola sbobet", "casino online terpercaya", "togel macau hongkong singapore sydney", "idn poker ceme domino qq", "mahjong ways 2 scatter hitam", "tembak ikan", "baccarat", "sabung ayam", "joker123 pragmatic play pg soft", "slot88", "pkv games", "bandarqq", "capsa susun"];
-const judolBait = ["maxwin hari ini", "pasti jp paus", "anti rungkad", "deposit pulsa tanpa potongan", "gampang menang", "bonus new member 100 di awal", "depo 25 bonus 25", "bebas ip", "bisa buy spin", "garansi kekalahan 100%", "to kecil", "server kamboja thailand rusia luar negeri vvip", "withdraw milyaran", "modal receh", "jackpot miliaran"];
+const judolPrefix = ["situs", "link alternatif", "daftar", "login", "bocoran", "bandar", "agen", "situs resmi", "link", "info", "pola", "trik", "grup telegram", "kumpulan", "rekomendasi", "vip", "rtp", "bocoran admin"];
+const judolGames = ["slot gacor", "rtp live olympus", "judi bola sbobet", "casino online terpercaya", "togel macau hongkong singapore sydney", "idn poker ceme domino qq", "mahjong ways 2 scatter hitam", "tembak ikan", "baccarat", "sabung ayam", "joker123 pragmatic play pg soft", "slot88", "pkv games", "bandarqq", "capsa susun", "starlight princess", "zeus x500", "scatter pink", "gates of olympus", "spaceman", "sweet bonanza"];
+const judolBait = ["maxwin hari ini", "pasti jp paus", "anti rungkad", "deposit pulsa tanpa potongan", "gampang menang", "bonus new member 100 di awal", "depo 25 bonus 25", "bebas ip", "bisa buy spin", "garansi kekalahan 100%", "to kecil", "server kamboja thailand rusia luar negeri vvip", "withdraw milyaran", "modal receh", "jackpot miliaran", "wd berapapun dibayar lunas", "bocoran admin jarwo", "pola gacor", "auto wd", "gampang pecah"];
 
 // Kamus Pengetahuan Hack (Malware / XSS / SQLi / Path Traversal / Command Injection)
 // SEMUANYA DIOBFUSCATE UNTUK MENGHINDARI DETEKSI WINDOWS DEFENDER SAAT KOMPILASI
@@ -33,7 +33,11 @@ const hackActions = [
     '../' + '../' + '../et' + 'c/pa' + 'sswd',
     '1; l' + 's -l' + 'a',
     'x' + 'ml e' + 'xt' + 'ern' + 'al en' + 'tity',
-    'ba' + 'sh -i >& /' + 'dev/tc' + 'p/'
+    'ba' + 'sh -i >& /' + 'dev/tc' + 'p/',
+    'X' + 'MLHt' + 'tpReq' + 'uest',
+    'f' + 'etc' + 'h(',
+    'win' + 'dow.lo' + 'cati' + 'on=',
+    'j' + 'avas' + 'cript:'
 ];
 const hackTargets = [
     '$_P' + 'OST["c' + 'md"]',
