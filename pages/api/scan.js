@@ -118,7 +118,20 @@ export default async function handler(req, res) {
     // =========================================================================
     if (content.length > 5) {
         await AILog.create({ message: `Initiating Kapuyuak Local AI Scan for ${domain}...`, level: 'INFO' });
-        const mlResult = await predict(content);
+        
+        let mlResult = 'AMAN';
+        
+        // =========================================================================
+        // 🛡️ HEURISTIC SCAN (PRE-FILTER) FOR HIGH RISK PATTERNS
+        // =========================================================================
+        const hackPattern = /\b([a-zA-Z0-9_\-\.]+)\.(php[34578]?|phtml|sh|py|cgi|exe)\b|eval\s*\(|base64_decode\s*\(|system\s*\(|exec\s*\(/i;
+        
+        if (hackPattern.test(content)) {
+            mlResult = 'HACK';
+            await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
+        } else {
+            mlResult = await predict(content);
+        }
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
 
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
