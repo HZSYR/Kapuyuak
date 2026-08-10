@@ -84,16 +84,27 @@ export default async function handler(req, res) {
     ];
     
     let signatureMatch = false;
+    let matchedSigStr = '';
     if (typeof content === 'string') {
         for (const sig of malwareSignatures) {
-            if (sig.test(content)) {
+            const m = content.match(sig);
+            if (m) {
                 signatureMatch = true;
+                matchedSigStr = m[0];
                 break;
             }
         }
     }
 
     if (signatureMatch) {
+        if (matchedSigStr) {
+            await Blacklist.findOneAndUpdate(
+                { value: matchedSigStr, type: 'keyword' },
+                { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                { upsert: true }
+            );
+            await trainAI(content, 'HACK');
+        }
         await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
         const expireDate = new Date();
         expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
@@ -126,8 +137,15 @@ export default async function handler(req, res) {
         // =========================================================================
         const hackPattern = /\b([a-zA-Z0-9_\-\.]+)\.(php[34578]?|phtml|sh|py|cgi|exe)\b|eval\s*\(|base64_decode\s*\(|system\s*\(|exec\s*\(/i;
         
-        if (hackPattern.test(content)) {
+        let heuristicMatch = content.match(hackPattern);
+        if (heuristicMatch) {
             mlResult = 'HACK';
+            await Blacklist.findOneAndUpdate(
+                { value: heuristicMatch[0], type: 'keyword' },
+                { value: heuristicMatch[0], type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                { upsert: true }
+            );
+            await trainAI(content, 'HACK');
             await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
         } else {
             mlResult = await predict(content);
@@ -136,6 +154,18 @@ export default async function handler(req, res) {
 
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
             await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
+            
+            if (!heuristicMatch) {
+                const autoPattern = content.length > 40 ? content.substring(0, 40).trim() : content.trim();
+                const aiCategory = mlResult === 'JUDI' ? 'SPAM_CONTENT' : 'MALWARE';
+                await Blacklist.findOneAndUpdate(
+                    { value: autoPattern, type: 'keyword' },
+                    { value: autoPattern, type: 'keyword', category: aiCategory, severity: 'HIGH', addedBy: 'AI_AUTO_LEARNING' },
+                    { upsert: true }
+                );
+                await trainAI(content, mlResult);
+            }
+
             const expireDate = new Date();
             expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
             const category = mlResult === 'JUDI' ? 'AI_DETECTED_SPAM' : 'AI_DETECTED_MALWARE';
