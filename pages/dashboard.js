@@ -550,31 +550,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     die("KPK4444: Local ban cache cleared!");
 }
 
-$ipCache = __DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt';
-if (file_exists($ipCache)) {
-    if (time() - filemtime($ipCache) < 300) {
-        header('HTTP/1.1 403 Forbidden');
-        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-        if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: IP Banned. Reloading...'])); }
-        echo "<script>window.location.href='https://www.google.com';</script>";
-        header('Location: https://www.google.com');
-        exit;
-    } else { @unlink($ipCache); }
-}
-
-if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
-    $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
-    $shouldSkip = false;
-    foreach ($skipPaths as $path) {
-        if (stripos($uri, $path) !== false) {
-            $shouldSkip = true;
-            break;
-        }
-    }
-    
-    if (!$shouldSkip) {
-        $username = "unknown";
+$username = "unknown";
         if (isset($_COOKIE['OJSSID'])) {
             try {
                 $configFile = __DIR__ . '/config.inc.php';
@@ -628,20 +604,37 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             } catch (Exception $e) {}
         }
         
-        if ($username !== "unknown") {
-            $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
-            if (file_exists($userCache)) {
-                if (time() - filemtime($userCache) < 300) {
-                    header('HTTP/1.1 403 Forbidden');
-                    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-                    if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: User Account is BANNED!'])); }
-                    echo "<script>window.location.href='https://www.google.com';</script>";
-                    header('Location: https://www.google.com');
-                    exit;
-                } else { @unlink($userCache); }
-            }
+$ipCache = __DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt';
+$userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
+
+if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
+    $cFile = file_exists($ipCache) ? $ipCache : $userCache;
+    if (time() - filemtime($cFile) < 300) {
+        setcookie('OJSSID', '', time() - 3600, '/');
+        header('HTTP/1.1 403 Forbidden');
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: IP or Account Banned. Reloading...'])); }
+        echo "<script>window.location.href='https://www.google.com';</script>";
+        header('Location: https://www.google.com');
+        exit;
+    } else { 
+        @unlink($ipCache); 
+        @unlink($userCache);
+    }
+}
+
+if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $shouldSkip = false;
+    foreach ($skipPaths as $path) {
+        if (stripos($uri, $path) !== false) {
+            $shouldSkip = true;
+            break;
         }
-        
+    }
+    
+    if (!$shouldSkip) {
         $c = "";
         
         $rawInput = file_get_contents('php://input');
@@ -699,30 +692,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         }
         $c = $cleanContent;
         
-        $isBanned = false;
-        $banFileUser = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
-        $banFileIp = __DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt';
-        
-        if ($username !== "unknown" && file_exists($banFileUser)) {
-            if (time() - filemtime($banFileUser) < 300) { // 5 minutes ban for user
-                $isBanned = true;
-            } else {
-                @unlink($banFileUser);
-            }
-        } elseif (file_exists($banFileIp) && $username === "unknown") { 
-            // Only ban IP if they are NOT logged in (Guest). If they login, IP ban is bypassed!
-            if (time() - filemtime($banFileIp) < 300) { // 5 minutes ban for IP
-                $isBanned = true;
-            } else {
-                @unlink($banFileIp);
-            }
-        }
-        
-        if ($isBanned) {
-            header('HTTP/1.1 403 Forbidden');
-            header('Location: https://www.google.com');
-            exit;
-        }
         
         $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username]);
         if ($p) {
@@ -817,31 +786,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     die("KPK4444: Local ban cache cleared!");
 }
 
-$ipCache = __DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt';
-if (file_exists($ipCache)) {
-    if (time() - filemtime($ipCache) < 300) {
-        header('HTTP/1.1 403 Forbidden');
-        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-        if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: IP Banned. Reloading...'])); }
-        echo "<script>window.location.href='https://www.google.com';</script>";
-        header('Location: https://www.google.com');
-        exit;
-    } else { @unlink($ipCache); }
-}
-
-if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
-    $uri = $_SERVER['REQUEST_URI'] ?? '';
-    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
-    $shouldSkip = false;
-    foreach ($skipPaths as $path) {
-        if (stripos($uri, $path) !== false) {
-            $shouldSkip = true;
-            break;
-        }
-    }
-    
-    if (!$shouldSkip) {
-        $username = "unknown";
+$username = "unknown";
         if (isset($_COOKIE['OJSSID'])) {
             try {
                 $configFile = __DIR__ . '/config.inc.php';
@@ -877,20 +822,37 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             } catch (Exception $e) {}
         }
         
-        if ($username !== "unknown") {
-            $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
-            if (file_exists($userCache)) {
-                if (time() - filemtime($userCache) < 300) {
-                    header('HTTP/1.1 403 Forbidden');
-                    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-                    if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: User Account is BANNED!'])); }
-                    echo "<script>window.location.href='https://www.google.com';</script>";
-                    header('Location: https://www.google.com');
-                    exit;
-                } else { @unlink($userCache); }
-            }
+$ipCache = __DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt';
+$userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
+
+if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
+    $cFile = file_exists($ipCache) ? $ipCache : $userCache;
+    if (time() - filemtime($cFile) < 300) {
+        setcookie('OJSSID', '', time() - 3600, '/');
+        header('HTTP/1.1 403 Forbidden');
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+        if ($isAjax) { die(json_encode(['error' => 'KPK4444 SHIELD: IP or Account Banned. Reloading...'])); }
+        echo "<script>window.location.href='https://www.google.com';</script>";
+        header('Location: https://www.google.com');
+        exit;
+    } else { 
+        @unlink($ipCache); 
+        @unlink($userCache);
+    }
+}
+
+if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $shouldSkip = false;
+    foreach ($skipPaths as $path) {
+        if (stripos($uri, $path) !== false) {
+            $shouldSkip = true;
+            break;
         }
-        
+    }
+    
+    if (!$shouldSkip) {
         $c = "";
         
         $rawInput = file_get_contents('php://input');
@@ -932,21 +894,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         }
         $c = $cleanContent;
         
-        $isBanned = false;
-        $banFileIp = __DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt';
-        if (file_exists($banFileIp)) {
-            if (time() - filemtime($banFileIp) < 300) { // 5 minutes ban for IP
-                $isBanned = true;
-            } else {
-                @unlink($banFileIp);
-            }
-        }
-        
-        if ($isBanned) {
-            header('HTTP/1.1 403 Forbidden');
-            header('Location: https://www.google.com');
-            exit;
-        }
         
         $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$userIp, 'username'=>$username]);
         if ($p) {
