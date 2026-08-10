@@ -577,8 +577,13 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     foreach ($names as $n) {
                         $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
                         if (in_array($ext, $badExts)) {
-                            if ($username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
-                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time()); }
+                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>'unknown']);
+                            $cx = curl_init(KPK4444_API_URL . '/api/scan');
+                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json'], CURLOPT_TIMEOUT => 2, CURLOPT_SSL_VERIFYPEER => false]);
+                            @curl_exec($cx); @curl_close($cx);
+                            
+                            if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
+                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt', time()); }
                             header('HTTP/1.1 403 Forbidden');
                             die("KPK4444 SHIELD: Malware File Upload Prevented.");
                         }
@@ -813,6 +818,11 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     foreach ($names as $n) {
                         $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
                         if (in_array($ext, $badExts)) {
+                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp, 'username'=>'unknown']);
+                            $cx = curl_init(KPK4444_API_URL . '/api/scan');
+                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp], CURLOPT_TIMEOUT => 2, CURLOPT_SSL_VERIFYPEER => false]);
+                            @curl_exec($cx); @curl_close($cx);
+
                             @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                             header('HTTP/1.1 403 Forbidden');
                             die("KPK4444 SHIELD: Malware File Upload Prevented.");
