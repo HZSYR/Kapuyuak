@@ -1316,7 +1316,13 @@ export default function Dashboard() {
   }, {});
   const topAttackIps = Object.entries(ipAttackCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
   
-  const filteredBannedIps = bannedIps.filter(bip => bip.ip.includes(bannedIpSearch));
+  const filteredBannedIps = bannedIps.filter(bip => {
+    const term = bannedIpSearch.toLowerCase();
+    const matchIp = bip.ip?.toLowerCase().includes(term);
+    const matchUser = bip.username && bip.username !== 'unknown' ? bip.username.toLowerCase().includes(term) : false;
+    const matchDomain = bip.domain ? bip.domain.toLowerCase().includes(term) : false;
+    return matchIp || matchUser || matchDomain;
+  });
   const BANNED_PER_PAGE = 10;
   const totalBannedPages = Math.max(1, Math.ceil(filteredBannedIps.length / BANNED_PER_PAGE));
   const currentBannedIps = filteredBannedIps.slice((bannedIpPage - 1) * BANNED_PER_PAGE, bannedIpPage * BANNED_PER_PAGE);
