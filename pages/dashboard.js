@@ -755,21 +755,28 @@ const getFullIndexPhp34 = (apiKey, url) => {
   let content = getFullIndexPhp(apiKey, url);
   
   content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
-  content = content.replace("require('./lib/pkp/includes/bootstrap.inc.php');", "require_once './lib/pkp/includes/bootstrap.php';");
+  
+  // REMOVE bootstrap from the top because we will place it at the bottom BEFORE Application::execute()
+  // This is the true fix for HTTP 500 in OJS 3.4 because Laravel Exception Handler was hijacking warnings from our shield.
+  content = content.replace("require('./lib/pkp/includes/bootstrap.inc.php');", "");
   
   // OJS 3.3 template has APP\\core\\Application, we need to replace it so it uses the 'use' statement.
   // Note: in template literal it has 1 backslash, so we search for 1 backslash
   content = content.replace("APP\\core\\Application::get()->execute();", "Application::get()->execute();");
   
   // Safely remove Anti-Inspect Shield (ob_start) which breaks Laravel Emitter in OJS 3.4
-  const shieldIndex = content.indexOf('// Anti-Inspect Shield');
-  const serveIndex = content.indexOf('// Serve the request');
-  if (shieldIndex !== -1 && serveIndex !== -1) {
-    content = content.substring(0, shieldIndex) + content.substring(serveIndex);
+  // We use string splitting because regex /s flag might be failing in NextJS build environment
+  const shieldStart = content.indexOf('// Anti-Inspect Shield');
+  const serveStart = content.indexOf('// Serve the request', shieldStart);
+  if (shieldStart !== -1 && serveStart !== -1) {
+      content = content.substring(0, shieldStart) + content.substring(serveStart);
   }
   
   // Remove hardcoded header from OJS 3.3 base that causes "Headers already sent" in OJS 3.4
   content = content.replace(/header\("X-Frame-Options: SAMEORIGIN"\);\s*/g, '');
+  
+  // PLACE the OJS 3.4 bootstrap directly above Application::get()->execute()
+  content = content.replace("// Serve the request", "require_once './lib/pkp/includes/bootstrap.php';\n\n// Serve the request");
   
   return content;
 };
