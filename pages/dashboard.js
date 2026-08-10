@@ -1974,7 +1974,7 @@ export default function Dashboard() {
                                 </div>
                                 <div className="text-right">
                                    <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tighter">
-                                     {aiTrainingSamples > 0 ? aiTrainingSamples.toLocaleString() : '110,000+'}
+                                     {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '110,000+'}
                                    </div>
                                    <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
                                      Data Samples
@@ -2040,25 +2040,29 @@ export default function Dashboard() {
                                        </tr>
                                      </thead>
                                      <tbody className="divide-y divide-blue-900/30 font-mono">
-                                       {groqKeys.map(gk => (
-                                         <tr key={gk._id} className="hover:bg-blue-500/5 transition duration-150">
-                                           <td className="px-4 py-2 text-cyan-300 text-[11px]">
-                                             <div className="flex items-center gap-2">
-                                               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/80"></span>
-                                               {gk.key.substring(0, 8)}<span className="text-slate-600">...</span>{gk.key.substring(gk.key.length - 4)}
-                                             </div>
-                                           </td>
-                                           <td className="px-4 py-2 text-[10px] text-slate-400">
-                                             {new Date(gk.addedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                           </td>
-                                           <td className="px-4 py-2 text-right">
-                                             <button onClick={() => deleteGroqKey(gk._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded transition-colors duration-200 font-semibold uppercase tracking-wider border border-rose-500/20">
-                                               Revoke
-                                             </button>
-                                           </td>
-                                         </tr>
-                                       ))}
-                                       {groqKeys.length === 0 && (
+                                       {Array.isArray(groqKeys) && groqKeys.map((gk, index) => {
+                                         const keyStr = gk?.key || '';
+                                         const shortKey = keyStr.length > 12 ? `${keyStr.substring(0, 8)}...${keyStr.substring(keyStr.length - 4)}` : (keyStr || 'gsk_key');
+                                         return (
+                                           <tr key={gk?._id || index} className="hover:bg-blue-500/5 transition duration-150">
+                                             <td className="px-4 py-2 text-cyan-300 text-[11px]">
+                                               <div className="flex items-center gap-2">
+                                                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/80"></span>
+                                                 {shortKey}
+                                               </div>
+                                             </td>
+                                             <td className="px-4 py-2 text-[10px] text-slate-400">
+                                               {gk?.addedAt ? new Date(gk.addedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recently'}
+                                             </td>
+                                             <td className="px-4 py-2 text-right">
+                                               <button onClick={() => deleteGroqKey(gk?._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded transition-colors duration-200 font-semibold uppercase tracking-wider border border-rose-500/20">
+                                                 Revoke
+                                               </button>
+                                             </td>
+                                           </tr>
+                                         );
+                                       })}
+                                       {(!Array.isArray(groqKeys) || groqKeys.length === 0) && (
                                          <tr>
                                            <td colSpan="3" className="px-4 py-6 text-center">
                                               <div className="flex flex-col items-center justify-center gap-1.5">
@@ -2108,22 +2112,24 @@ export default function Dashboard() {
 
                   {/* Terminal Output */}
                   <div className="p-4 flex-1 h-[310px] overflow-y-auto font-mono text-[11px] flex flex-col justify-start space-y-2">
-                    {aiLogs.length === 0 ? (
+                    {!Array.isArray(aiLogs) || aiLogs.length === 0 ? (
                       <div className="text-slate-600 italic py-8 text-center m-auto">Waiting for AI scanner logs...</div>
                     ) : (
-                      aiLogs.map(log => {
+                      aiLogs.map((log, idx) => {
                         let color = 'text-slate-400';
-                        if (log.level === 'INFO') color = 'text-cyan-400';
-                        if (log.level === 'SUCCESS') color = 'text-emerald-400';
-                        if (log.level === 'BLOCKED') color = 'text-rose-500 font-bold';
-                        if (log.level === 'WARN') color = 'text-amber-400';
-                        if (log.level === 'ERROR') color = 'text-rose-400';
+                        if (log?.level === 'INFO') color = 'text-cyan-400';
+                        if (log?.level === 'SUCCESS') color = 'text-emerald-400';
+                        if (log?.level === 'BLOCKED') color = 'text-rose-500 font-bold';
+                        if (log?.level === 'WARN') color = 'text-amber-400';
+                        if (log?.level === 'ERROR') color = 'text-rose-400';
+
+                        const timeStr = log?.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '';
 
                         return (
-                          <div key={log._id} className="flex items-start">
-                            <span className="text-slate-600 mr-2 shrink-0">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
-                            <span className={`${color} shrink-0 mr-2 font-bold`}>[{log.level}]</span>
-                            <span className="text-emerald-400/90 break-words">{log.message}</span>
+                          <div key={log?._id || idx} className="flex items-start">
+                            {timeStr && <span className="text-slate-600 mr-2 shrink-0">[{timeStr}]</span>}
+                            <span className={`${color} shrink-0 mr-2 font-bold`}>[{log?.level || 'LOG'}]</span>
+                            <span className="text-emerald-400/90 break-words">{log?.message || ''}</span>
                           </div>
                         );
                       })
