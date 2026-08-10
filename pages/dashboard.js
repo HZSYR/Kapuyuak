@@ -156,7 +156,7 @@ $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
 
 if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
     $cFile = file_exists($ipCache) ? $ipCache : $userCache;
-    if (time() - filemtime($cFile) < 300) {
+    if (time() - filemtime($cFile) < 3600) {
         setcookie('OJSSID', '', time() - 3600, '/');
         header('HTTP/1.1 403 Forbidden');
         $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -391,7 +391,7 @@ $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
 
 if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
     $cFile = file_exists($ipCache) ? $ipCache : $userCache;
-    if (time() - filemtime($cFile) < 300) {
+    if (time() - filemtime($cFile) < 3600) {
         setcookie('OJSSID', '', time() - 3600, '/');
         header('HTTP/1.1 403 Forbidden');
         $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -544,7 +544,7 @@ $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
 
 if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
     $cFile = file_exists($ipCache) ? $ipCache : $userCache;
-    if (time() - filemtime($cFile) < 300) {
+    if (time() - filemtime($cFile) < 3600) {
         setcookie('OJSSID', '', time() - 3600, '/');
         header('HTTP/1.1 403 Forbidden');
         $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -731,7 +731,7 @@ $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
 
 if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
     $cFile = file_exists($ipCache) ? $ipCache : $userCache;
-    if (time() - filemtime($cFile) < 300) {
+    if (time() - filemtime($cFile) < 3600) {
         setcookie('OJSSID', '', time() - 3600, '/');
         header('HTTP/1.1 403 Forbidden');
         $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -812,7 +812,7 @@ $userCache = __DIR__ . '/kpk_banned_user_' . md5($username) . '.txt';
 
 if (file_exists($ipCache) || ($username !== "unknown" && file_exists($userCache))) {
     $cFile = file_exists($ipCache) ? $ipCache : $userCache;
-    if (time() - filemtime($cFile) < 300) {
+    if (time() - filemtime($cFile) < 3600) {
         setcookie('OJSSID', '', time() - 3600, '/');
         header('HTTP/1.1 403 Forbidden');
         $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
