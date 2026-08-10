@@ -927,12 +927,10 @@ export default function Dashboard() {
   const [topOrigins, setTopOrigins] = useState([]);
   const [blacklists, setBlacklists] = useState([]);
   const [blacklistPage, setBlacklistPage] = useState(1);
-  const [groqKeys, setGroqKeys] = useState([]);
   const [bannedIps, setBannedIps] = useState([]);
   const [bannedIpSearch, setBannedIpSearch] = useState('');
   const [bannedIpPage, setBannedIpPage] = useState(1);
   const [now, setNow] = useState(Date.now());
-  const [aiEngine, setAiEngine] = useState('GROQ');
   const [aiTrainingSamples, setAiTrainingSamples] = useState(0);
 
   useEffect(() => {
@@ -1089,48 +1087,33 @@ export default function Dashboard() {
     setApiError(null);
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
-      const [lRes, bRes, kRes, gRes, alRes, bipRes, aicRes] = await Promise.all([
+      const [lRes, bRes, kRes, alRes, bipRes, aicRes] = await Promise.all([
         fetch('/api/logs', { headers }),
         fetch('/api/blacklist', { headers }),
         fetch('/api/generate-key', { headers }),
-        fetch('/api/groq-keys', { headers }),
         fetch('/api/ai-logs', { headers }),
         fetch('/api/banned-ips', { headers }),
         fetch('/api/ai-config', { headers })
       ]);
-      const [l, b, k, g, al, bip, aic] = await Promise.all([lRes.json(), bRes.json(), kRes.json(), gRes.json(), alRes.json(), bipRes.json(), aicRes.json()]);
-      if (!lRes.ok || !bRes.ok || !kRes.ok || !gRes.ok || !alRes.ok || !bipRes.ok) {
-        const errMsg = k.error || b.error || l.error || g.error || al.error || bip.error || 'Unknown API error';
-        const errStatus = !kRes.ok ? kRes.status : !bRes.ok ? bRes.status : !lRes.ok ? lRes.status : !gRes.ok ? gRes.status : !alRes.ok ? alRes.status : bipRes.status;
+      const [l, b, k, al, bip, aic] = await Promise.all([lRes.json(), bRes.json(), kRes.json(), alRes.json(), bipRes.json(), aicRes.json()]);
+      if (!lRes.ok || !bRes.ok || !kRes.ok || !alRes.ok || !bipRes.ok) {
+        const errMsg = k.error || b.error || l.error || al.error || bip.error || 'Unknown API error';
+        const errStatus = !kRes.ok ? kRes.status : !bRes.ok ? bRes.status : !lRes.ok ? lRes.status : !alRes.ok ? alRes.status : bipRes.status;
         setApiError(`Status ${errStatus}: ${errMsg}`);
       }
       setLogs(Array.isArray(l) ? l : []);
       setBlacklists(Array.isArray(b) ? b : []);
       setKeys(Array.isArray(k) ? k : []);
-      setGroqKeys(Array.isArray(g) ? g : []);
       setAiLogs(Array.isArray(al) ? al : []);
       setBannedIps(Array.isArray(bip) ? bip : []);
       
-      if (aic && aic.activeEngine) {
-        setAiEngine(aic.activeEngine);
+      if (aic) {
         setAiTrainingSamples(aic.trainingSamples || 0);
       }
     } catch (err) {
       setApiError(`Network Error: ${err.message}`);
     }
     if (showLoading) setIsLoading(false);
-  };
-
-  const handleToggleEngine = async (engine) => {
-    try {
-      const r = await fetch('/api/ai-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
-        body: JSON.stringify({ action: 'TOGGLE_ENGINE', engine })
-      });
-      const d = await r.json();
-      if (d.success) { setAiEngine(d.activeEngine); }
-    } catch (e) {}
   };
 
   const login = async (e) => {
@@ -1199,17 +1182,6 @@ export default function Dashboard() {
     });
   };
 
-  const createGroqKey = async (e) => {
-    e.preventDefault();
-    await fetch('/api/groq-keys', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
-      body: JSON.stringify({ key: e.target.groqKey.value })
-    });
-    e.target.reset();
-    loadData(jwtToken, false);
-  };
-
   const clearAiLogs = () => {
     setConfirmModal({
       isOpen: true, title: 'Hapus Semua AI Logs', message: 'Clear all AI Terminal Logs?',
@@ -1254,16 +1226,6 @@ export default function Dashboard() {
             }
           });
         }
-        loadData(jwtToken, false);
-      }
-    });
-  };
-
-  const deleteGroqKey = (id) => {
-    setConfirmModal({
-      isOpen: true, title: 'Hapus AI Key', message: 'Delete this AI Key?',
-      onConfirm: async () => {
-        await fetch(`/api/groq-keys?id=${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
         loadData(jwtToken, false);
       }
     });
@@ -2107,151 +2069,32 @@ export default function Dashboard() {
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
                 <div className="lg:col-span-6 bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 shadow-sm h-fit">
                   <div>
-                    <div className="flex flex-col gap-4 mb-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-                            <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${aiEngine === 'KAPUYUAK' ? 'bg-emerald-400' : 'bg-cyan-400'}`}></span>
-                            AI Scanner Configuration
-                          </h3>
-                          <p className="text-xs text-indigo-500/80 dark:text-gray-400 mt-0.5 font-mono">Select Classification Engine</p>
+                     <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300 font-mono tracking-tight drop-shadow mb-6">
+                        AI Scanner Configuration
+                     </h3>
+                     <div className="bg-gradient-to-r from-emerald-950/40 to-teal-900/20 border border-emerald-500/30 p-5 rounded-2xl flex items-center justify-between shadow-lg">
+                        <div className="flex items-center gap-3.5">
+                           <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                              <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+                           </div>
+                           <div>
+                              <h4 className="text-emerald-400 font-bold text-sm tracking-wide uppercase">Kapuyuak Local Engine</h4>
+                              <p className="text-emerald-200/60 text-[11px] font-mono mt-0.5">
+                                Autonomous machine learning with 100% data privacy.
+                              </p>
+                           </div>
                         </div>
-                        <div className="flex bg-slate-200 dark:bg-[#090d16] p-1 rounded-xl border border-slate-700/30">
-                            <button onClick={() => handleToggleEngine('GROQ')} className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${aiEngine === 'GROQ' ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}>GROQ LLM</button>
-                            <button onClick={() => handleToggleEngine('KAPUYUAK')} className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${aiEngine === 'KAPUYUAK' ? 'bg-gradient-to-r from-green-500 to-emerald-400 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}>KAPUYUAK AI</button>
+                        <div className="text-right">
+                           <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tighter">
+                             {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '110,000+'}
+                           </div>
+                           <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
+                             Data Samples
+                           </div>
                         </div>
-                      </div>
-
-                      {aiEngine === 'KAPUYUAK' ? (
-                          <div className="mt-4">
-                             {/* Kapuyuak Main Status Card */}
-                             <div className="bg-gradient-to-r from-emerald-950/40 to-teal-900/20 border border-emerald-500/30 p-5 rounded-2xl flex items-center justify-between shadow-lg">
-                                <div className="flex items-center gap-3.5">
-                                   <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                                      <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
-                                   </div>
-                                   <div>
-                                      <h4 className="text-emerald-400 font-bold text-sm tracking-wide uppercase">Kapuyuak Local Engine</h4>
-                                      <p className="text-emerald-200/60 text-[11px] font-mono mt-0.5">
-                                        Autonomous machine learning with 100% data privacy.
-                                      </p>
-                                   </div>
-                                </div>
-                                <div className="text-right">
-                                   <div className="text-2xl font-bold text-emerald-400 font-mono tracking-tighter">
-                                     {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '110,000+'}
-                                   </div>
-                                   <div className="text-[9px] text-emerald-500/70 uppercase font-semibold tracking-widest mt-0.5">
-                                     Data Samples
-                                   </div>
-                                </div>
-                             </div>
-                          </div>
-                      ) : (
-                          <div className="flex flex-col gap-4 mt-2">
-                             {/* Card 1: Cloud API Stats */}
-                             <div className="bg-gradient-to-r from-blue-900/20 to-blue-800/10 border border-blue-500/20 rounded-xl p-4 flex items-center justify-between shadow-lg">
-                                <div className="flex items-center gap-3.5">
-                                   <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                                      <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></div>
-                                   </div>
-                                   <div>
-                                      <h4 className="text-blue-400 font-bold text-sm tracking-wide uppercase drop-shadow-md">Cloud API Engine</h4>
-                                      <p className="text-blue-200/50 text-[10px] font-mono mt-0.5">
-                                        High-performance Groq infrastructure.
-                                      </p>
-                                   </div>
-                                </div>
-                                <div className="text-right">
-                                   <div className="text-2xl font-bold text-blue-400 font-mono tracking-tighter leading-none drop-shadow-md">
-                                     {groqKeys.length}
-                                   </div>
-                                   <div className="text-[9px] text-blue-400/80 uppercase font-bold tracking-widest mt-1">
-                                     Active Keys
-                                   </div>
-                                </div>
-                             </div>
-
-                             {/* Card 2: Key Management (Form + Table integrated tightly) */}
-                             <div className="bg-[#090d16]/80 border border-blue-900/50 rounded-xl overflow-hidden shadow-xl flex flex-col">
-                                 {/* Form Action Bar */}
-                                 <div className="bg-[#101726]/80 p-3.5 border-b border-blue-900/50">
-                                     <form onSubmit={createGroqKey} className="flex items-center gap-2.5">
-                                        <div className="relative flex-1">
-                                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <svg className="h-3.5 w-3.5 text-blue-500/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
-                                          </div>
-                                          <input
-                                            name="groqKey"
-                                            required
-                                            placeholder="Enter new Groq API Key (gsk_...)"
-                                            className="w-full bg-black/40 border border-blue-800/30 pl-9 pr-3 py-2 rounded-lg text-blue-100 font-mono text-xs focus:outline-none focus:border-blue-500 transition-colors"
-                                          />
-                                        </div>
-                                        <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-colors text-[10px] uppercase tracking-wider shadow-md whitespace-nowrap">
-                                          Deploy Key
-                                        </button>
-                                     </form>
-                                 </div>
-
-                                 {/* Table Area */}
-                                 <div className="max-h-[140px] overflow-y-auto custom-scrollbar bg-black/10">
-                                   <table className="w-full text-left text-xs">
-                                     <thead className="text-[9px] uppercase text-blue-300/50 bg-blue-950/20 tracking-wider sticky top-0 backdrop-blur-md">
-                                       <tr>
-                                         <th className="px-4 py-2.5 font-semibold border-b border-blue-900/50">API Key Identity</th>
-                                         <th className="px-4 py-2.5 font-semibold border-b border-blue-900/50">Deployed On</th>
-                                         <th className="px-4 py-2.5 font-semibold text-right border-b border-blue-900/50">Action</th>
-                                       </tr>
-                                     </thead>
-                                     <tbody className="divide-y divide-blue-900/30 font-mono">
-                                       {Array.isArray(groqKeys) && groqKeys.map((gk, index) => {
-                                         const keyStr = gk?.key || '';
-                                         const shortKey = keyStr.length > 12 ? `${keyStr.substring(0, 8)}...${keyStr.substring(keyStr.length - 4)}` : (keyStr || 'gsk_key');
-                                         return (
-                                           <tr key={gk?._id || index} className="hover:bg-blue-500/5 transition duration-150">
-                                             <td className="px-4 py-2 text-cyan-300 text-[11px]">
-                                               <div className="flex items-center gap-2">
-                                                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/80"></span>
-                                                 {shortKey}
-                                               </div>
-                                             </td>
-                                             <td className="px-4 py-2 text-[10px] text-slate-400">
-                                               {gk?.addedAt ? new Date(gk.addedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recently'}
-                                             </td>
-                                             <td className="px-4 py-2 text-right">
-                                               <button onClick={() => deleteGroqKey(gk?._id)} className="text-[9px] px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white rounded transition-colors duration-200 font-semibold uppercase tracking-wider border border-rose-500/20">
-                                                 Revoke
-                                               </button>
-                                             </td>
-                                           </tr>
-                                         );
-                                       })}
-                                       {(!Array.isArray(groqKeys) || groqKeys.length === 0) && (
-                                         <tr>
-                                           <td colSpan="3" className="px-4 py-6 text-center">
-                                              <div className="flex flex-col items-center justify-center gap-1.5">
-                                                <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                                                <span className="text-slate-500 font-mono text-[9px] tracking-wider uppercase">No active cloud keys found</span>
-                                              </div>
-                                           </td>
-                                         </tr>
-                                       )}
-                                     </tbody>
-                                   </table>
-                                 </div>
-                             </div>
-                          </div>
-                      )}
+                     </div>
                   </div>
-
-                  {aiEngine === 'GROQ' && (
-                    <p className="text-[10px] text-slate-500 font-mono mt-2 pt-2 border-t border-slate-800">
-                      *Multiple Groq API keys will load-balance automatically for AI scans.
-                    </p>
-                  )}
                 </div>
-              </div>
 
                 {/* RIGHT: AI TERMINAL UI (lg:col-span-6) */}
                 <div className="lg:col-span-6 bg-[#030409] border border-slate-800 rounded-2xl overflow-hidden flex flex-col shadow-2xl lg:h-full min-h-[380px]">
@@ -2304,9 +2147,9 @@ export default function Dashboard() {
                   {/* Terminal Footer */}
                   <div className="px-4 py-2.5 bg-[#0b101a] border-t border-slate-800 text-[10px] font-mono text-slate-500 flex justify-between items-center mt-auto">
                     <span>STATUS: MONITORING THREAT ENGINE</span>
-                    <span className={`font-bold tracking-wider ${aiEngine === 'KAPUYUAK' ? 'text-emerald-400' : 'text-cyan-400'}`}>
-                      {aiEngine === 'KAPUYUAK' ? 'KAPUYUAK-AI ACTIVE' : 'GROQ-LLM ACTIVE'}
-                    </span>
+                    <div className="font-bold tracking-wider text-emerald-400 drop-shadow-md">
+                      KAPUYUAK-AI ACTIVE
+                    </div>
                   </div>
                 </div>
 

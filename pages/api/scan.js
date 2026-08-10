@@ -3,11 +3,10 @@ import LicenseKey from '../../kpk4444-models/LicenseKey';
 import Blacklist from '../../kpk4444-models/Blacklist';
 import AttackLog from '../../kpk4444-models/AttackLog';
 import BannedIP from '../../kpk4444-models/BannedIP';
-import GroqKey from '../../kpk4444-models/GroqKey';
 import AILog from '../../kpk4444-models/AILog';
 import { rateLimitMiddleware } from '../../kpk4444-middleware/rateLimit';
 import crypto from 'crypto';
-import { getKapuyuakConfig, predict, trainAI } from '../../kpk4444-lib/kapuyuakAI';
+import { predict, trainAI } from '../../kpk4444-lib/kapuyuakAI';
 
 export const config = {
   api: {
@@ -115,11 +114,9 @@ export default async function handler(req, res) {
     }
 
     // =========================================================================
-    // 🧠 SUPER SMART AI SCANNER (GROQ OR KAPUYUAK AI)
+    // 🧠 KAPUYUAK LOCAL AI SCANNER (NEURAL ENGINE)
     // =========================================================================
-    const aiConfig = await getKapuyuakConfig();
-
-    if (aiConfig.activeEngine === 'KAPUYUAK' && content.length > 5) {
+    if (content.length > 5) {
         await AILog.create({ message: `Initiating Kapuyuak Local AI Scan for ${domain}...`, level: 'INFO' });
         const mlResult = await predict(content);
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
@@ -146,173 +143,6 @@ export default async function handler(req, res) {
         
         await AILog.create({ message: `Kapuyuak AI Complete: Content is SAFE.`, level: 'INFO' });
         return res.status(200).json({ blocked: false });
-    }
-
-    const groqKeyDocs = await GroqKey.find();
-    
-    if (groqKeyDocs.length > 0 && content.length > 5) {
-      await AILog.create({ message: `Initiating Groq AI Scan for ${content.length} bytes from ${domain}...`, level: 'INFO' });
-      const keys = groqKeyDocs.map(k => k.key);
-      
-      // Acak urutan kunci agar beban terbagi (Load Balancing)
-      keys.sort(() => Math.random() - 0.5);
-
-      const systemPrompt = `Anda adalah sistem keamanan siber canggih untuk platform jurnal akademik OJS (KPK4444 Enterprise). Tugas Anda adalah mendeteksi HACK dan SPAM JUDI ONLINE. Analisis teks berikut dan tentukan apakah teks tersebut AMAN, JUDI, atau HACK.
-
-PANDUAN KLASIFIKASI SUPER KETAT:
-[KATEGORI 1: AMAN (Konteks Wajar/Akademik/Sehari-hari/Data Sistem)]
-- Jurnal akademik murni, penggunaan kata ambigu dalam KONTEKS YANG BENAR (misal: burung kacer gacor, slot memori/parkir, pertandingan sepak bola, BET surface area).
-- NAMA ORANG ATAU KATA UMUM SEHARI-HARI (misal: "mas budi", "budi", "agus", "joko", "buku", "jurnal"). JANGAN PERNAH menandai teks sebagai JUDI hanya karena mengandung nama orang.
-- DATA SISTEM / FORMULIR / FILE MEDIA (GAMBAR/PDF): Teks berupa JSON, form data, HTML, ATAU representasi biner GAMBAR/PDF ADALAH AMAN.
-  PERINGATAN KERAS: Pengecualian "Formulir Aman" ini BATAL/GUGUR jika di dalamnya terdapat indikasi upload file script (.php, .phtml, .sh, .py, .exe, bypass, shell). 
-
-[KATEGORI 2: JUDI (Spam / Promosi Perjudian)]
-- Promosi terang-terangan: maxwin, slot zeus, judi bola. Mengajak deposit, bonus new member.
-- KEYWORD STUFFING: Tumpukan kata kunci judi tanpa konteks kalimat yang masuk akal.
-
-[KATEGORI 3: HACK (Web Shell / Malware / Serangan Siber)]
-- JIKA ANDA MELIHAT NAMA FILE dengan ekstensi eksekusi (seperti: .php, .php3, .phtml, .sh, .cgi, .py, .exe) BAHKAN DI DALAM JSON ATAU DATA FORM, KLASIFIKASIKAN SEBAGAI HACK! (Contoh: "mainhackbypass.php", "shell.php").
-- Mengandung fungsi eksekusi sistem jarak jauh (eval, system, exec, base64_decode() yang mencurigakan).
-- Merupakan upaya SQL Injection atau XSS.
-
-INSTRUKSI OUTPUT (SANGAT PENTING):
-Anda WAJIB merespons HANYA dalam format JSON yang valid (tanpa blok markdown).
-Format JSON yang diizinkan:
-{
-  "status": "AMAN" | "JUDI" | "HACK",
-  "reason": "Alasan singkat",
-  "new_signatures": ["kata1", "kata2"]
-}
-Jika status AMAN, "new_signatures" HARUS [].
-TUGAS KHUSUS AI SELF-LEARNING: Ekstrak "new_signatures" (1-3 kosa kata judi/hack baru yang sangat spesifik yang Anda temukan).
-ANALISIS MENDALAM SEBELUM MENGEKSTRAK: Anda WAJIB menganalisa seluruh kata dan file terlebih dahulu. Pastikan 100% bahwa kosa kata yang diekstrak ke dalam array ini adalah MURNI unsur JUDI atau HACK. JANGAN SEKALI-KALI memasukkan kata-kata normal/akademik, singkatan wajar, dan NAMA ORANG (seperti "mas budi", dll)! Jika tidak yakin, biarkan array kosong [].`;
-
-      
-      // --- SMART CHUNKING ALGORITHM ---
-      // Instead of just taking the first 1500 chars, we take the FIRST 750 and the LAST 750.
-      // Spammers usually inject at the top (Title/Abstract) or the bottom (Footer Links).
-      let aiContent = content;
-      if (content.length > 1500) {
-        aiContent = content.substring(0, 750) + '\n\n... [BAGIAN TENGAH DIPOTONG UNTUK MENGHEMAT TOKEN] ...\n\n' + content.substring(content.length - 750);
-      }
-      
-      let aiSuccess = false;
-      
-      for (const groqKey of keys) {
-        try {
-          // AbortController untuk timeout 8 detik (supaya OJS tidak menunggu terlalu lama)
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
-          
-          const aiRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${groqKey}`
-            },
-            body: JSON.stringify({
-              model: 'llama-3.1-8b-instant',
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: `Teks yang dianalisis:\n"""\n${aiContent}\n"""` }
-              ],
-              temperature: 0,
-              max_tokens: 150,
-              response_format: { type: 'json_object' }
-            }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          
-          if (!aiRes.ok) {
-            // Jika key ini limit/error, lanjut ke key berikutnya di loop (Backup jalan)
-            console.warn(`Groq key failed with status: ${aiRes.status}, trying next key...`);
-            await AILog.create({ message: `API Key (...${groqKey.substring(groqKey.length - 4)}) failed (HTTP ${aiRes.status}). Switching to backup key...`, level: 'WARN' });
-            continue; 
-          }
-
-          const aiData = await aiRes.json();
-          
-          if (aiData.choices && aiData.choices.length > 0) {
-            const aiText = aiData.choices[0].message.content.trim();
-            aiSuccess = true;
-            
-            // Log respons AI yang sebenarnya untuk debugging di terminal dashboard
-            await AILog.create({ message: `AI Response: "${aiText.substring(0, 80)}"`, level: 'INFO' });
-            
-            try {
-              const cleanedText = aiText.replace(/```json/gi, '').replace(/```/g, '').trim();
-              const aiDataParsed = JSON.parse(cleanedText);
-              const { status, reason, new_signatures } = aiDataParsed;
-
-              if (status === 'AMAN') {
-                await AILog.create({ message: `AI Analysis Complete: Content is SAFE.`, level: 'INFO' });
-                return res.status(200).json({ blocked: false });
-              } else if (status === 'JUDI' || status === 'HACK') {
-                const category = status === 'JUDI' ? 'SPAM_CONTENT' : 'MALWARE';
-                
-                // Kapuyuak AI Self-Training dari konfirmasi GROQ
-                trainAI(content, status).catch(() => {});
-                
-                try {
-                    await AILog.create({ message: `AI Detected ${status}: ${reason}`, level: 'BLOCKED' });
-                    await AttackLog.create({
-                      apiKey, domain, category: category === 'SPAM_CONTENT' ? 'AI_DETECTED_SPAM' : 'AI_DETECTED_MALWARE', severity: 'CRITICAL',
-                      field: field || 'unknown', snippet: `[GROQ AI REASON: ${reason}] ${content.substring(0, 100)}`,
-                      ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
-                    });
-                    await BannedIP.findOneAndUpdate(
-                      { ip, username: username || 'unknown' },
-                      { reason: `AI Detected ${status}: ${reason}`, domain: domain, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
-                      { upsert: true }
-                    );
-
-                    // SELF LEARNING: AUTO UPSERT BLACKLIST
-                    if (Array.isArray(new_signatures) && new_signatures.length > 0) {
-                        for (const sig of new_signatures) {
-                            if (typeof sig === 'string' && sig.trim().length > 2) {
-                                await Blacklist.updateOne(
-                                    { type: 'keyword', value: sig.trim().toLowerCase() },
-                                    { $setOnInsert: {
-                                        type: 'keyword', value: sig.trim().toLowerCase(),
-                                        category: category, severity: status === 'JUDI' ? 'HIGH' : 'CRITICAL',
-                                        addedBy: 'AI_AUTO_LEARNING'
-                                    }},
-                                    { upsert: true }
-                                );
-                            }
-                        }
-                        await AILog.create({ message: `AI Auto-Learned ${new_signatures.length} new signatures.`, level: 'INFO' });
-                    }
-                } catch(dbErr) { console.error(`DB Error on ${status} logging:`, dbErr); }
-
-                return res.status(200).json({
-                  blocked: true, category: category, severity: 'CRITICAL',
-                  matchedPattern: 'Groq AI Adaptive Scanner', snippet: reason
-                });
-              } else {
-                await AILog.create({ message: `AI Analysis Unknown Status. Output: ${aiText.substring(0, 50)}...`, level: 'WARN' });
-                aiSuccess = false;
-                break;
-              }
-            } catch (parseErr) {
-               await AILog.create({ message: `AI JSON Parse Failed. Output: ${aiText.substring(0, 50)}...`, level: 'WARN' });
-               aiSuccess = false;
-               break;
-            }
-            break; // Keluar dari loop karena berhasil
-          }
-        } catch (e) {
-          console.error("Groq AI Scan failed with a key, falling back...", e);
-          await AILog.create({ message: `Network error reaching Groq API. Trying backup key...`, level: 'WARN' });
-        }
-      }
-      
-      // Jika semua Groq API Keys gagal/habis limit, sistem otomatis lanjut ke Manual Scoring (Fallback)
-      if (!aiSuccess) {
-        console.error("All Groq keys failed. Falling back to Manual Scoring.");
-        await AILog.create({ message: `All API keys failed or exhausted! Falling back to Manual Scoring algorithm.`, level: 'ERROR' });
-      }
     }
 
     // =========================================================================
