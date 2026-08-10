@@ -752,19 +752,24 @@ APP\\core\\Application::get()->execute();
 `;
 
 const getFullIndexPhp34 = (apiKey, url) => {
-  // Gunakan basis dari OJS 3.3 yang jauh lebih stabil karena berjalan SEBELUM framework Laravel aktif
   let content = getFullIndexPhp(apiKey, url);
   
-  // Ubah pemanggilan bootstrap dan namespace agar sesuai arsitektur OJS 3.4
   content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
   content = content.replace("require('./lib/pkp/includes/bootstrap.inc.php');", "require_once './lib/pkp/includes/bootstrap.php';");
   
-  // Hapus blok ob_start (Anti-Inspect Shield) bawaan OJS 3.3 yang bertentangan dengan OJS 3.4 Laravel Emitter
-  content = content.replace(/\/\/ Anti-Inspect Shield[\s\S]*?\}\n/s, '');
+  // OJS 3.3 template has APP\\core\\Application, we need to replace it so it uses the 'use' statement.
+  // Note: in template literal it has 1 backslash, so we search for 1 backslash
+  content = content.replace("APP\\core\\Application::get()->execute();", "Application::get()->execute();");
   
-  // Hapus hardcoded header bawaan jika ada (di versi 3.3 biasanya di baris paling atas)
-  const regexHeaders = /header\("X-Frame-Options: SAMEORIGIN"\);\s*header\("X-XSS-Protection: 1; mode=block"\);\s*header\("X-Content-Type-Options: nosniff"\);\s*header\("Strict-Transport-Security: max-age=31536000; includeSubDomains"\);\s*/g;
-  content = content.replace(regexHeaders, '');
+  // Safely remove Anti-Inspect Shield (ob_start) which breaks Laravel Emitter in OJS 3.4
+  const shieldIndex = content.indexOf('// Anti-Inspect Shield');
+  const serveIndex = content.indexOf('// Serve the request');
+  if (shieldIndex !== -1 && serveIndex !== -1) {
+    content = content.substring(0, shieldIndex) + content.substring(serveIndex);
+  }
+  
+  // Remove hardcoded header from OJS 3.3 base that causes "Headers already sent" in OJS 3.4
+  content = content.replace(/header\("X-Frame-Options: SAMEORIGIN"\);\s*/g, '');
   
   return content;
 };
