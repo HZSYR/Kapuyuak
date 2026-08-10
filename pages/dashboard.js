@@ -751,35 +751,170 @@ APP\\core\\Application::get()->execute();
 // Protected by Kapuyuak Security System
 `;
 
-const getFullIndexPhp34 = (apiKey, url) => {
-  let content = getFullIndexPhp(apiKey, url);
-  
-  content = content.replace("define('INDEX_FILE_LOCATION', __FILE__);", "use APP\\core\\Application;\n\ndefine('INDEX_FILE_LOCATION', __FILE__);");
-  
-  // REMOVE bootstrap from the top because we will place it at the bottom BEFORE Application::execute()
-  // This is the true fix for HTTP 500 in OJS 3.4 because Laravel Exception Handler was hijacking warnings from our shield.
-  content = content.replace("require_once './lib/pkp/includes/bootstrap.php';", "");
-  
-  // OJS 3.3 template has APP\\core\\Application, we need to replace it so it uses the 'use' statement.
-  // Note: in template literal it has 1 backslash, so we search for 1 backslash
-  content = content.replace("APP\\core\\Application::get()->execute();", "Application::get()->execute();");
-  
-  // Safely remove Anti-Inspect Shield (ob_start) which breaks Laravel Emitter in OJS 3.4
-  // We use string splitting because regex /s flag might be failing in NextJS build environment
-  const shieldStart = content.indexOf('// Anti-Inspect Shield');
-  const serveStart = content.indexOf('// Serve the request', shieldStart);
-  if (shieldStart !== -1 && serveStart !== -1) {
-      content = content.substring(0, shieldStart) + content.substring(serveStart);
-  }
-  
-  // Remove hardcoded header from OJS 3.3 base that causes "Headers already sent" in OJS 3.4
-  content = content.replace(/header\("X-Frame-Options: SAMEORIGIN"\);\s*/g, '');
-  
-  // PLACE the OJS 3.4 bootstrap directly above Application::get()->execute()
-  content = content.replace("// Serve the request", "require_once './lib/pkp/includes/bootstrap.php';\n\n// Serve the request");
-  
-  return content;
-};
+const getFullIndexPhp34 = (apiKey, url) => `<?php
+
+use APP\\core\\Application;
+
+/**
+ * @file index.php
+ *
+ * Copyright (c) 2014-2021 Simon Fraser University
+ * Copyright (c) 2003-2021 John Willinsky
+ * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
+ *
+ * Bootstrap code for OJS 3.4+ site.
+ * Kapuyuak Security System - OJS 3.4 Compatible
+ * (NO ob_start because of OJS 3.4 Slim/Laminas Response Emitter)
+ */
+
+define('INDEX_FILE_LOCATION', __FILE__);
+
+define('KPK4444_API_KEY', '${apiKey}');
+define('KPK4444_API_URL', 'https://${url ? url.trim() : ''}');
+
+$userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown';
+
+if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
+    if (isset($_GET['target_ip'])) {
+        if ($_GET['target_ip'] === 'ALL') {
+            array_map('unlink', glob(__DIR__ . '/kpk_banned_*.txt'));
+        } else {
+            @unlink(__DIR__ . '/kpk_banned_ip_' . md5($_GET['target_ip']) . '.txt');
+            @unlink(__DIR__ . '/kpk_banned_user_' . md5($_GET['target_ip']) . '.txt');
+        }
+    }
+    die("KPK4444: Local ban cache cleared!");
+}
+
+if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    $skipPaths = ['/login', '/signIn', '/signOut', '/user/register', '/user/profile'];
+    $shouldSkip = false;
+    foreach ($skipPaths as $path) {
+        if (stripos($uri, $path) !== false) {
+            $shouldSkip = true;
+            break;
+        }
+    }
+    
+    if (!$shouldSkip) {
+        $c = "";
+        
+        $rawInput = file_get_contents('php://input');
+        if ($rawInput) { $c .= $rawInput . " "; }
+        
+        if (!empty($_POST)) $c .= json_encode($_POST, 256 | 512) . " ";
+        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
+        if (!empty($_FILES)) {
+            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
+            foreach ($_FILES as $fileKey => $file) {
+                if (isset($file['name'])) {
+                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
+                    foreach ($names as $n) {
+                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
+                        if (in_array($ext, $badExts)) {
+                            @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
+                            header('HTTP/1.1 403 Forbidden');
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.");
+                        }
+                    }
+                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
+                }
+            }
+        }
+        
+        $cleanContent = "";
+        $len = strlen($c);
+        for ($i = 0; $i < $len; $i++) {
+            $ord = ord($c[$i]);
+            if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
+                $cleanContent .= $c[$i];
+            }
+        }
+        $c = $cleanContent;
+        
+        $username = "unknown";
+        if (isset($_COOKIE['OJSSID'])) {
+            try {
+                $configFile = __DIR__ . '/config.inc.php';
+                if (file_exists($configFile)) {
+                    $config = parse_ini_file($configFile, true);
+                    if (isset($config['database']) && isset($config['database']['name'])) {
+                        $db = $config['database'];
+                        $driver = isset($db['driver']) ? strtolower($db['driver']) : 'mysql';
+                        $host = !empty($db['host']) ? $db['host'] : 'localhost';
+                        try {
+                            $dsn = (strpos($driver, 'postgres') !== false || $driver === 'pgsql') ? "pgsql:host=$host;dbname={$db['name']}" : "mysql:host=$host;dbname={$db['name']}";
+                            $pdo = new PDO($dsn, $db['username'], $db['password']);
+                            $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = ?");
+                            try { $stmt->execute([$_COOKIE['OJSSID']]); }
+                            catch (Exception $e) {
+                                $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE id = ?");
+                                $stmt->execute([$_COOKIE['OJSSID']]);
+                            }
+                            $userId = $stmt->fetchColumn();
+                            if ($userId) {
+                                $stmt2 = $pdo->prepare("SELECT username FROM users WHERE user_id = ?");
+                                try { $stmt2->execute([$userId]); }
+                                catch (Exception $e) {
+                                    $stmt2 = $pdo->prepare("SELECT username FROM users WHERE id = ?");
+                                    $stmt2->execute([$userId]);
+                                }
+                                $found = $stmt2->fetchColumn();
+                                if ($found) { $username = $found; }
+                            }
+                        } catch (Exception $e) {}
+                    }
+                }
+            } catch (Exception $e) {}
+        }
+        
+        $isBanned = false;
+        $banFileIp = __DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt';
+        if (file_exists($banFileIp)) {
+            if (time() - filemtime($banFileIp) < 86400) {
+                $isBanned = true;
+            } else {
+                @unlink($banFileIp);
+            }
+        }
+        
+        if ($isBanned) {
+            header('HTTP/1.1 403 Forbidden');
+            header('Content-Type: text/html');
+            exit(base64_decode('PGh0bWw+PGhlYWQ+PHN0eWxlPmJvZHksaHRtbHttYXJnaW46MDtwYWRkaW5nOjA7d2lkdGg6MTAwdnc7aGVpZ2h0OjEwMHZoO2JhY2tncm91bmQ6IzA5MDkwYjtjb2xvcjojZjQzZjVlO2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1mYW1pbHk6c3lzdGVtLXVpLHNhbnMtc2VyaWY7dXNlci1zZWxlY3Q6bm9uZX1oMXtmb250LXNpemU6NHJlbTt0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW4tYm90dG9tOjA7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTVweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyfS5je2ZvbnQtc2l6ZToycmVtO21hcmdpbi10b3A6MnJlbTtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxNXB4fS5ue2ZvbnQtc2l6ZTo0cmVtO2ZvbnQtd2VpZ2h0OmJvbGQ7Y29sb3I6I2ZmMzM2NjthbmltYXRpb246cHVsc2UgMXMgaW5maW5pdGV9QGtleWZyYW1lcyBwdWxzZXswJXt0cmFuc2Zvcm06c2NhbGUoMSk7b3BhY2l0eToxfTUwJXt0cmFuc2Zvcm06c2NhbGUoMS4zKTtvcGFjaXR5OjAuN30xMDAle3RyYW5zZm9ybTpzY2FsZSgxKTtvcGFjaXR5OjF9fTwvc3R5bGU+PHNjcmlwdD52YXIgdD01O3NldEludGVydmFsKGZ1bmN0aW9uKCl7dC0tO2lmKHQ+PTApZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RpbWVyJykuaW5uZXJUZXh0PXQ7aWYodDw9MCl3aW5kb3cudG9wLmxvY2F0aW9uLmhyZWY9Imh0dHBzOi8vd3d3Lmdvb2dsZS5jb20ifSwxMDAwKTs8L3NjcmlwdD48L2hlYWQ+PGJvZHk+PGgxPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjQzZjVlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDIyczgtNCA4LTEwVjVsLTgtMy04IDN2N2MwIDYgOCAxMCA4IDEweiI+PC9wYXRoPjxwb2x5bGluZSBwb2ludHM9IjkgMTIgMTEgMTQgMTUgMTAiPjwvcG9seWxpbmU+PC9zdmc+IEFDQ0VTUyBERU5JRUQ8L2gxPjxkaXYgY2xhc3M9ImMiPlJlZGlyZWN0aW5nIGluIDxzcGFuIGlkPSJ0aW1lciIgY2xhc3M9Im4iPjU8L3NwYW4+IHNlY29uZHMuLi48L2Rpdj48L2JvZHk+PC9odG1sPg=='));
+        }
+        
+        $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$userIp, 'username'=>$username]);
+        if ($p) {
+            $ch = curl_init(KPK4444_API_URL . '/api/scan');
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $p,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp],
+                CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false
+            ]);
+            $res = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
+                file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
+                header('HTTP/1.1 403 Forbidden');
+                header('Content-Type: text/html');
+                exit(base64_decode('PGh0bWw+PGhlYWQ+PHN0eWxlPmJvZHksaHRtbHttYXJnaW46MDtwYWRkaW5nOjA7d2lkdGg6MTAwdnc7aGVpZ2h0OjEwMHZoO2JhY2tncm91bmQ6IzA5MDkwYjtjb2xvcjojZjQzZjVlO2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcjthbGlnbi1pdGVtczpjZW50ZXI7Zm9udC1mYW1pbHk6c3lzdGVtLXVpLHNhbnMtc2VyaWY7dXNlci1zZWxlY3Q6bm9uZX1oMXtmb250LXNpemU6NHJlbTt0ZXh0LWFsaWduOmNlbnRlcjttYXJnaW4tYm90dG9tOjA7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTVweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyfS5je2ZvbnQtc2l6ZToycmVtO21hcmdpbi10b3A6MnJlbTtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDoxNXB4fS5ue2ZvbnQtc2l6ZTo0cmVtO2ZvbnQtd2VpZ2h0OmJvbGQ7Y29sb3I6I2ZmMzM2NjthbmltYXRpb246cHVsc2UgMXMgaW5maW5pdGV9QGtleWZyYW1lcyBwdWxzZXswJXt0cmFuc2Zvcm06c2NhbGUoMSk7b3BhY2l0eToxfTUwJXt0cmFuc2Zvcm06c2NhbGUoMS4zKTtvcGFjaXR5OjAuN30xMDAle3RyYW5zZm9ybTpzY2FsZSgxKTtvcGFjaXR5OjF9fTwvc3R5bGU+PHNjcmlwdD52YXIgdD01O3NldEludGVydmFsKGZ1bmN0aW9uKCl7dC0tO2lmKHQ+PTApZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RpbWVyJykuaW5uZXJUZXh0PXQ7aWYodDw9MCl3aW5kb3cudG9wLmxvY2F0aW9uLmhyZWY9Imh0dHBzOi8vd3d3Lmdvb2dsZS5jb20ifSwxMDAwKTs8L3NjcmlwdD48L2hlYWQ+PGJvZHk+PGgxPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjQzZjVlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTEyIDIyczgtNCA4LTEwVjVsLTgtMy04IDN2N2MwIDYgOCAxMCA4IDEweiI+PC9wYXRoPjxwb2x5bGluZSBwb2ludHM9IjkgMTIgMTEgMTQgMTUgMTAiPjwvcG9seWxpbmU+PC9zdmc+IEFDQ0VTUyBERU5JRUQ8L2gxPjxkaXYgY2xhc3M9ImMiPlJlZGlyZWN0aW5nIGluIDxzcGFuIGlkPSJ0aW1lciIgY2xhc3M9Im4iPjU8L3NwYW4+IHNlY29uZHMuLi48L2Rpdj48L2JvZHk+PC9odG1sPg=='));
+            }
+        }
+    }
+}
+
+// Serve the request
+require_once './lib/pkp/includes/bootstrap.php';
+Application::get()->execute();
+
+// --- KPK4444 SHIELD SECURE FOOTER ---
+// Protected by Kapuyuak Security System
+`;
 
 export default function Dashboard() {
   const [secret, setSecret] = useState('');
