@@ -80,7 +80,13 @@ export default async function handler(req, res) {
       /passthru\s*\(/i,
       /exec\s*\(\s*\$_/i,
       /\$_POST\s*\[\s*['"]cmd['"]\s*\]/i,
-      /wscript\.shell/i
+      /wscript\.shell/i,
+      /php:\/\/filter\/.*convert\.iconv/i,
+      /(?:169\.254\.169\.254|metadata\.google\.internal)/i,
+      /\{php\}.*system\(.*\{(?:\/)?php\}/i,
+      /\b(?:move_uploaded_file|file_put_contents)\s*\(\s*(?:\$_(?:FILES|POST|GET)|php:\/\/input)/i,
+      /\.phar|\.pht(?:ml)?|\.php[3-8]/i,
+      /phar:\/\//i
     ];
     
     let signatureMatch = false;
