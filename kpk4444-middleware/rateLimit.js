@@ -20,10 +20,11 @@ export async function rateLimitMiddleware(req, res, limit, windowMs = 60000) {
 
   try {
     await connectDB();
-    const banned = await BannedIP.findOne({ ip });
+    // Hanya periksa ban IP global (username: 'unknown'), biarkan ban spesifik username ditangani oleh scan.js
+    const banned = await BannedIP.findOne({ ip, username: 'unknown' });
     if (banned) {
       if (now > banned.expiresAt) {
-        await BannedIP.deleteOne({ ip });
+        await BannedIP.deleteOne({ ip, username: 'unknown' });
       } else {
         res.status(403).json({ error: 'BLOCKED: Your IP is temporarily banned for 10 minutes due to malicious activity.' });
         return false;
@@ -53,8 +54,8 @@ export async function rateLimitMiddleware(req, res, limit, windowMs = 60000) {
       try {
         await connectDB();
         await BannedIP.findOneAndUpdate(
-          { ip },
-          { reason: 'L7 DDoS Flood / API Rate Limit Exceeded', expiresAt: new Date(now + 15 * 60 * 1000) },
+          { ip, username: 'unknown' },
+          { ip, username: 'unknown', reason: 'L7 DDoS Flood / API Rate Limit Exceeded', expiresAt: new Date(now + 15 * 60 * 1000) },
           { upsert: true }
         );
       } catch(e) {}
