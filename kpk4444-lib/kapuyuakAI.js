@@ -1,6 +1,56 @@
 import bayes from 'bayes';
 import KapuyuakAI from '../kpk4444-models/KapuyuakAI';
 import { connectDB } from './mongodb';
+import fs from 'fs';
+import path from 'path';
+
+let kbbiSet = null;
+
+function loadKBBI() {
+  if (kbbiSet) return kbbiSet;
+  kbbiSet = new Set();
+  try {
+    const filePath = path.join(process.cwd(), 'kbbi.txt');
+    if (fs.existsSync(filePath)) {
+      const words = fs.readFileSync(filePath, 'utf8').split('\n');
+      for (const w of words) {
+        if(w.trim()) kbbiSet.add(w.trim().toLowerCase());
+      }
+    }
+  } catch (e) {
+    console.error("Gagal memuat database KBBI", e);
+  }
+  return kbbiSet;
+}
+
+export function generateFlexibleLog(content, mlResult, domain) {
+  const dictionary = loadKBBI();
+  const words = content.replace(/[^a-zA-Z\s]/g, ' ').toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  let kbbiWords = 0;
+  for (const w of words) {
+    if (dictionary.has(w)) kbbiWords++;
+  }
+  
+  const total = words.length === 0 ? 1 : words.length;
+  const ratio = (kbbiWords / total) * 100;
+  
+  if (mlResult === 'HACK' || mlResult === 'JUDI') {
+    const hackPhrases = [
+      `Aksi terdeteksi! Payload tidak lazim ditemukan dari ${domain}. Hanya ${ratio.toFixed(1)}% kata yang dikenali KBBI. Pemblokiran langsung dieksekusi.`,
+      `Sistem Deep Learning kami menangkap anomali bahasa. Payload dari ${domain} sangat tidak natural (${ratio.toFixed(1)}% rasio KBBI). Target ini pasti HACKER/SPAMMER.`,
+      `Peringatan keamanan, Bos! Saya baru saja menganalisis data dari ${domain}. Struktur bahasanya hancur (Skor KBBI: ${ratio.toFixed(1)}%). Serangan berhasil dinetralisir.`
+    ];
+    return hackPhrases[Math.floor(Math.random() * hackPhrases.length)];
+  } else {
+    const safePhrases = [
+      `Analisis selesai. Teks dari ${domain} tampak natural dan manusiawi (Kesesuaian KBBI: ${ratio.toFixed(1)}%). Tidak ada ancaman siber.`,
+      `Saya telah memindai data dari ${domain}. Gaya bahasanya wajar dan valid di bahasa kita. Akses diizinkan.`,
+      `Pengecekan Deep Learning rampung. Data mengandung struktur bahasa yang sangat aman (Rasio valid: ${ratio.toFixed(1)}%). Semuanya terkendali, Bos.`
+    ];
+    return safePhrases[Math.floor(Math.random() * safePhrases.length)];
+  }
+}
+
 
 let classifier = null;
 
