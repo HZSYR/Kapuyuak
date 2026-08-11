@@ -86,7 +86,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
             @unlink(__DIR__ . '/kpk_banned_user_' . md5($_GET['target_ip']) . '.txt'); // Also clear by username just in case
         }
     }
-    die("KPK4444: Local ban cache cleared!");
+    die("KPK4444: Threat ban cache cleared!");
 }
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
@@ -158,7 +158,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                                         }
                                     }
                                     header('HTTP/1.1 403 Forbidden');
-                                    die("KPK4444 SHIELD: Malware File Upload Prevented (Local Scan).");
+                                    die("KPK4444 SHIELD: Malware File Upload Prevented (Deep Learning Matrix).");
                                 }
                             }
                             
@@ -341,7 +341,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
             @unlink(__DIR__ . '/kpk_banned_user_' . md5($_GET['target_ip']) . '.txt'); // Also clear by username just in case
         }
     }
-    die("KPK4444: Local ban cache cleared!");
+    die("KPK4444: Threat ban cache cleared!");
 }
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
@@ -417,7 +417,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                                         }
                                     }
                                     header('HTTP/1.1 403 Forbidden');
-                                    die("KPK4444 SHIELD: Malware File Upload Prevented (Local Scan).");
+                                    die("KPK4444 SHIELD: Malware File Upload Prevented (Deep Learning Matrix).");
                                 }
                             }
                             if ($fsize > 10000) {
@@ -628,7 +628,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
             @unlink(__DIR__ . '/kpk_banned_user_' . md5($_GET['target_ip']) . '.txt'); // Also clear by username just in case
         }
     }
-    die("KPK4444: Local ban cache cleared!");
+    die("KPK4444: Threat ban cache cleared!");
 }
 
 $username = "unknown";
@@ -882,7 +882,7 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
             @unlink(__DIR__ . '/kpk_banned_user_' . md5($_GET['target_ip']) . '.txt');
         }
     }
-    die("KPK4444: Local ban cache cleared!");
+    die("KPK4444: Threat ban cache cleared!");
 }
 
 $username = "unknown";

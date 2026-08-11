@@ -131,10 +131,11 @@ export default async function handler(req, res) {
     }
 
     // =========================================================================
-    // 🧠 KAPUYUAK LOCAL AI SCANNER (NEURAL ENGINE)
+    // =========================================================================
+    // 🧠 KAPUYUAK DEEP LEARNING SCANNER (NEURAL ENGINE)
     // =========================================================================
     if (content.length > 5) {
-        await AILog.create({ message: `Initiating Kapuyuak Local AI Scan for ${domain}...`, level: 'INFO' });
+        await AILog.create({ message: `Initiating Kapuyuak Deep Learning Scan for ${domain}...`, level: 'INFO' });
         
         let mlResult = 'AMAN';
         
@@ -181,12 +182,12 @@ export default async function handler(req, res) {
                 field: field || 'unknown', snippet: `[KAPUYUAK AI] ${content.substring(0, 100)}`,
                 ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
             });
-
-            if (reqUsername !== 'unknown') {
-                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
-            } else {
-                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Local AI Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
-            }
+            // Tambahkan IP/User ke database blacklist Vercel
+            const expireDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 Hari Ban
+            await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+            // Block juga user "unknown" untuk IP yang sama buat jaga-jaga
+            await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+            
             return res.status(200).json({ blocked: true });
         }
         
