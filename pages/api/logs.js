@@ -31,5 +31,12 @@ export default async function handler(req, res) {
     }
     return res.status(200).json(logs);
   }
+  if (req.method === 'DELETE') {
+    if (!verifyAdminJWT(req)) return res.status(401).json({ error: 'Unauthorized JWT' });
+    await AttackLog.deleteMany({});
+    return res.status(200).json({ success: true, message: 'All logs cleared' });
+  }
+
   return res.status(405).json({ error: 'Method Not Allowed' });
 }
+

@@ -1284,7 +1284,7 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* BANNED IPs TAB */}
+                {/* BANNED IPs TAB */}
             {tab === 'BANNED IPs' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
@@ -1304,9 +1304,34 @@ export default function Dashboard() {
                         <p className="text-[10px] text-indigo-300/70 font-mono">TOP IP REPEATER THREATS</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20">
-                      <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                      <span className="text-[9px] font-bold text-rose-400 tracking-wider uppercase">Live</span>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={async () => {
+                          if (!confirm("Are you sure you want to reset all Attack Vectors data? This will clear all attack logs.")) return;
+                          try {
+                            const res = await fetch('/api/logs', { 
+                              method: 'DELETE', 
+                              headers: { 'Authorization': `Bearer ${jwtToken}` } 
+                            });
+                            if (res.ok) {
+                              setLogs([]);
+                            } else {
+                              alert("Failed to reset attack logs.");
+                            }
+                          } catch (e) {
+                            alert("Error resetting attack logs.");
+                          }
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 hover:bg-rose-500/20 border border-slate-700 hover:border-rose-500/50 transition-all text-slate-300 hover:text-rose-400 group"
+                        title="Reset Attack Vectors"
+                      >
+                        <svg className="w-3 h-3 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span className="text-[9px] font-bold tracking-wider uppercase">Reset</span>
+                      </button>
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20">
+                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                        <span className="text-[9px] font-bold text-rose-400 tracking-wider uppercase">Live</span>
+                      </div>
                     </div>
                   </div>
 
