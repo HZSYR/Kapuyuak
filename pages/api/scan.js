@@ -183,10 +183,10 @@ export default async function handler(req, res) {
                 ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
             });
             // Tambahkan IP/User ke database blacklist Vercel
-            const expireDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 Hari Ban
-            await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+            const banExpireDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 Hari Ban
+            await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
             // Block juga user "unknown" untuk IP yang sama buat jaga-jaga
-            await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: expireDate }, { upsert: true });
+            await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
             
             return res.status(200).json({ blocked: true });
         }
