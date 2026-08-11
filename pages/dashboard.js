@@ -2196,12 +2196,29 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
-                <div className="lg:col-span-6 relative bg-[#04060a] border border-emerald-900/50 rounded-2xl overflow-hidden shadow-2xl h-fit">
-                  {/* Minimalist Background */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#0a111a] to-transparent"></div>
-                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
+                <div className="lg:col-span-6 relative bg-[#04060a] border border-emerald-900/50 rounded-2xl overflow-hidden shadow-2xl lg:h-full min-h-[380px] flex flex-col justify-between p-8">
+                  {/* Minimalist Background with Floating Viruses */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#0a111a] to-transparent z-0"></div>
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent z-0"></div>
                   
-                  <div className="relative p-8 h-full flex flex-col items-center justify-center text-center">
+                  {/* Floating Malware Icons */}
+                  <div className="absolute top-8 left-12 opacity-[0.07] z-0">
+                     <svg className="w-12 h-12 text-rose-500 animate-[spin_12s_linear_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                     </svg>
+                  </div>
+                  <div className="absolute bottom-28 right-8 opacity-[0.08] z-0">
+                     <svg className="w-16 h-16 text-rose-600 animate-[bounce_5s_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                     </svg>
+                  </div>
+                  <div className="absolute top-1/2 left-3/4 opacity-[0.05] z-0">
+                     <svg className="w-8 h-8 text-rose-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                     </svg>
+                  </div>
+
+                  <div className="relative z-10 flex flex-col items-center justify-center text-center mt-6">
                      <div className="relative mb-6">
                         <div className="w-20 h-20 rounded-full bg-emerald-950/40 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.1)]">
                            <svg className="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -2216,22 +2233,22 @@ export default function Dashboard() {
                      </div>
                      
                      <h3 className="text-xl font-bold text-slate-100 tracking-wide mb-1">Neural Engine v3</h3>
-                     <p className="text-[10px] text-emerald-500/60 mb-8 font-mono uppercase tracking-widest">100% Local Inference</p>
-                     
-                     <div className="w-full space-y-2 mt-auto">
-                        <div className="flex justify-between items-center bg-[#070d14] px-4 py-3 rounded-xl border border-slate-800/50">
-                           <span className="text-[10px] font-mono text-slate-500 uppercase">Protection Status</span>
-                           <span className="text-[10px] font-bold font-mono text-emerald-400 flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                              MAXIMUM
-                           </span>
-                        </div>
-                        <div className="flex justify-between items-center bg-[#070d14] px-4 py-3 rounded-xl border border-slate-800/50">
-                           <span className="text-[10px] font-mono text-slate-500 uppercase">Training Data</span>
-                           <span className="text-[10px] font-bold font-mono text-emerald-400">
-                              {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '112,450'} SAMPLES
-                           </span>
-                        </div>
+                     <p className="text-[10px] text-emerald-500/60 mb-2 font-mono uppercase tracking-widest">100% Local Inference</p>
+                  </div>
+                  
+                  <div className="relative z-10 w-full space-y-2 mt-auto">
+                     <div className="flex justify-between items-center bg-[#070d14] px-4 py-3 rounded-xl border border-slate-800/50 backdrop-blur-md">
+                        <span className="text-[10px] font-mono text-slate-500 uppercase">Protection Status</span>
+                        <span className="text-[10px] font-bold font-mono text-emerald-400 flex items-center gap-2">
+                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                           MAXIMUM
+                        </span>
+                     </div>
+                     <div className="flex justify-between items-center bg-[#070d14] px-4 py-3 rounded-xl border border-slate-800/50 backdrop-blur-md">
+                        <span className="text-[10px] font-mono text-slate-500 uppercase">Training Data</span>
+                        <span className="text-[10px] font-bold font-mono text-emerald-400">
+                           {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '112,450'} SAMPLES
+                        </span>
                      </div>
                   </div>
                 </div>
