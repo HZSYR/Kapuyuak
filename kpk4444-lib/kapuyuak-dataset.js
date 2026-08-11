@@ -299,17 +299,5 @@ export function generateMegaDataset() {
         dataset.push({ label: 'AMBIGU', text });
     }
 
-    // --- 5. GENERATE GIBBERISH/TYPO DATA (Target ~15000) ---
-    // Mencegah kata acak/typo pendek (keyboard smash spt 'dfsgdrf') diprediksi sbg JUDI (False Positive)
-    const gibberishChars = "abcdefghijklmnopqrstuvwxyz";
-    for (let i = 0; i < 15000; i++) {
-        let text = "";
-        let len = Math.floor(Math.random() * 15) + 3; // 3 to 17 chars
-        for(let j=0; j<len; j++) {
-            text += gibberishChars.charAt(Math.floor(Math.random() * gibberishChars.length));
-        }
-        dataset.push({ label: 'AMAN', text });
-    }
-
     return dataset;
 }

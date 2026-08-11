@@ -26,9 +26,14 @@ export default async function handler(req, res) {
       apiKey, domain, category: 'DOMAIN_MISMATCH', severity: 'CRITICAL',
       ipAddress: ip, userAgent: req.headers['user-agent']
     });
-    // CATATAN: Tidak melakukan auto-ban IP pada domain mismatch karena bisa
-    // terjadi karena misconfiguration client yang sah, bukan serangan.
-    // Ban manual tetap bisa dilakukan oleh admin dari dashboard.
+    
+    // Auto ban for domain spoofing attempt
+    await BannedIP.findOneAndUpdate(
+      { ip },
+      { ip, username: 'unknown', domain, reason: 'Domain Mismatch Spoofing', expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+      { upsert: true }
+    );
+    
     return res.status(403).json({ error: 'DOMAIN_MISMATCH' });
   }
 

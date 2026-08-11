@@ -20,13 +20,14 @@ export async function rateLimitMiddleware(req, res, limit, windowMs = 60000) {
 
   try {
     await connectDB();
-    // Hanya blokir berdasarkan IP jika record ban adalah untuk user anonymous.
-    // Jangan blokir IP yang punya ban berbasis username, karena itu hanya berlaku
-    // untuk 1 akun tertentu, bukan seluruh jaringan/IP.
-    const banned = await BannedIP.findOne({ ip, username: 'unknown', expiresAt: { $gt: new Date(now) } });
+    const banned = await BannedIP.findOne({ ip });
     if (banned) {
-      res.status(403).json({ error: 'BLOCKED: Your IP is temporarily banned for malicious activity.' });
-      return false;
+      if (now > banned.expiresAt) {
+        await BannedIP.deleteOne({ ip });
+      } else {
+        res.status(403).json({ error: 'BLOCKED: Your IP is temporarily banned for 10 minutes due to malicious activity.' });
+        return false;
+      }
     }
   } catch (err) {
     console.error("DB Error in Rate Limit:", err);

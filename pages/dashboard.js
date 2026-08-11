@@ -2201,7 +2201,26 @@ export default function Dashboard() {
                   <div className="absolute inset-0 bg-gradient-to-b from-[#0a111a] to-transparent z-0"></div>
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent z-0"></div>
                   
-                  {/* Removed Floating Threat Anomalies as requested */}
+                  {/* Floating Threat Anomalies (Premium Cyber Look) */}
+                  <div className="absolute top-16 left-12 flex items-center justify-center animate-[bounce_4s_infinite]">
+                     <div className="w-12 h-12 rounded-full bg-rose-500/5 border border-rose-500/20 flex items-center justify-center animate-pulse">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.9)]"></div>
+                     </div>
+                  </div>
+                  
+                  <div className="absolute bottom-32 right-12 flex items-center justify-center" style={{ animation: 'bounce 6s infinite 1s' }}>
+                     <div className="w-16 h-16 rounded-full bg-red-500/5 border border-red-500/20 flex items-center justify-center animate-pulse">
+                        <svg className="w-6 h-6 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                     </div>
+                  </div>
+                  
+                  <div className="absolute top-1/2 left-2/3 flex items-center justify-center" style={{ animation: 'bounce 5s infinite 2s' }}>
+                     <div className="w-8 h-8 rounded-full bg-orange-500/5 border border-orange-500/20 flex items-center justify-center animate-pulse">
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.9)]"></div>
+                     </div>
+                  </div>
 
                   <div className="relative z-10 flex flex-col items-center justify-center text-center mt-6">
                      <div className="relative mb-6">
@@ -2275,10 +2294,10 @@ export default function Dashboard() {
                         const timeStr = log?.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '';
 
                         return (
-                          <div key={log?._id || idx} className="flex items-start w-full">
+                          <div key={log?._id || idx} className="flex items-start">
                             {timeStr && <span className="text-slate-600 mr-2 shrink-0">[{timeStr}]</span>}
                             <span className={`${color} shrink-0 mr-2 font-bold`}>[{log?.level || 'LOG'}]</span>
-                            <span className="text-emerald-400/90 flex-1 break-words whitespace-pre-wrap">{log?.message || ''}</span>
+                            <span className="text-emerald-400/90 break-words">{log?.message || ''}</span>
                           </div>
                         );
                       })
