@@ -30,7 +30,8 @@ export default async function handler(req, res) {
     if (typeof ip === 'string') {
       ip = ip.split(',')[0].trim();
     }
-    const reqUsername = username || 'unknown';
+    // Mendukung berbagai versi OJS (3.3, 3.4, 3.5) yang mungkin mengirimkan parameter berbeda
+    const reqUsername = req.body.username || req.body.user || req.body.user_id || req.body.userId || req.body.author || req.body.email || 'unknown';
     
     let isGloballyBanned = false;
     let globalBanReason = '';
