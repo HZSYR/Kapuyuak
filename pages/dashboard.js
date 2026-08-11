@@ -2201,26 +2201,25 @@ export default function Dashboard() {
                   <div className="absolute inset-0 bg-gradient-to-b from-[#0a111a] to-transparent z-0"></div>
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent z-0"></div>
                   
-                  {/* Floating Malware Icons */}
-                  <div className="absolute top-12 left-10 opacity-[0.25] z-0 animate-[bounce_4s_infinite]">
-                     {/* Bug / Malware Icon */}
-                     <svg className="w-14 h-14 text-rose-500 drop-shadow-[0_0_15px_rgba(244,63,94,0.8)]" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14 6a2 2 0 00-4 0v1h4V6zm2 1h1a1 1 0 011 1v2a1 1 0 01-1 1h-1v2h1a1 1 0 011 1v2a1 1 0 01-1 1h-1v1a3 3 0 01-6 0v-1H9a1 1 0 01-1-1v-2a1 1 0 011-1h1v-2H9a1 1 0 01-1-1V8a1 1 0 011-1h1V6a4 4 0 018 0v1z" />
-                     </svg>
+                  {/* Floating Threat Anomalies (Premium Cyber Look) */}
+                  <div className="absolute top-16 left-12 flex items-center justify-center animate-[bounce_4s_infinite]">
+                     <div className="w-12 h-12 rounded-full bg-rose-500/5 border border-rose-500/20 flex items-center justify-center animate-pulse">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.9)]"></div>
+                     </div>
                   </div>
                   
-                  <div className="absolute bottom-28 right-12 opacity-[0.2] z-0" style={{ animation: 'bounce 5s infinite 1.5s' }}>
-                     {/* Skull Virus Icon */}
-                     <svg className="w-20 h-20 text-rose-600 drop-shadow-[0_0_20px_rgba(225,29,72,0.9)]" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-2 9a2 2 0 110-4 2 2 0 010 4zm4 0a2 2 0 110-4 2 2 0 010 4zm-4 5v-1h4v1h-4z"/>
-                     </svg>
+                  <div className="absolute bottom-32 right-12 flex items-center justify-center" style={{ animation: 'bounce 6s infinite 1s' }}>
+                     <div className="w-16 h-16 rounded-full bg-red-500/5 border border-red-500/20 flex items-center justify-center animate-pulse">
+                        <svg className="w-6 h-6 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                     </div>
                   </div>
                   
-                  <div className="absolute top-1/2 left-3/4 opacity-[0.35] z-0" style={{ animation: 'bounce 6s infinite 0.5s' }}>
-                     {/* Danger Alert Icon */}
-                     <svg className="w-10 h-10 text-rose-400 drop-shadow-[0_0_12px_rgba(251,113,133,0.9)] animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                     </svg>
+                  <div className="absolute top-1/2 left-2/3 flex items-center justify-center" style={{ animation: 'bounce 5s infinite 2s' }}>
+                     <div className="w-8 h-8 rounded-full bg-orange-500/5 border border-orange-500/20 flex items-center justify-center animate-pulse">
+                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.9)]"></div>
+                     </div>
                   </div>
 
                   <div className="relative z-10 flex flex-col items-center justify-center text-center mt-6">
