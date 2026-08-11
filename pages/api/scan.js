@@ -162,6 +162,25 @@ export default async function handler(req, res) {
                 mlResult = 'AMAN';
             } else {
                 mlResult = await predict(content);
+                
+                // --- VERIFIKASI ANTI FALSE-POSITIVE ---
+                // Bias Laplace Smoothing pada Naive Bayes menyebabkan kata yang sama sekali belum pernah dilihat (seperti 'dfsgdrf') 
+                // akan condong ke class dengan jumlah kata terkecil. Kita harus memverifikasi tebakan AI.
+                
+                if (mlResult === 'HACK') {
+                    // Serangan siber (XSS, SQLi, RCE, LFI) PASTI memiliki tanda baca khusus.
+                    // Jika hanya teks alfanumerik biasa (seperti 'dfsgdrf'), itu pasti False Positive.
+                    const hasPunctuation = /[()<>{}\[\]=;$\/\\'"\-\.]/.test(content);
+                    if (!hasPunctuation) {
+                        mlResult = 'AMAN';
+                    }
+                } else if (mlResult === 'JUDI') {
+                    // Jika ditebak JUDI, pastikan minimal ada 1 suku kata yang mengarah ke sana
+                    const judiKeywords = /slot|gacor|togel|casino|judi|bet|qq|poker|jackpot|scatter|rtp|maxwin|deposit|bonus|taruhan/i;
+                    if (!judiKeywords.test(content)) {
+                        mlResult = 'AMAN';
+                    }
+                }
             }
         }
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
