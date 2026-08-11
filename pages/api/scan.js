@@ -260,6 +260,16 @@ export default async function handler(req, res) {
           );
       }
 
+      // SAFE AUTO-LEARNING (SUPERVISED): AI belajar dari data yang tertangkap basah oleh algoritma manual.
+      // Hal ini membuat AI semakin pintar tanpa resiko "keracunan tebakan sendiri" (Model Poisoning).
+      try {
+          const learnLabel = blockedCategory === 'SPAM_CONTENT' ? 'JUDI' : 'HACK';
+          await trainAI(content, learnLabel);
+          await AILog.create({ message: `AI Auto-Learned from Manual Detection (${learnLabel})`, level: 'INFO' });
+      } catch (e) {
+          // Abaikan jika error saat training
+      }
+      
       return res.status(200).json({
         blocked: true, category: blockedCategory, severity: highestSeverity,
         matchedPattern: matchedPatterns.join(', '), snippet: content.substring(0, 100)
