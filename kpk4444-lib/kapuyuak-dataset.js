@@ -45,6 +45,7 @@ const amanKeywords = [
 const amanOjsEnglish = [
     "test", "testing", "submission", "guidelines", "title", "privacy statement", "consent", "checklist", "I agree to have my data collected", "previously published", "references", "upload", "file", "document", "pdf", "docx", "application/json", "true", "false", "null", "undefined", "session", "token", "requirements", "author", "article", "begin submission",
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "01",
+    "{", "}", "[", "]", ":", ",", "\"", "'",
     "firstName", "lastName", "affiliation", "country", "orcid", "biography", "email", "phone",
     "submissionFile", "fileStage", "genreId", "uploaderUserId",
     "stageId", "submissionId", "reviewAssignmentId", "workflowStageId",
