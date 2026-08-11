@@ -2275,10 +2275,10 @@ export default function Dashboard() {
                         const timeStr = log?.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '';
 
                         return (
-                          <div key={log?._id || idx} className="flex items-start">
+                          <div key={log?._id || idx} className="flex items-start w-full">
                             {timeStr && <span className="text-slate-600 mr-2 shrink-0">[{timeStr}]</span>}
                             <span className={`${color} shrink-0 mr-2 font-bold`}>[{log?.level || 'LOG'}]</span>
-                            <span className="text-emerald-400/90 break-words">{log?.message || ''}</span>
+                            <span className="text-emerald-400/90 flex-1 break-words whitespace-pre-wrap">{log?.message || ''}</span>
                           </div>
                         );
                       })
