@@ -1306,21 +1306,25 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={async () => {
-                          if (!confirm("Are you sure you want to reset all Attack Vectors data? This will clear all attack logs.")) return;
-                          try {
-                            const res = await fetch('/api/logs', { 
-                              method: 'DELETE', 
-                              headers: { 'Authorization': `Bearer ${jwtToken}` } 
-                            });
-                            if (res.ok) {
-                              setLogs([]);
-                            } else {
-                              alert("Failed to reset attack logs.");
+                        onClick={() => {
+                          setConfirmModal({
+                            isOpen: true,
+                            title: 'Reset Attack Vectors',
+                            message: 'Yakin mau hapus semua riwayat log serangan? Data yang sudah dihapus tidak bisa dikembalikan!',
+                            onConfirm: async () => {
+                              try {
+                                const res = await fetch('/api/logs', { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+                                if (res.ok) {
+                                  setLogs([]);
+                                  loadData(jwtToken, false);
+                                } else {
+                                  alert("Gagal mereset logs.");
+                                }
+                              } catch (e) {
+                                alert("Terjadi kesalahan.");
+                              }
                             }
-                          } catch (e) {
-                            alert("Error resetting attack logs.");
-                          }
+                          });
                         }}
                         className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 hover:bg-rose-500/20 border border-slate-700 hover:border-rose-500/50 transition-all text-slate-300 hover:text-rose-400 group"
                         title="Reset Attack Vectors"
