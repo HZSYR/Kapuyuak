@@ -158,7 +158,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                             if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
                             else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp??$_SERVER['REMOTE_ADDR']??'unknown') . '.txt', time()); }
                             header('HTTP/1.1 403 Forbidden');
-                            die("KPK4444 SHIELD: Malware File Upload Prevented.<script>window.top.location.href='https://www.google.com';</script><img src=\"x\" onerror=\"window.top.location.href='https://www.google.com'\">");
+                            die("KPK4444 SHIELD: Malware File Upload Prevented.<script>window.top.location.href='https://www.google.com';</script><img src=x onerror=window.top.location.href=atob('aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ==')>");
                         }
                     }
                     $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
@@ -218,7 +218,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 header('HTTP/1.1 403 Forbidden');
                 $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
                 if ($isAjax) {
-                    die("KPK4444 SHIELD: Access Denied.<script>window.top.location.href='https://www.google.com';</script><img src=\"x\" onerror=\"window.top.location.href='https://www.google.com'\">");
+                    die("KPK4444 SHIELD: Access Denied.<script>window.top.location.href='https://www.google.com';</script><img src=x onerror=window.top.location.href=atob('aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ==')>");
                 } else {
                     header('Location: https://www.google.com');
                     exit;
@@ -234,7 +234,7 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 header('HTTP/1.1 403 Forbidden');
                 $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
                 if ($isAjax) {
-                    die("KPK4444 SHIELD: Access Denied.<script>window.top.location.href='https://www.google.com';</script><img src=\"x\" onerror=\"window.top.location.href='https://www.google.com'\">");
+                    die("KPK4444 SHIELD: Access Denied.<script>window.top.location.href='https://www.google.com';</script><img src=x onerror=window.top.location.href=atob('aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ==')>");
                 } else {
                     header('Location: https://www.google.com');
                     exit;
