@@ -50,7 +50,24 @@ const amanOjsEnglish = [
     "Content-Type", "multipart/form-data", "boundary", "charset=utf-8",
     "copyediting", "production", "scheduling", "publishing", "archive",
     "comments for the editor", "competing interests", "acknowledgements", "funding", "data availability",
-    "dashboard", "profile", "tasks", "notifications", "administration", "settings", "website", "workflow", "distribution", "users & roles"
+    "dashboard", "profile", "tasks", "notifications", "administration", "settings", "website", "workflow", "distribution", "users & roles",
+    // OJS Submission form checklist phrases (COMMON FALSE POSITIVE SOURCES)
+    "This submission meets the requirements outlined in the Author Guidelines",
+    "This submission has not been previously published nor is it before another journal for consideration",
+    "All references have been checked for accuracy and completeness",
+    "All tables and figures have been numbered and labeled",
+    "Permission has been obtained to publish all photos datasets and other material",
+    "Yes my submission meets all of these requirements",
+    "Once you begin you can save your submission and come back to it later",
+    "You will be able to review and correct any information before you submit",
+    "Back to Submissions", "Save and continue", "Privacy Consent", "Submission Checklist",
+    "I consent to have the data in this article processed",
+    "abstract keywords introduction methodology results discussion conclusion",
+    "literature review theoretical framework research design data collection",
+    "peer review double blind single blind open review editorial board",
+    "corresponding author email affiliation institution department",
+    "volume issue pages year publisher journal name",
+    "Plagiarism free original work ethical approval informed consent"
 ];
 
 // Kamus Pengetahuan Judol (Gambling Spam)
@@ -255,8 +272,8 @@ function addHiddenSpace(text) {
 export function generateMegaDataset() {
     const dataset = [];
 
-    // --- 1. GENERATE AMAN DATA (Target ~35000) ---
-    for (let i = 0; i < 35000; i++) {
+    // --- 1. GENERATE AMAN DATA (Target ~55000 — lebih banyak dari JUDI untuk mengurangi false positive) ---
+    for (let i = 0; i < 55000; i++) {
         let text = `${getRandom(amanSubjects)} ${getRandom(amanVerbs)} ${getRandom(amanObjects)}.`;
         if (Math.random() > 0.5) text += ` [${getRandom(amanKeywords)}]`;
         if (Math.random() > 0.4) text += ` ${getRandom(amanOjsEnglish)} ${getRandom(amanOjsEnglish)}`;
@@ -266,8 +283,8 @@ export function generateMegaDataset() {
         dataset.push({ label: 'AMAN', text });
     }
 
-    // --- 2. GENERATE JUDOL DATA (Target ~40000) ---
-    for (let i = 0; i < 40000; i++) {
+    // --- 2. GENERATE JUDOL DATA (Target ~30000 — dikurangi dari 40k untuk mengurangi bias JUDI) ---
+    for (let i = 0; i < 30000; i++) {
         let text = `${getRandom(judolPrefix)} ${getRandom(judolGames)} ${getRandom(judolBait)}!`;
         if (Math.random() > 0.5) text = text.replace(/a/g, '@').replace(/i/g, '1');
         
