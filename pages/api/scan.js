@@ -155,7 +155,13 @@ export default async function handler(req, res) {
             await trainAI(content, 'HACK');
             await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
         } else {
-            mlResult = await predict(content);
+            // Bypass Naive Bayes for very short inputs to prevent False Positives (like "ewtret")
+            const wordCount = content.trim().split(/\s+/).length;
+            if (wordCount < 3 && content.length < 20) {
+                mlResult = 'AMAN';
+            } else {
+                mlResult = await predict(content);
+            }
         }
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
 

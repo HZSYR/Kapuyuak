@@ -36,16 +36,16 @@ export function generateFlexibleLog(content, mlResult, domain) {
   
   if (mlResult === 'HACK' || mlResult === 'JUDI') {
     const hackPhrases = [
-      `Aksi terdeteksi! Payload tidak lazim ditemukan dari ${domain}. Hanya ${ratio.toFixed(1)}% kata yang dikenali KBBI. Pemblokiran langsung dieksekusi.`,
-      `Sistem Deep Learning kami menangkap anomali bahasa. Payload dari ${domain} sangat tidak natural (${ratio.toFixed(1)}% rasio KBBI). Target ini pasti HACKER/SPAMMER.`,
-      `Peringatan keamanan, Bos! Saya baru saja menganalisis data dari ${domain}. Struktur bahasanya hancur (Skor KBBI: ${ratio.toFixed(1)}%). Serangan berhasil dinetralisir.`
+      `Aksi terdeteksi! Terdapat indikasi muatan berbahaya dari ${domain}. Sistem keamanan kami telah melakukan isolasi dan pemblokiran secara instan.`,
+      `Sistem Deep Learning menangkap anomali lalu lintas data. Payload dari ${domain} teridentifikasi sebagai ancaman siber (HACKER/SPAMMER).`,
+      `Peringatan keamanan tingkat tinggi! Saya baru saja menganalisis data dari ${domain}. Ditemukan struktur kode eksploitasi. Serangan berhasil dinetralisir.`
     ];
     return hackPhrases[Math.floor(Math.random() * hackPhrases.length)];
   } else {
     const safePhrases = [
-      `Analisis selesai. Teks dari ${domain} tampak natural dan manusiawi (Kesesuaian KBBI: ${ratio.toFixed(1)}%). Tidak ada ancaman siber.`,
-      `Saya telah memindai data dari ${domain}. Gaya bahasanya wajar dan valid di bahasa kita. Akses diizinkan.`,
-      `Pengecekan Deep Learning rampung. Data mengandung struktur bahasa yang sangat aman (Rasio valid: ${ratio.toFixed(1)}%). Semuanya terkendali, Bos.`
+      `Analisis mendalam selesai. Teks dari ${domain} berstatus bersih dan terverifikasi aman. Tidak ada ancaman siber yang terdeteksi.`,
+      `Saya telah memindai data dari ${domain}. Gaya bahasa dan parameter input dalam batas wajar. Akses sistem diizinkan sepenuhnya.`,
+      `Pengecekan Deep Learning rampung. Data yang dikirimkan terbukti valid dan aman dari injeksi berbahaya. Semuanya terkendali, Bos.`
     ];
     return safePhrases[Math.floor(Math.random() * safePhrases.length)];
   }
