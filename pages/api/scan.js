@@ -181,11 +181,13 @@ export default async function handler(req, res) {
                 field: field || 'unknown', snippet: `[KAPUYUAK AI] ${content.substring(0, 100)}`,
                 ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
             });
-            // Tambahkan IP/User ke database blacklist Vercel
+            // Tambahkan ke database blacklist Vercel
             const banExpireDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 Hari Ban
-            await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
-            // Block juga user "unknown" untuk IP yang sama buat jaga-jaga
-            await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
+            if (reqUsername !== 'unknown') {
+                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
+            } else {
+                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
+            }
             
             return res.status(200).json({ blocked: true });
         }
@@ -251,11 +253,20 @@ export default async function handler(req, res) {
         ipAddress: ip, userAgent: req.headers['user-agent'], username: username || 'unknown'
       });
 
-      await BannedIP.findOneAndUpdate(
-        { ip, username: username || 'unknown' },
-        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
-        { upsert: true }
-      );
+      const expireHour = new Date(Date.now() + 1 * 60 * 60 * 1000);
+      if (reqUsername !== 'unknown') {
+          await BannedIP.findOneAndUpdate(
+            { username: reqUsername },
+            { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: expireHour },
+            { upsert: true }
+          );
+      } else {
+          await BannedIP.findOneAndUpdate(
+            { ip, username: 'unknown' },
+            { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: expireHour },
+            { upsert: true }
+          );
+      }
 
       return res.status(200).json({
         blocked: true, category: blockedCategory, severity: highestSeverity,
