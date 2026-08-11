@@ -6,7 +6,7 @@ import BannedIP from '../../kpk4444-models/BannedIP';
 import AILog from '../../kpk4444-models/AILog';
 import { rateLimitMiddleware } from '../../kpk4444-middleware/rateLimit';
 import crypto from 'crypto';
-import { predict, trainAI, generateFlexibleLog } from '../../kpk4444-lib/kapuyuakAI';
+import { predict, trainAI } from '../../kpk4444-lib/kapuyuakAI';
 
 export const config = {
   api: {
@@ -30,8 +30,7 @@ export default async function handler(req, res) {
     if (typeof ip === 'string') {
       ip = ip.split(',')[0].trim();
     }
-    // Mendukung berbagai versi OJS (3.3, 3.4, 3.5) yang mungkin mengirimkan parameter berbeda
-    const reqUsername = req.body.username || req.body.user || req.body.user_id || req.body.userId || req.body.author || req.body.email || 'unknown';
+    const reqUsername = username || 'unknown';
     
     let isGloballyBanned = false;
     let globalBanReason = '';
@@ -104,11 +103,17 @@ export default async function handler(req, res) {
     }
 
     if (signatureMatch) {
-        // Hanya training Naive Bayes, TIDAK otomatis tambah ke Blacklist DB (mencegah keracunan data)
-        await trainAI(content, 'HACK');
+        if (matchedSigStr) {
+            await Blacklist.findOneAndUpdate(
+                { value: matchedSigStr, type: 'keyword' },
+                { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                { upsert: true }
+            );
+            await trainAI(content, 'HACK');
+        }
         await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
         const expireDate = new Date();
-        expireDate.setHours(expireDate.getHours() + 1);
+        expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
         if (reqUsername !== 'unknown') {
             await BannedIP.findOneAndUpdate(
                 { username: reqUsername },
@@ -126,7 +131,6 @@ export default async function handler(req, res) {
     }
 
     // =========================================================================
-    // =========================================================================
     // 🧠 KAPUYUAK DEEP LEARNING SCANNER (NEURAL ENGINE)
     // =========================================================================
     if (content.length > 5) {
@@ -142,45 +146,29 @@ export default async function handler(req, res) {
         let heuristicMatch = content.match(hackPattern);
         if (heuristicMatch) {
             mlResult = 'HACK';
-            // Hanya training model, TIDAK tambah ke Blacklist DB (mencegah keracunan data)
+            await Blacklist.findOneAndUpdate(
+                { value: heuristicMatch[0], type: 'keyword' },
+                { value: heuristicMatch[0], type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                { upsert: true }
+            );
             await trainAI(content, 'HACK');
             await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
         } else {
-            // Bypass Naive Bayes for very short inputs to prevent False Positives (like "ewtret")
-            const wordCount = content.trim().split(/\s+/).length;
-            if (wordCount < 3 && content.length < 20) {
-                mlResult = 'AMAN';
-            } else {
-                mlResult = await predict(content);
-                
-                // --- VERIFIKASI ANTI FALSE-POSITIVE ---
-                // Bias Laplace Smoothing pada Naive Bayes menyebabkan kata yang sama sekali belum pernah dilihat (seperti 'dfsgdrf') 
-                // akan condong ke class dengan jumlah kata terkecil. Kita harus memverifikasi tebakan AI.
-                
-                if (mlResult === 'HACK') {
-                    // Serangan siber (XSS, SQLi, RCE, LFI) PASTI memiliki tanda baca khusus.
-                    // Jika hanya teks alfanumerik biasa (seperti 'dfsgdrf'), itu pasti False Positive.
-                    const hasPunctuation = /[()<>{}\[\]=;$\/\\'"\-\.]/.test(content);
-                    if (!hasPunctuation) {
-                        mlResult = 'AMAN';
-                    }
-                } else if (mlResult === 'JUDI') {
-                    // Jika ditebak JUDI, pastikan minimal ada 1 suku kata yang mengarah ke sana
-                    const judiKeywords = /slot|gacor|togel|casino|judi|bet|qq|poker|jackpot|scatter|rtp|maxwin|deposit|bonus|taruhan/i;
-                    if (!judiKeywords.test(content)) {
-                        mlResult = 'AMAN';
-                    }
-                }
-            }
+            mlResult = await predict(content);
         }
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
 
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
-            await AILog.create({ message: generateFlexibleLog(content, mlResult, domain, ip, reqUsername), level: 'BLOCKED' });
+            await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
             
             if (!heuristicMatch) {
-                // Hanya training model Naive Bayes saja, TIDAK otomatis tambah ke Blacklist DB
-                // (Fitur auto-learning ke DB dinonaktifkan karena bisa keracunan false positive)
+                const autoPattern = content.length > 40 ? content.substring(0, 40).trim() : content.trim();
+                const aiCategory = mlResult === 'JUDI' ? 'SPAM_CONTENT' : 'MALWARE';
+                await Blacklist.findOneAndUpdate(
+                    { value: autoPattern, type: 'keyword' },
+                    { value: autoPattern, type: 'keyword', category: aiCategory, severity: 'HIGH', addedBy: 'AI_AUTO_LEARNING' },
+                    { upsert: true }
+                );
                 await trainAI(content, mlResult);
             }
 
@@ -193,18 +181,16 @@ export default async function handler(req, res) {
                 field: field || 'unknown', snippet: `[KAPUYUAK AI] ${content.substring(0, 100)}`,
                 ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
             });
-            // Tambahkan User/IP ke database blacklist Vercel secara adil
+            // Tambahkan IP/User ke database blacklist Vercel
             const banExpireDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 Hari Ban
-            if (reqUsername !== 'unknown') {
-                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
-            } else {
-                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
-            }
+            await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
+            // Block juga user "unknown" untuk IP yang sama buat jaga-jaga
+            await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
             
             return res.status(200).json({ blocked: true });
         }
         
-        await AILog.create({ message: generateFlexibleLog(content, 'AMAN', domain, ip, reqUsername), level: 'INFO' });
+        await AILog.create({ message: `Kapuyuak AI Complete: Content is SAFE.`, level: 'INFO' });
         return res.status(200).json({ blocked: false });
     }
 
@@ -265,20 +251,11 @@ export default async function handler(req, res) {
         ipAddress: ip, userAgent: req.headers['user-agent'], username: username || 'unknown'
       });
 
-      // Blokir adil: hanya username jika diketahui, hanya IP jika anonim
-      if (reqUsername !== 'unknown') {
-        await BannedIP.findOneAndUpdate(
-          { username: reqUsername },
-          { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
-          { upsert: true }
-        );
-      } else {
-        await BannedIP.findOneAndUpdate(
-          { ip, username: 'unknown' },
-          { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
-          { upsert: true }
-        );
-      }
+      await BannedIP.findOneAndUpdate(
+        { ip, username: username || 'unknown' },
+        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
+        { upsert: true }
+      );
 
       return res.status(200).json({
         blocked: true, category: blockedCategory, severity: highestSeverity,
