@@ -4,29 +4,7 @@ import { connectDB } from './mongodb';
 import fs from 'fs';
 import path from 'path';
 
-let kbbiSet = null;
-
-function loadKBBI() {
-  if (kbbiSet) return kbbiSet;
-  kbbiSet = new Set();
-  try {
-    const filePath = path.join(process.cwd(), 'database-KBBI', 'list_1.0.0.txt');
-    if (fs.existsSync(filePath)) {
-      const words = fs.readFileSync(filePath, 'utf8').split('\n');
-      for (const w of words) {
-        if(w.trim()) kbbiSet.add(w.trim().toLowerCase());
-      }
-    }
-  } catch (e) {
-    console.error("Gagal memuat database KBBI", e);
-  }
-  return kbbiSet;
-}
-
 export function generateFlexibleLog(content, mlResult, domain, ip = 'unknown', username = 'unknown') {
-  // Load KBBI to ensure the AI's language engine is active
-  loadKBBI();
-
   const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
   
   const identityStr = username !== 'unknown' ? `User ${username} [IP: ${ip}]` : `Guest [IP: ${ip}]`;
@@ -59,9 +37,9 @@ let classifier = null;
 
 export async function getKapuyuakConfig() {
   await connectDB();
-  let config = await KapuyuakAI.findOne({ configId: 'global' });
+  let config = await KapuyuakAI.findOne({ configId: 'global_v2' });
   if (!config) {
-    config = await KapuyuakAI.create({ configId: 'global', activeEngine: 'GROQ' });
+    config = await KapuyuakAI.create({ configId: 'global_v2', activeEngine: 'GROQ' });
   }
   return config;
 }
