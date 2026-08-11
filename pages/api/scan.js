@@ -104,17 +104,11 @@ export default async function handler(req, res) {
     }
 
     if (signatureMatch) {
-        if (matchedSigStr) {
-            await Blacklist.findOneAndUpdate(
-                { value: matchedSigStr, type: 'keyword' },
-                { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
-                { upsert: true }
-            );
-            await trainAI(content, 'HACK');
-        }
+        // Hanya training Naive Bayes, TIDAK otomatis tambah ke Blacklist DB (mencegah keracunan data)
+        await trainAI(content, 'HACK');
         await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
         const expireDate = new Date();
-        expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
+        expireDate.setHours(expireDate.getHours() + 1);
         if (reqUsername !== 'unknown') {
             await BannedIP.findOneAndUpdate(
                 { username: reqUsername },
@@ -148,11 +142,7 @@ export default async function handler(req, res) {
         let heuristicMatch = content.match(hackPattern);
         if (heuristicMatch) {
             mlResult = 'HACK';
-            await Blacklist.findOneAndUpdate(
-                { value: heuristicMatch[0], type: 'keyword' },
-                { value: heuristicMatch[0], type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
-                { upsert: true }
-            );
+            // Hanya training model, TIDAK tambah ke Blacklist DB (mencegah keracunan data)
             await trainAI(content, 'HACK');
             await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
         } else {
@@ -189,13 +179,8 @@ export default async function handler(req, res) {
             await AILog.create({ message: generateFlexibleLog(content, mlResult, domain, ip, reqUsername), level: 'BLOCKED' });
             
             if (!heuristicMatch) {
-                const autoPattern = content.length > 40 ? content.substring(0, 40).trim() : content.trim();
-                const aiCategory = mlResult === 'JUDI' ? 'SPAM_CONTENT' : 'MALWARE';
-                await Blacklist.findOneAndUpdate(
-                    { value: autoPattern, type: 'keyword' },
-                    { value: autoPattern, type: 'keyword', category: aiCategory, severity: 'HIGH', addedBy: 'AI_AUTO_LEARNING' },
-                    { upsert: true }
-                );
+                // Hanya training model Naive Bayes saja, TIDAK otomatis tambah ke Blacklist DB
+                // (Fitur auto-learning ke DB dinonaktifkan karena bisa keracunan false positive)
                 await trainAI(content, mlResult);
             }
 
