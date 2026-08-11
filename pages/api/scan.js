@@ -166,7 +166,7 @@ export default async function handler(req, res) {
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
 
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
-            await AILog.create({ message: generateFlexibleLog(content, mlResult, domain), level: 'BLOCKED' });
+            await AILog.create({ message: generateFlexibleLog(content, mlResult, domain, ip, reqUsername), level: 'BLOCKED' });
             
             if (!heuristicMatch) {
                 const autoPattern = content.length > 40 ? content.substring(0, 40).trim() : content.trim();
@@ -199,7 +199,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ blocked: true });
         }
         
-        await AILog.create({ message: generateFlexibleLog(content, 'AMAN', domain), level: 'INFO' });
+        await AILog.create({ message: generateFlexibleLog(content, 'AMAN', domain, ip, reqUsername), level: 'INFO' });
         return res.status(200).json({ blocked: false });
     }
 

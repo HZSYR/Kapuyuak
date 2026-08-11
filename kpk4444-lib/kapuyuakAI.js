@@ -23,30 +23,32 @@ function loadKBBI() {
   return kbbiSet;
 }
 
-export function generateFlexibleLog(content, mlResult, domain) {
+export function generateFlexibleLog(content, mlResult, domain, ip = 'unknown', username = 'unknown') {
   // Load KBBI to ensure the AI's language engine is active
   loadKBBI();
 
   const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  
+  const identityStr = username !== 'unknown' ? `User ${username} [IP: ${ip}]` : `Guest [IP: ${ip}]`;
 
   if (mlResult === 'JUDI') {
     const p1 = ["Aksi terdeteksi!", "Peringatan keamanan!", "Sistem memantau anomali.", "Pemindaian selesai."];
     const p2 = ["Terdapat indikasi muatan promosi Perjudian (JUDOL)", "Sistem menangkap pola teks yang terkait dengan situs Judi Online", "Ditemukan struktur kalimat yang mempromosikan Judi/Slot", "Analisis mendeteksi adanya keyword SPAM Perjudian ilegal"];
-    const p3 = [`dari ${domain}.`, `melalui rute masuk ${domain}.`, `bersumber dari domain ${domain}.`];
+    const p3 = [`dari ${identityStr} di domain ${domain}.`, `dikirim oleh ${identityStr} melalui ${domain}.`, `bersumber dari ${identityStr} pada target ${domain}.`];
     const p4 = ["Sistem keamanan telah melakukan pemblokiran instan.", "Koneksi diputus untuk menjaga integritas server.", "Akses ditolak secara permanen sesuai protokol.", "Tindakan isolasi langsung dieksekusi."];
     return `${getRandom(p1)} ${getRandom(p2)} ${getRandom(p3)} ${getRandom(p4)}`;
   } 
   else if (mlResult === 'HACK') {
     const p1 = ["Bahaya siber terdeteksi!", "Peringatan eksploitasi!", "Sistem Deep Learning menangkap anomali kritis.", "Aktivitas peretasan tertangkap."];
     const p2 = ["Payload teridentifikasi mengandung injeksi berbahaya (HACK)", "Ditemukan struktur kode eksploitasi dan upaya peretasan", "Analisis menemukan pola injeksi Web Shell / Malware", "Sistem mendeteksi muatan yang dirancang merusak sistem"];
-    const p3 = [`dari ${domain}.`, `pada jalur koneksi ${domain}.`, `yang dikirim dari ${domain}.`];
+    const p3 = [`dari ${identityStr} menuju ${domain}.`, `pada jalur koneksi ${domain} oleh ${identityStr}.`, `yang diluncurkan oleh ${identityStr} terhadap ${domain}.`];
     const p4 = ["Serangan berhasil dinetralisir dengan tegas.", "Pemblokiran keamanan langsung diaktifkan.", "Akses penyusup telah digagalkan sepenuhnya.", "Sistem langsung membuang payload tersebut."];
     return `${getRandom(p1)} ${getRandom(p2)} ${getRandom(p3)} ${getRandom(p4)}`;
   } 
   else {
     const p1 = ["Analisis mendalam selesai.", "Pengecekan Deep Learning rampung.", "Pemindaian payload berhasil.", "Verifikasi keamanan selesai."];
     const p2 = ["Teks dan struktur kalimat berstatus bersih", "Gaya bahasa dan parameter input dalam batas wajar", "Data yang dikirimkan terbukti valid", "Tidak ditemukan satupun pola ancaman siber"];
-    const p3 = [`dari ${domain}.`, `pada permintaan ${domain}.`, `untuk koneksi dari ${domain}.`];
+    const p3 = [`dari ${identityStr} ke ${domain}.`, `pada permintaan ${domain} oleh ${identityStr}.`, `untuk koneksi dari ${identityStr} tujuan ${domain}.`];
     const p4 = ["Akses sistem diizinkan sepenuhnya.", "Tidak ada ancaman, semuanya terkendali.", "Lalu lintas data aman untuk diproses OJS.", "Koneksi diizinkan masuk ke server."];
     return `${getRandom(p1)} ${getRandom(p2)} ${getRandom(p3)} ${getRandom(p4)}`;
   }
