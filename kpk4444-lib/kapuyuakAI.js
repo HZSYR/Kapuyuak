@@ -4,6 +4,10 @@ import { connectDB } from './mongodb';
 
 let classifier = null;
 
+export function resetClassifierMemory() {
+    classifier = null;
+}
+
 export async function getKapuyuakConfig() {
   await connectDB();
   let config = await KapuyuakAI.findOne({ configId: 'global' });

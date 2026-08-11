@@ -1,5 +1,7 @@
 import { connectDB } from '../../kpk4444-lib/mongodb';
 import KapuyuakAI from '../../kpk4444-models/KapuyuakAI';
+import Blacklist from '../../kpk4444-models/Blacklist';
+import { resetClassifierMemory } from '../../kpk4444-lib/kapuyuakAI';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -9,6 +11,8 @@ export default async function handler(req, res) {
   try {
     await connectDB();
     const result = await KapuyuakAI.deleteMany({});
+    const blacklistResult = await Blacklist.deleteMany({ addedBy: 'AI_AUTO_LEARNING' });
+    resetClassifierMemory();
     return res.status(200).json({ 
         success: true, 
         message: "Neural Engine state has been completely wiped. Retraining will occur on next scan.",
