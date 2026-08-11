@@ -10,7 +10,7 @@ function loadKBBI() {
   if (kbbiSet) return kbbiSet;
   kbbiSet = new Set();
   try {
-    const filePath = path.join(process.cwd(), 'kbbi.txt');
+    const filePath = path.join(process.cwd(), 'database-KBBI', 'list_1.0.0.txt');
     if (fs.existsSync(filePath)) {
       const words = fs.readFileSync(filePath, 'utf8').split('\n');
       for (const w of words) {
