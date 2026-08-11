@@ -1144,13 +1144,6 @@ export default function Dashboard() {
                         disabled={blacklistPage === 1}
                         className="px-3 py-1 bg-slate-200 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 disabled:opacity-40 border border-slate-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-300 uppercase tracking-wider transition"
                       >
-Prev
-                      </button>
-                      <button 
-                        onClick={() => setBlacklistPage(p => p + 1)}
-                        disabled={blacklistPage * 8 >= blacklists.length}
-                        className="px-3 py-1 bg-slate-200 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 disabled:opacity-40 border border-slate-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-300 uppercase tracking-wider transition"
-                      >
                         Next
                       </button>
                     </div>
@@ -1164,70 +1157,64 @@ Prev
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
-                <div className="lg:col-span-6 relative bg-gradient-to-br from-slate-900 to-black border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl lg:h-full min-h-[400px] flex flex-col justify-between p-8 group">
-                  {/* High-tech grid background */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+                <div className="lg:col-span-6 relative bg-[#04090c] border border-emerald-900/50 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.05)] lg:h-full min-h-[400px] flex flex-col justify-between p-8 group">
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.02)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
                   
-                  {/* Glow effect on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.1)_0%,transparent_70%)] pointer-events-none"></div>
-
-                  {/* Header / Engine Identity */}
+                  {/* Top Header */}
                   <div className="relative z-10 flex items-start justify-between w-full">
-                    <div className="flex items-center gap-4">
-                      <div className="relative w-16 h-16 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.15)] overflow-hidden">
-                        {/* Scanning beam effect inside icon box */}
-                        <div className="absolute top-0 inset-x-0 h-[2px] bg-emerald-400 shadow-[0_0_10px_#34d399] animate-[scan_2s_ease-in-out_infinite_alternate]"></div>
-                        <svg className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                      </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-wider">NEURAL ENGINE</h3>
-                        <p className="text-xs text-emerald-500/80 font-mono tracking-[0.2em] uppercase">v3.0 Deep Learning Matrix</p>
-                      </div>
+                    <div className="flex flex-col">
+                      <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300 tracking-wider">KAPUYUAK AI</h3>
+                      <p className="text-[10px] text-emerald-500/70 font-mono tracking-[0.2em] uppercase">Naive Bayes Heuristic Engine</p>
                     </div>
                     
-                    {/* Status Badge */}
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-md">
                       <div className="relative flex h-2.5 w-2.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                       </div>
-                      <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Active</span>
+                      <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Securing</span>
                     </div>
                   </div>
 
-                  {/* Center Visualization / Graphs (Decorative) */}
-                  <div className="relative z-10 flex-1 flex flex-col justify-center py-8">
-                    <div className="flex items-end justify-between h-20 w-full gap-1 px-2">
-                      {[40, 70, 45, 90, 65, 85, 30, 55, 75, 50, 95, 60].map((h, i) => (
-                        <div key={i} className="w-full relative group cursor-crosshair">
-                          {/* Invisible hover area to trigger tooltip */}
-                          <div className="absolute inset-0 h-32 bottom-0 z-20"></div>
-                          {/* Tooltip */}
-                          <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-emerald-400 text-[9px] font-mono px-2 py-1 rounded border border-slate-700 whitespace-nowrap transition-opacity pointer-events-none z-30">
-                            Node {i+1}: {h}%
-                          </div>
-                          {/* Bar */}
-                          <div 
-                            className="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_15px_rgba(52,211,153,0.6)] transition-all duration-300" 
-                            style={{ height: `${h}%` }}
-                          ></div>
-                        </div>
-                      ))}
+                  {/* Center Visualization: Circular Radar / Shield Animation */}
+                  <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-6">
+                    <div className="relative w-40 h-40 flex items-center justify-center">
+                      {/* Outer spinning dashed ring */}
+                      <div className="absolute inset-0 rounded-full border border-emerald-500/20 border-dashed animate-[spin_10s_linear_infinite]"></div>
+                      {/* Middle pulsing ring */}
+                      <div className="absolute inset-2 rounded-full border border-emerald-400/30 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                      {/* Inner solid ring */}
+                      <div className="absolute inset-6 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-950/30 shadow-[0_0_30px_rgba(52,211,153,0.2)]">
+                        {/* Shield Icon */}
+                        <svg className="w-10 h-10 text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)] z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </div>
+                      
+                      {/* Orbiting blip (Simulation of scanning) */}
+                      <div className="absolute inset-0 animate-[spin_3s_linear_infinite]">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399,0_0_20px_#34d399]"></div>
+                      </div>
                     </div>
-                    <div className="w-full h-px bg-slate-800 mt-2 relative">
-                      <div className="absolute top-0 left-0 h-px bg-emerald-500 shadow-[0_0_10px_#34d399] w-1/3 animate-[pulse_2s_infinite]"></div>
-                    </div>
+                  </div>
+                  
+                  {/* AI Explanation Text */}
+                  <div className="relative z-10 flex flex-col bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md mb-4 text-center">
+                    <p className="text-[11px] text-slate-300 leading-relaxed font-mono">
+                      Kapuyuak Security System menggunakan model <strong className="text-emerald-400">Naive Bayes Classifier</strong> yang di-training secara kontinu. 
+                      Setiap <span className="text-emerald-300">request XHR/AJAX</span> dianalisis kemiripannya secara probabilistik terhadap pola serangan *Webshell* dan sisipan algoritma *Slot/Judol*. 
+                      Jika terdeteksi anomali *heuristic* melebihi ambang batas aman, IP peretas akan seketika di-banned dan ditendang dari OJS.
+                    </p>
                   </div>
                   
                   {/* Bottom Stats Metrics */}
                   <div className="relative z-10 grid grid-cols-2 gap-4 mt-auto">
-                     <div className="flex flex-col bg-slate-900/80 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md">
-                        <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">Protection Level</span>
-                        <span className="text-sm font-bold text-emerald-400 tracking-wide">MAXIMUM OVERRIDE</span>
+                     <div className="flex flex-col bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 backdrop-blur-md items-center text-center">
+                        <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">Status AI</span>
+                        <span className="text-sm font-bold text-emerald-400 tracking-wide">LEARNING & PROTECTING</span>
                      </div>
-                     <div className="flex flex-col bg-slate-900/80 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md">
+                     <div className="flex flex-col bg-slate-900/80 p-3 rounded-xl border border-slate-700/50 backdrop-blur-md items-center text-center">
                         <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">Training Samples</span>
                         <span className="text-sm font-bold font-mono text-emerald-400 tracking-wider">
                            {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '130,003'} <span className="text-[10px] text-emerald-600">REQ</span>
