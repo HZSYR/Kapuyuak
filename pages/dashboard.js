@@ -689,30 +689,30 @@ export default function Dashboard() {
                       </div>
 
                       <div className="space-y-3">
-                        {(topOrigins.length > 0 ? topOrigins : [
-                          { country: 'Indonesia', count: 39 },
-                          { country: 'United States', count: 12 },
-                          { country: 'China', count: 8 },
-                          { country: 'Russia', count: 4 },
-                          { country: 'France', count: 1 }
-                        ]).sort((a,b) => b.count - a.count).slice(0, 5).map((stat, i) => {
-                          const maxCount = Math.max(...(topOrigins.length > 0 ? topOrigins : [{count: 39}]).map(o => o.count), 1);
-                          const pct = Math.min(100, Math.round((stat.count / maxCount) * 100));
-                          return (
-                            <div key={i} className="group flex flex-col gap-1">
-                              <div className="flex justify-between items-center text-xs">
-                                <span className="text-slate-700 dark:text-slate-200 font-semibold">{stat.country}</span>
-                                <span className="text-[11px] text-cyan-500 font-mono font-bold">{stat.count.toLocaleString()} attacks</span>
+                        {topOrigins.length > 0 ? (
+                          topOrigins.sort((a,b) => b.count - a.count).slice(0, 5).map((stat, i) => {
+                            const maxCount = Math.max(...topOrigins.map(o => o.count), 1);
+                            const pct = Math.min(100, Math.round((stat.count / maxCount) * 100));
+                            return (
+                              <div key={i} className="group flex flex-col gap-1">
+                                <div className="flex justify-between items-center text-xs">
+                                  <span className="text-slate-700 dark:text-slate-200 font-semibold">{stat.country || 'Unknown'}</span>
+                                  <span className="text-[11px] text-cyan-500 font-mono font-bold">{stat.count.toLocaleString()} attacks</span>
+                                </div>
+                                <div className="h-2 w-full bg-slate-200 dark:bg-slate-800/80 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full bg-gradient-to-r ${i === 0 ? 'from-rose-500 to-red-600' : i === 1 ? 'from-orange-500 to-amber-500' : i === 2 ? 'from-cyan-500 to-blue-500' : i === 3 ? 'from-indigo-400 to-indigo-600' : 'from-slate-500 to-slate-600'} transition-all duration-500`}
+                                    style={{ width: `${pct}%` }}
+                                  ></div>
+                                </div>
                               </div>
-                              <div className="h-2 w-full bg-slate-200 dark:bg-slate-800/80 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full bg-gradient-to-r ${i === 0 ? 'from-rose-500 to-red-600' : i === 1 ? 'from-orange-500 to-amber-500' : i === 2 ? 'from-cyan-500 to-blue-500' : i === 3 ? 'from-indigo-400 to-indigo-600' : 'from-slate-500 to-slate-600'} transition-all duration-500`}
-                                  style={{ width: `${pct}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })
+                        ) : (
+                          <div className="py-4 text-center">
+                            <span className="text-xs text-slate-500 font-mono">NO DATA / 0 ATTACKS</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 

@@ -39,15 +39,17 @@ export default function Globe3D({ logs = [], onMarkersUpdate }) {
   useEffect(() => {
     if (!logs || logs.length === 0) return;
     let cancelled = false;
-    const uniqueIps = [...new Set(logs.map(l => l.ipAddress))]
-      .filter(ip => ip && ip !== 'unknown' && ip !== '::1' && ip !== '127.0.0.1')
-      .slice(0, 5);
-    if (uniqueIps.length === 0) return;
-
     const counts = logs.reduce((acc, log) => {
       acc[log.ipAddress] = (acc[log.ipAddress] || 0) + 1;
       return acc;
     }, {});
+
+    const uniqueIps = Object.keys(counts)
+      .filter(ip => ip && ip !== 'unknown' && ip !== '::1' && ip !== '127.0.0.1')
+      .sort((a, b) => counts[b] - counts[a])
+      .slice(0, 5);
+
+    if (uniqueIps.length === 0) return;
 
     const fetchGeoData = async () => {
       try {
