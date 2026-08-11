@@ -39,7 +39,7 @@ export async function getKapuyuakConfig() {
   await connectDB();
   let config = await KapuyuakAI.findOne({ configId: 'global_v2' });
   if (!config) {
-    config = await KapuyuakAI.create({ configId: 'global_v2', activeEngine: 'GROQ' });
+    config = await KapuyuakAI.create({ configId: 'global_v2', activeEngine: 'KAPUYUAK' });
   }
   return config;
 }
