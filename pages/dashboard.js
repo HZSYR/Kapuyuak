@@ -75,7 +75,7 @@ header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
 define('KPK4444_API_KEY', '${apiKey}');
 define('KPK4444_API_URL', 'https://${url ? url.trim() : ''}');
 
-$userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown';
+$userIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     if (isset($_GET['target_ip'])) {
@@ -290,7 +290,7 @@ header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
 define('KPK4444_API_KEY', '${apiKey}');
 define('KPK4444_API_URL', 'https://${url ? url.trim() : ''}');
 
-$userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown';
+$userIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     if (isset($_GET['target_ip'])) {
@@ -538,7 +538,7 @@ header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
 define('KPK4444_API_KEY', '${apiKey}');
 define('KPK4444_API_URL', 'https://\${url ? url.trim() : ''}');
 
-$userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown';
+$userIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     if (isset($_GET['target_ip'])) {
@@ -775,7 +775,7 @@ define('INDEX_FILE_LOCATION', __FILE__);
 define('KPK4444_API_KEY', '${apiKey}');
 define('KPK4444_API_URL', 'https://${url ? url.trim() : ''}');
 
-$userIp = $_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown';
+$userIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 
 if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     if (isset($_GET['target_ip'])) {
