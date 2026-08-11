@@ -209,10 +209,9 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
                 if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
+                    file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                     if ($username !== "unknown") {
                         file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time());
-                    } else {
-                        file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
@@ -225,10 +224,9 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 }
             } elseif ($code == 403 || $code == 429) {
                 if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
+                    file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                     if ($username !== "unknown") {
                         file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time());
-                    } else {
-                        file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
