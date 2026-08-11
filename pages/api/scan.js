@@ -161,16 +161,8 @@ export default async function handler(req, res) {
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
             await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
             
-            if (!heuristicMatch) {
-                const autoPattern = content.length > 40 ? content.substring(0, 40).trim() : content.trim();
-                const aiCategory = mlResult === 'JUDI' ? 'SPAM_CONTENT' : 'MALWARE';
-                await Blacklist.findOneAndUpdate(
-                    { value: autoPattern, type: 'keyword' },
-                    { value: autoPattern, type: 'keyword', category: aiCategory, severity: 'HIGH', addedBy: 'AI_AUTO_LEARNING' },
-                    { upsert: true }
-                );
-                await trainAI(content, mlResult);
-            }
+            // Dihapus: AI tidak boleh melatih dirinya sendiri menggunakan tebakannya sendiri (mencegah model poisoning/collapse).
+            // Dihapus: Pembuatan Blacklist otomatis dari 40 karakter pertama payload dihapus karena menyebabkan false positive massal.
 
             const expireDate = new Date();
             expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
