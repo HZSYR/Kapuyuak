@@ -1186,15 +1186,35 @@ export default function Dashboard() {
                       <div className="absolute inset-3 rounded-full border border-emerald-400/20 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
                       {/* Inner solid ring */}
                       <div className="absolute inset-6 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-950/40 shadow-[0_0_30px_rgba(52,211,153,0.3)] z-20">
+                        {/* Connected Particles Network Simulation */}
+                        <div className="absolute inset-[-20px] animate-[spin_25s_linear_infinite] z-10 pointer-events-none opacity-70">
+                          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]">
+                            <g stroke="#34d399" strokeWidth="0.5" strokeOpacity="0.5" fill="#34d399">
+                              {/* Connecting Lines */}
+                              <line x1="25" y1="35" x2="50" y2="15" />
+                              <line x1="50" y1="15" x2="75" y2="30" />
+                              <line x1="75" y1="30" x2="85" y2="60" />
+                              <line x1="85" y1="60" x2="60" y2="85" />
+                              <line x1="60" y1="85" x2="30" y2="75" />
+                              <line x1="30" y1="75" x2="25" y2="35" />
+                              <line x1="50" y1="15" x2="60" y2="85" strokeDasharray="2 2" />
+                              <line x1="25" y1="35" x2="75" y2="30" strokeDasharray="1 3" />
+                              
+                              {/* Glowing Nodes (Particles) */}
+                              <circle cx="25" cy="35" r="1.5" className="animate-pulse" />
+                              <circle cx="50" cy="15" r="2.5" />
+                              <circle cx="75" cy="30" r="1.5" className="animate-pulse" />
+                              <circle cx="85" cy="60" r="2" />
+                              <circle cx="60" cy="85" r="1.5" />
+                              <circle cx="30" cy="75" r="2.5" className="animate-pulse" />
+                            </g>
+                          </svg>
+                        </div>
                         {/* Shield Icon */}
                         <svg className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.9)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                       </div>
-                      
-                      {/* Orbiting blip (Simulation of scanning) */}
-                      <div className="absolute inset-0 animate-[spin_4s_linear_infinite] z-10">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></div>
                       </div>
                     </div>
                   </div>
