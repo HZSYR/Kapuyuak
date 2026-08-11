@@ -971,8 +971,12 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         if ($rawInput && strlen($rawInput) < 2000000) { $c .= $rawInput . " "; }
         
         $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
-        if (!empty($p)) $c .= json_encode($p, 256 | 512) . " ";
-        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
+        if (!empty($p)) {
+            array_walk_recursive($p, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
+        }
+        if (!empty($_GET)) {
+            array_walk_recursive($_GET, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
+        }
         if (!empty($_FILES)) {
             $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
             foreach ($_FILES as $fileKey => $file) {
