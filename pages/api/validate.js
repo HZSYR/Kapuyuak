@@ -27,13 +27,7 @@ export default async function handler(req, res) {
       ipAddress: ip, userAgent: req.headers['user-agent']
     });
     
-    // Auto ban for domain spoofing attempt
-    await BannedIP.findOneAndUpdate(
-      { ip },
-      { reason: 'Domain Mismatch Spoofing', expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
-      { upsert: true }
-    );
-    
+    // Hanya catat log, TIDAK blokir IP (IP bisa milik banyak orang di NAT/Kampus)
     return res.status(403).json({ error: 'DOMAIN_MISMATCH' });
   }
 

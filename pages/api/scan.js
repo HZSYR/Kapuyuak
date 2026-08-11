@@ -280,11 +280,20 @@ export default async function handler(req, res) {
         ipAddress: ip, userAgent: req.headers['user-agent'], username: username || 'unknown'
       });
 
-      await BannedIP.findOneAndUpdate(
-        { ip, username: username || 'unknown' },
-        { reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
-        { upsert: true }
-      );
+      // Blokir adil: hanya username jika diketahui, hanya IP jika anonim
+      if (reqUsername !== 'unknown') {
+        await BannedIP.findOneAndUpdate(
+          { username: reqUsername },
+          { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
+          { upsert: true }
+        );
+      } else {
+        await BannedIP.findOneAndUpdate(
+          { ip, username: 'unknown' },
+          { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000) },
+          { upsert: true }
+        );
+      }
 
       return res.status(200).json({
         blocked: true, category: blockedCategory, severity: highestSeverity,
