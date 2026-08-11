@@ -1177,53 +1177,25 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                  {/* Center Visualization: Circular Radar / Shield Animation & Attack Simulation */}
+                  {/* Center Visualization */}
                   <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-8">
-                    <div className="relative w-48 h-48 flex items-center justify-center">
+                    <div className="relative w-32 h-32 flex items-center justify-center">
                       {/* Outer spinning dashed ring */}
                       <div className="absolute inset-0 rounded-full border border-emerald-500/20 border-dashed animate-[spin_12s_linear_infinite]"></div>
                       {/* Middle pulsing ring */}
-                      <div className="absolute inset-4 rounded-full border border-emerald-400/20 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                      <div className="absolute inset-3 rounded-full border border-emerald-400/20 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
                       {/* Inner solid ring */}
-                      <div className="absolute inset-10 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-950/40 shadow-[0_0_30px_rgba(52,211,153,0.3)] z-20">
+                      <div className="absolute inset-6 rounded-full border-2 border-emerald-500/50 flex items-center justify-center bg-emerald-950/40 shadow-[0_0_30px_rgba(52,211,153,0.3)] z-20">
                         {/* Shield Icon */}
-                        <svg className="w-12 h-12 text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.9)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.9)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                       </div>
                       
                       {/* Orbiting blip (Simulation of scanning) */}
                       <div className="absolute inset-0 animate-[spin_4s_linear_infinite] z-10">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_15px_#34d399]"></div>
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></div>
                       </div>
-
-                      {/* Incoming Attack Simulation Particles */}
-                      <div className="absolute inset-0 z-10">
-                        <div className="absolute top-1/2 left-0 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_#f43f5e] animate-[moveRight_2.5s_ease-in_infinite]"></div>
-                        <div className="absolute top-0 right-1/4 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_#f43f5e] animate-[moveDownLeft_3s_ease-in_infinite_1s]"></div>
-                        <div className="absolute bottom-0 right-1/4 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_#f43f5e] animate-[moveUpLeft_2s_ease-in_infinite_0.5s]"></div>
-                      </div>
-                      {/* Add keyframes inline for the attack simulation without styled-jsx to avoid SWC compiler errors */}
-                      <style dangerouslySetInnerHTML={{ __html: `
-                        @keyframes moveRight {
-                          0% { transform: translate(-30px, -50%) scale(0); opacity: 0; }
-                          20% { transform: translate(10px, -50%) scale(1); opacity: 1; }
-                          80% { transform: translate(50px, -50%) scale(1); opacity: 1; background-color: #f43f5e; }
-                          100% { transform: translate(60px, -50%) scale(2); opacity: 0; background-color: #34d399; }
-                        }
-                        @keyframes moveDownLeft {
-                          0% { transform: translate(30px, -30px) scale(0); opacity: 0; }
-                          20% { transform: translate(10px, -10px) scale(1); opacity: 1; }
-                          80% { transform: translate(-30px, 30px) scale(1); opacity: 1; background-color: #f43f5e; }
-                          100% { transform: translate(-40px, 40px) scale(2); opacity: 0; background-color: #34d399; }
-                        }
-                        @keyframes moveUpLeft {
-                          0% { transform: translate(30px, 30px) scale(0); opacity: 0; }
-                          20% { transform: translate(10px, 10px) scale(1); opacity: 1; }
-                          80% { transform: translate(-30px, -30px) scale(1); opacity: 1; background-color: #f43f5e; }
-                          100% { transform: translate(-40px, -40px) scale(2); opacity: 0; background-color: #34d399; }
-                        }
-                      `}} />
                     </div>
                   </div>
                   
@@ -1231,7 +1203,7 @@ export default function Dashboard() {
                   <div className="relative z-10 flex flex-col bg-slate-900/60 p-5 rounded-xl border border-slate-700/50 backdrop-blur-md mb-4 text-center shadow-lg">
                     <p className="text-[12px] text-slate-300 font-mono leading-relaxed">
                       Menggunakan algoritma <strong className="text-emerald-400">Naive Bayes Heuristic</strong>, AI Kapuyuak menganalisis tiap *request* secara <i>real-time</i>.<br/> 
-                      <span className="text-rose-400 mt-2 block font-semibold">Memblokir injeksi Judol &amp; Webshell seketika sebelum menembus sistem OJS!</span>
+                      <span className="text-rose-400 mt-2 block font-semibold">Memblokir ancaman siber &amp; injeksi kode seketika sebelum menembus sistem OJS!</span>
                     </p>
                   </div>
                   
