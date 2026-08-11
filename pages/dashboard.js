@@ -1169,7 +1169,15 @@ export default function Dashboard() {
                     </div>
                     
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-md">
-                         {/* Center Visualization: Circular Radar / Shield Animation & Attack Simulation */}
+                        <div className="relative flex h-2.5 w-2.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Securing</span>
+                      </div>
+                    </div>
+
+                  {/* Center Visualization: Circular Radar / Shield Animation & Attack Simulation */}
                   <div className="relative z-10 flex-1 flex flex-col items-center justify-center py-8">
                     <div className="relative w-48 h-48 flex items-center justify-center">
                       {/* Outer spinning dashed ring */}
@@ -1195,8 +1203,8 @@ export default function Dashboard() {
                         <div className="absolute top-0 right-1/4 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_#f43f5e] animate-[moveDownLeft_3s_ease-in_infinite_1s]"></div>
                         <div className="absolute bottom-0 right-1/4 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_#f43f5e] animate-[moveUpLeft_2s_ease-in_infinite_0.5s]"></div>
                       </div>
-                      {/* Add keyframes inline for the attack simulation */}
-                      <style jsx>{`
+                      {/* Add keyframes inline for the attack simulation without styled-jsx to avoid SWC compiler errors */}
+                      <style dangerouslySetInnerHTML={{ __html: `
                         @keyframes moveRight {
                           0% { transform: translate(-30px, -50%) scale(0); opacity: 0; }
                           20% { transform: translate(10px, -50%) scale(1); opacity: 1; }
@@ -1215,7 +1223,7 @@ export default function Dashboard() {
                           80% { transform: translate(-30px, -30px) scale(1); opacity: 1; background-color: #f43f5e; }
                           100% { transform: translate(-40px, -40px) scale(2); opacity: 0; background-color: #34d399; }
                         }
-                      `}</style>
+                      `}} />
                     </div>
                   </div>
                   
@@ -1223,7 +1231,7 @@ export default function Dashboard() {
                   <div className="relative z-10 flex flex-col bg-slate-900/60 p-5 rounded-xl border border-slate-700/50 backdrop-blur-md mb-4 text-center shadow-lg">
                     <p className="text-[12px] text-slate-300 font-mono leading-relaxed">
                       Menggunakan algoritma <strong className="text-emerald-400">Naive Bayes Heuristic</strong>, AI Kapuyuak menganalisis tiap *request* secara <i>real-time</i>.<br/> 
-                      <span className="text-rose-400 mt-2 block font-semibold">Memblokir injeksi Judol & Webshell seketika sebelum menembus sistem OJS!</span>
+                      <span className="text-rose-400 mt-2 block font-semibold">Memblokir injeksi Judol &amp; Webshell seketika sebelum menembus sistem OJS!</span>
                     </p>
                   </div>
                   
