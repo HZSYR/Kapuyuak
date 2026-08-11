@@ -15,8 +15,21 @@ export default async function handler(req, res) {
     jwt.verify(token, JWT_SECRET);
     
     await connectDB();
+
+    const { ip, username } = req.body || {};
+
+    // 🔒 Selective unban: unban specific IP or username if provided
+    if (ip && typeof ip === 'string') {
+      const result = await BannedIP.deleteMany({ ip: ip.trim() });
+      return res.status(200).json({ success: true, count: result.deletedCount, target: ip.trim() });
+    }
+    if (username && typeof username === 'string') {
+      const result = await BannedIP.deleteMany({ username: username.trim() });
+      return res.status(200).json({ success: true, count: result.deletedCount, target: username.trim() });
+    }
+
+    // Fallback: unban all
     const result = await BannedIP.deleteMany({});
-    
     res.status(200).json({ success: true, count: result.deletedCount });
   } catch (err) {
     res.status(500).json({ error: err.message });

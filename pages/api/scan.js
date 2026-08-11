@@ -26,7 +26,8 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    let ip = req.body.userIp || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    // 🔒 SECURITY: IP hanya dari trusted server headers, BUKAN dari req.body (bisa dipalsukan)
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
     if (typeof ip === 'string') {
       ip = ip.split(',')[0].trim();
     }
@@ -200,16 +201,25 @@ export default async function handler(req, res) {
 
     for (const item of blacklists) {
       let matched = false;
+
+      // 🔒 SECURITY: Skip regex patterns that are too long or potentially dangerous (ReDoS prevention)
+      if (item.value && item.value.length > 500) continue;
+
       if (item.type === 'keyword') {
         if (item.value.length >= 5) {
-          if (new RegExp(item.value, 'i').test(content)) matched = true;
+          try { if (new RegExp(item.value, 'i').test(content)) matched = true; } catch(e) {}
         } else {
-          if (new RegExp(`\\b${item.value}\\b`, 'i').test(content)) matched = true;
+          try { if (new RegExp(`\\b${item.value}\\b`, 'i').test(content)) matched = true; } catch(e) {}
         }
       } else if (item.type === 'regex') {
-        try { if (new RegExp(item.value, 'i').test(content)) matched = true; } catch(e) {}
+        try {
+          // Validate regex isn't catastrophically backtracking-prone
+          const dangerousPattern = /(\([^)]*\+[^)]*\)\+|\([^)]*\*[^)]*\)\*|\([^)]*\{[^)]*\)\{)/;
+          if (dangerousPattern.test(item.value)) continue; // Skip dangerous regex
+          if (new RegExp(item.value, 'i').test(content)) matched = true;
+        } catch(e) {}
       } else if (item.type === 'sqlpattern') {
-        if (new RegExp(item.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i').test(content)) matched = true;
+        try { if (new RegExp(item.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i').test(content)) matched = true; } catch(e) {}
       } else if (item.type === 'domain') {
         if (content.includes(item.value)) matched = true;
       }
@@ -279,7 +289,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ blocked: false });
   } catch (error) {
     console.error("FATAL ERROR in /api/scan:", error);
-    // FAIL OPEN: Jika sistem error internal, jangan blokir OJS. Biarkan jalan.
-    return res.status(200).json({ blocked: false, error: 'Internal Server Error Fallback' });
+    // 🔒 FAIL-CLOSED: Jika sistem error, BLOKIR konten demi keamanan.
+    // Lebih baik false-positive daripada meloloskan serangan.
+    return res.status(200).json({ blocked: true, error: 'Security Failsafe Activated' });
   }
 }

@@ -2,10 +2,16 @@ import { connectDB } from '../../kpk4444-lib/mongodb';
 import KapuyuakAI from '../../kpk4444-models/KapuyuakAI';
 import Blacklist from '../../kpk4444-models/Blacklist';
 import { resetClassifierMemory } from '../../kpk4444-lib/kapuyuakAI';
+import { verifyAdminJWT } from '../../kpk4444-middleware/auth';
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  // 🔒 SECURITY: Require admin JWT to reset AI
+  if (!verifyAdminJWT(req)) {
+    return res.status(401).json({ error: 'Unauthorized: Admin JWT required' });
   }
 
   try {
