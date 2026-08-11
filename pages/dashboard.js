@@ -2237,7 +2237,7 @@ export default function Dashboard() {
                      </div>
                      
                      <h3 className="text-xl font-bold text-slate-100 tracking-wide mb-1">Neural Engine v3</h3>
-                     <p className="text-[10px] text-emerald-500/60 mb-2 font-mono uppercase tracking-widest">100% Local Inference</p>
+                     <p className="text-[10px] text-emerald-500/60 mb-2 font-mono uppercase tracking-widest">DEEP LEARNING THREAT MATRIX</p>
                   </div>
                   
                   <div className="relative z-10 w-full space-y-2 mt-auto">
