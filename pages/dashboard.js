@@ -1144,7 +1144,7 @@ export default function Dashboard() {
                         disabled={blacklistPage === 1}
                         className="px-3 py-1 bg-slate-200 dark:bg-white/5 hover:bg-slate-300 dark:hover:bg-white/10 disabled:opacity-40 border border-slate-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-slate-300 uppercase tracking-wider transition"
                       >
-                        Prev
+Prev
                       </button>
                       <button 
                         onClick={() => setBlacklistPage(p => p + 1)}
@@ -1164,62 +1164,73 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                 
                 {/* LEFT: AI Scanner Configuration (lg:col-span-6) */}
-                <div className="lg:col-span-6 relative bg-[#04060a] border border-emerald-900/50 rounded-2xl overflow-hidden shadow-2xl lg:h-full min-h-[380px] flex flex-col justify-between p-8">
-                  {/* Minimalist Background with Floating Viruses */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#0a111a] to-transparent z-0"></div>
-                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent z-0"></div>
+                <div className="lg:col-span-6 relative bg-gradient-to-br from-slate-900 to-black border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl lg:h-full min-h-[400px] flex flex-col justify-between p-8 group">
+                  {/* High-tech grid background */}
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.03)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
                   
-                  {/* Floating Threat Anomalies (Premium Cyber Look) */}
-                  <div className="absolute top-16 left-12 flex items-center justify-center animate-[bounce_4s_infinite]">
-                     <div className="w-12 h-12 rounded-full bg-rose-500/5 border border-rose-500/20 flex items-center justify-center animate-pulse">
-                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.9)]"></div>
-                     </div>
-                  </div>
-                  
-                  <div className="absolute bottom-32 right-12 flex items-center justify-center" style={{ animation: 'bounce 6s infinite 1s' }}>
-                     <div className="w-16 h-16 rounded-full bg-red-500/5 border border-red-500/20 flex items-center justify-center animate-pulse">
-                        <svg className="w-6 h-6 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.1)_0%,transparent_70%)] pointer-events-none"></div>
+
+                  {/* Header / Engine Identity */}
+                  <div className="relative z-10 flex items-start justify-between w-full">
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-16 h-16 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.15)] overflow-hidden">
+                        {/* Scanning beam effect inside icon box */}
+                        <div className="absolute top-0 inset-x-0 h-[2px] bg-emerald-400 shadow-[0_0_10px_#34d399] animate-[scan_2s_ease-in-out_infinite_alternate]"></div>
+                        <svg className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                         </svg>
-                     </div>
-                  </div>
-                  
-                  <div className="absolute top-1/2 left-2/3 flex items-center justify-center" style={{ animation: 'bounce 5s infinite 2s' }}>
-                     <div className="w-8 h-8 rounded-full bg-orange-500/5 border border-orange-500/20 flex items-center justify-center animate-pulse">
-                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.9)]"></div>
-                     </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-wider">NEURAL ENGINE</h3>
+                        <p className="text-xs text-emerald-500/80 font-mono tracking-[0.2em] uppercase">v3.0 Deep Learning Matrix</p>
+                      </div>
+                    </div>
+                    
+                    {/* Status Badge */}
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-md">
+                      <div className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">Active</span>
+                    </div>
                   </div>
 
-                  <div className="relative z-10 flex flex-col items-center justify-center text-center mt-6">
-                     <div className="relative mb-6">
-                        <div className="w-20 h-20 rounded-full bg-emerald-950/40 border border-emerald-500/20 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-                           <svg className="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                           </svg>
+                  {/* Center Visualization / Graphs (Decorative) */}
+                  <div className="relative z-10 flex-1 flex flex-col justify-center py-8">
+                    <div className="flex items-end justify-between h-20 w-full gap-1 px-2">
+                      {[40, 70, 45, 90, 65, 85, 30, 55, 75, 50, 95, 60].map((h, i) => (
+                        <div key={i} className="w-full relative group cursor-crosshair">
+                          {/* Invisible hover area to trigger tooltip */}
+                          <div className="absolute inset-0 h-32 bottom-0 z-20"></div>
+                          {/* Tooltip */}
+                          <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-emerald-400 text-[9px] font-mono px-2 py-1 rounded border border-slate-700 whitespace-nowrap transition-opacity pointer-events-none z-30">
+                            Node {i+1}: {h}%
+                          </div>
+                          {/* Bar */}
+                          <div 
+                            className="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_15px_rgba(52,211,153,0.6)] transition-all duration-300" 
+                            style={{ height: `${h}%` }}
+                          ></div>
                         </div>
-                        {/* Ping indicator */}
-                        <div className="absolute 0 top-0 right-0 flex h-3 w-3">
-                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                           <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                        </div>
-                     </div>
-                     
-                     <h3 className="text-xl font-bold text-slate-100 tracking-wide mb-1">Neural Engine v3</h3>
-                     <p className="text-[10px] text-emerald-500/60 mb-2 font-mono uppercase tracking-widest">DEEP LEARNING THREAT MATRIX</p>
+                      ))}
+                    </div>
+                    <div className="w-full h-px bg-slate-800 mt-2 relative">
+                      <div className="absolute top-0 left-0 h-px bg-emerald-500 shadow-[0_0_10px_#34d399] w-1/3 animate-[pulse_2s_infinite]"></div>
+                    </div>
                   </div>
                   
-                  <div className="relative z-10 w-full space-y-2 mt-auto">
-                     <div className="flex justify-between items-center bg-[#070d14] px-4 py-3 rounded-xl border border-slate-800/50 backdrop-blur-md">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase">Protection Status</span>
-                        <span className="text-[10px] font-bold font-mono text-emerald-400 flex items-center gap-2">
-                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                           MAXIMUM
-                        </span>
+                  {/* Bottom Stats Metrics */}
+                  <div className="relative z-10 grid grid-cols-2 gap-4 mt-auto">
+                     <div className="flex flex-col bg-slate-900/80 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md">
+                        <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">Protection Level</span>
+                        <span className="text-sm font-bold text-emerald-400 tracking-wide">MAXIMUM OVERRIDE</span>
                      </div>
-                     <div className="flex justify-between items-center bg-[#070d14] px-4 py-3 rounded-xl border border-slate-800/50 backdrop-blur-md">
-                        <span className="text-[10px] font-mono text-slate-500 uppercase">Training Data</span>
-                        <span className="text-[10px] font-bold font-mono text-emerald-400">
-                           {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '112,450'} SAMPLES
+                     <div className="flex flex-col bg-slate-900/80 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md">
+                        <span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">Training Samples</span>
+                        <span className="text-sm font-bold font-mono text-emerald-400 tracking-wider">
+                           {(aiTrainingSamples && aiTrainingSamples > 0) ? aiTrainingSamples.toLocaleString() : '130,003'} <span className="text-[10px] text-emerald-600">REQ</span>
                         </span>
                      </div>
                   </div>
