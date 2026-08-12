@@ -83,7 +83,8 @@ export async function predict(text) {
   const result = ai.categorize(sample);
   
   // Lapis Penalti Ketat (Mencegah AI Adversarial Attack / Padding Bypass)
-  const highRiskPatterns = /eval\(|system\(|shell_exec|move_uploaded_file|file_put_contents|php:\/\/filter|chmod\(|\$_FILES/i;
+  // Diubah menjadi lebih spesifik untuk mengurangi false positive pada skrip PHP normal
+  const highRiskPatterns = /eval\s*\(\s*\$_|system\s*\(\s*\$_|shell_exec\s*\(\s*\$_|php:\/\/filter\/(?:read=)?(?:convert\.iconv|string\.rot13)/i;
   if (highRiskPatterns.test(sample)) {
       return 'HACK'; // Override Naive Bayes jika ada pola fatal mutlak
   }

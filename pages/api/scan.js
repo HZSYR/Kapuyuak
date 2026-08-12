@@ -86,18 +86,16 @@ export default async function handler(req, res) {
     // 🛡️ FAST MALWARE SIGNATURE SCANNER (STATIC ZERO-DAY)
     // =========================================================================
     const malwareSignatures = [
-      /eval\s*\(\s*base64_decode\s*\(/i,
-      /system\s*\(\s*\$_GET/i,
-      /system\s*\(\s*\$_POST/i,
-      /shell_exec\s*\(/i,
-      /passthru\s*\(/i,
-      /exec\s*\(\s*\$_/i,
-      /\$_POST\s*\[\s*['"]cmd['"]\s*\]/i,
+      /eval\s*\(\s*(?:base64_decode|gzinflate)\s*\(/i,
+      /system\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE|SERVER)/i,
+      /shell_exec\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE|SERVER)/i,
+      /passthru\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE|SERVER)/i,
+      /exec\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE|SERVER)/i,
+      /\$_(?:GET|POST|REQUEST|COOKIE)\s*\[\s*['"](?:cmd|exec|eval|run)['"]\s*\]/i,
       /wscript\.shell/i,
-      /php:\/\/filter\/.*convert\.iconv/i,
+      /php:\/\/filter\/(?:read=)?(?:convert\.iconv|string\.rot13|zlib\.deflate)/i,
       /(?:169\.254\.169\.254|metadata\.google\.internal)/i,
-      /\{php\}.*system\(.*\{(?:\/)?php\}/i,
-      /\b(?:move_uploaded_file|file_put_contents)\s*\(\s*(?:\$_(?:FILES|POST|GET)|php:\/\/input)/i,
+      /\{php\}.*(?:system|exec|shell_exec|eval)\(.*\{(?:\/)?php\}/i,
       /phar:\/\//i
     ];
     
@@ -158,7 +156,7 @@ export default async function handler(req, res) {
         // =========================================================================
         // 🛡️ HEURISTIC SCAN (PRE-FILTER) FOR HIGH RISK PATTERNS
         // =========================================================================
-        const hackPattern = /eval\s*\(|base64_decode\s*\(|system\s*\(|exec\s*\(/i;
+        const hackPattern = /eval\s*\(\s*\$_|system\s*\(\s*\$_|exec\s*\(\s*\$_|shell_exec\s*\(\s*\$_/i;
         
         let heuristicMatch = decodedContent.match(hackPattern);
         if (heuristicMatch) {
