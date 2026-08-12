@@ -131,7 +131,7 @@ export default async function handler(req, res) {
             );
             await trainAI(decodedContent, 'HACK');
         }
-        await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain} | IP: ${ip} | User: ${reqUsername}`, level: 'CRITICAL' });
+        await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain} | IP: ${ip} | User: ${reqUsername}`, level: 'BLOCKED' });
         const expireDate = new Date(Date.now() + 60 * 60 * 1000); // Ban 1 jam
         try {
             if (reqUsername !== 'unknown') {
@@ -147,7 +147,7 @@ export default async function handler(req, res) {
                     { upsert: true, new: true }
                 );
             }
-            await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned until ${expireDate.toISOString()}`, level: 'CRITICAL' });
+            await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned until ${expireDate.toISOString()}`, level: 'BLOCKED' });
         } catch (banErr) {
             await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
         }
@@ -218,7 +218,7 @@ export default async function handler(req, res) {
                         { upsert: true, new: true }
                     );
                 }
-                await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned 24h (${mlResult})`, level: 'CRITICAL' });
+                await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned 24h (${mlResult})`, level: 'BLOCKED' });
             } catch (banErr) {
                 await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
             }
@@ -311,7 +311,7 @@ export default async function handler(req, res) {
                 { upsert: true, new: true }
               );
           }
-          await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned 1h (Manual Score: ${spamScore} pts)`, level: 'CRITICAL' });
+          await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned 1h (Manual Score: ${spamScore} pts)`, level: 'BLOCKED' });
       } catch (banErr) {
           await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
       }
