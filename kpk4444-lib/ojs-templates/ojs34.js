@@ -126,29 +126,23 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             array_walk_recursive($_GET, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
         }
         if (!empty($_FILES)) {
-            $badExts = ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'sh', 'cgi', 'pl', 'py', 'exe'];
             foreach ($_FILES as $fileKey => $file) {
                 if (isset($file['name'])) {
-                    $names = is_array($file['name']) ? $file['name'] : [$file['name']];
-                    foreach ($names as $n) {
-                        $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
-                        if (in_array($ext, $badExts)) {
-                            $r = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>'HACK_EXT: '.$n, 'field'=>'upload', 'userIp'=>$userIp, 'username'=>$username??'unknown']);
-                            $cx = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
-                            curl_setopt_array($cx, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $r, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp], CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15, CURLOPT_FOLLOWLOCATION => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0]);
-                            @curl_exec($cx); @curl_close($cx);
-
-                            if (isset($username) && $username !== "unknown") { @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time()); }
-                            else { @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time()); }
-                            header('HTTP/1.1 403 Forbidden');
-                            die("KPK4444 SHIELD: Malware File Upload Prevented.<script>window.top.location.href='https://www.google.com';</script><img src=x onerror=window.top.location.href=atob('aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ==')>");
+                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
+                }
+                if (isset($file['tmp_name'])) {
+                    $tmpNames = is_array($file['tmp_name']) ? $file['tmp_name'] : [$file['tmp_name']];
+                    foreach ($tmpNames as $tmp) {
+                        if (is_uploaded_file($tmp)) {
+                            $fileContent = @file_get_contents($tmp, false, null, 0, 50000);
+                            if ($fileContent) {
+                                $c .= " [FILE_CONTENT:" . base64_encode($fileContent) . "] ";
+                            }
                         }
                     }
-                    $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
                 }
             }
         }
-        
         $cleanContent = "";
         $len = strlen($c);
         for ($i = 0; $i < $len; $i++) {
