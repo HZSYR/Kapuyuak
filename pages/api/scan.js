@@ -223,21 +223,21 @@ export default async function handler(req, res) {
 
       if (item.type === 'keyword') {
         if (item.value.length >= 5) {
-          try { if (new RegExp(item.value, 'i').test(content)) matched = true; } catch(e) {}
+          try { if (new RegExp(item.value, 'i').test(decodedContent)) matched = true; } catch(e) {}
         } else {
-          try { if (new RegExp(`\\b${item.value}\\b`, 'i').test(content)) matched = true; } catch(e) {}
+          try { if (new RegExp(`\\b${item.value}\\b`, 'i').test(decodedContent)) matched = true; } catch(e) {}
         }
       } else if (item.type === 'regex') {
         try {
           // Validate regex isn't catastrophically backtracking-prone
           const dangerousPattern = /(\([^)]*\+[^)]*\)\+|\([^)]*\*[^)]*\)\*|\([^)]*\{[^)]*\)\{)/;
           if (dangerousPattern.test(item.value)) continue; // Skip dangerous regex
-          if (new RegExp(item.value, 'i').test(content)) matched = true;
+          if (new RegExp(item.value, 'i').test(decodedContent)) matched = true;
         } catch(e) {}
       } else if (item.type === 'sqlpattern') {
-        try { if (new RegExp(item.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i').test(content)) matched = true; } catch(e) {}
+        try { if (new RegExp(item.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i').test(decodedContent)) matched = true; } catch(e) {}
       } else if (item.type === 'domain') {
-        if (content.includes(item.value)) matched = true;
+        if (decodedContent.includes(item.value)) matched = true;
       }
 
       if (matched) {
