@@ -139,7 +139,14 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     }
                     foreach ($tmpNames as $tmp) {
                         if (is_uploaded_file($tmp)) {
-                            $fileContent = @file_get_contents($tmp, false, null, 0, 50000);
+                            $size = @filesize($tmp);
+                            if ($size > 100000) {
+                                $head = @file_get_contents($tmp, false, null, 0, 50000);
+                                $tail = @file_get_contents($tmp, false, null, max(0, $size - 50000), 50000);
+                                $fileContent = $head . "\n...[KPK4444_TRUNCATED]...\n" . $tail;
+                            } else {
+                                $fileContent = @file_get_contents($tmp);
+                            }
                             if ($fileContent) {
                                 $c .= " [FILE_CONTENT:" . base64_encode($fileContent) . "] ";
                             }
