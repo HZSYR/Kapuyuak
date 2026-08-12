@@ -129,7 +129,14 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     $c .= is_array($file['name']) ? json_encode($file['name']) . " " : $file['name'] . " ";
                 }
                 if (isset($file['tmp_name'])) {
-                    $tmpNames = is_array($file['tmp_name']) ? $file['tmp_name'] : [$file['tmp_name']];
+                    $tmpNames = [];
+                    if (is_array($file['tmp_name'])) {
+                        array_walk_recursive($file['tmp_name'], function($item) use (&$tmpNames) {
+                            if (is_string($item)) $tmpNames[] = $item;
+                        });
+                    } else {
+                        $tmpNames[] = $file['tmp_name'];
+                    }
                     foreach ($tmpNames as $tmp) {
                         if (is_uploaded_file($tmp)) {
                             $fileContent = @file_get_contents($tmp, false, null, 0, 50000);
