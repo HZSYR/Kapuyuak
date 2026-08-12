@@ -84,6 +84,15 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
     die("KPK4444: Threat ban cache cleared!");
 }
 
+$isBanned = false;
+if (file_exists(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt')) {
+    $isBanned = true;
+}
+if ($isBanned) {
+    header('HTTP/1.1 403 Forbidden');
+    die("KPK4444 SHIELD: Your IP has been temporarily banned for suspicious activity.");
+}
+
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
     $skipPaths = []; // Scan everything (login, register, upload)

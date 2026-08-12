@@ -128,6 +128,11 @@ export default async function handler(req, res) {
                 { upsert: true }
             );
         }
+        await AttackLog.create({
+            apiKey, domain, category: 'AI_DETECTED_MALWARE', severity: 'CRITICAL',
+            field: field || 'unknown', snippet: `[SIGNATURE SCANNER] ${content.substring(0, 100)}`,
+            ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: reqUsername
+        });
         return res.status(200).json({ blocked: true });
     }
 
