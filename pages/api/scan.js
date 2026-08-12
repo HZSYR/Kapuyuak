@@ -147,7 +147,7 @@ export default async function handler(req, res) {
         // =========================================================================
         // 🛡️ HEURISTIC SCAN (PRE-FILTER) FOR HIGH RISK PATTERNS
         // =========================================================================
-        const hackPattern = /\b([a-zA-Z0-9_\-\.]+)\.(php[34578]?|phtml|sh|py|cgi|exe)\b|eval\s*\(|base64_decode\s*\(|system\s*\(|exec\s*\(/i;
+        const hackPattern = /eval\s*\(|base64_decode\s*\(|system\s*\(|exec\s*\(/i;
         
         let heuristicMatch = content.match(hackPattern);
         if (heuristicMatch) {
