@@ -126,26 +126,30 @@ export default async function handler(req, res) {
         if (matchedSigStr) {
             await Blacklist.findOneAndUpdate(
                 { value: matchedSigStr, type: 'keyword' },
-                { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                { $set: { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' } },
                 { upsert: true }
             );
             await trainAI(decodedContent, 'HACK');
         }
-        await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
-        const expireDate = new Date();
-        expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
-        if (reqUsername !== 'unknown') {
-            await BannedIP.findOneAndUpdate(
-                { username: reqUsername },
-                { ip, username: reqUsername, domain, reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
-                { upsert: true }
-            );
-        } else {
-            await BannedIP.findOneAndUpdate(
-                { ip, username: 'unknown' },
-                { ip, username: 'unknown', domain, reason: 'Malware Signature Detected (Web Shell)', expiresAt: expireDate },
-                { upsert: true }
-            );
+        await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain} | IP: ${ip} | User: ${reqUsername}`, level: 'CRITICAL' });
+        const expireDate = new Date(Date.now() + 60 * 60 * 1000); // Ban 1 jam
+        try {
+            if (reqUsername !== 'unknown') {
+                await BannedIP.findOneAndUpdate(
+                    { username: reqUsername },
+                    { $set: { ip, username: reqUsername, domain, reason: 'Malware Signature Detected (Web Shell)', bannedAt: new Date(), expiresAt: expireDate } },
+                    { upsert: true, new: true }
+                );
+            } else {
+                await BannedIP.findOneAndUpdate(
+                    { ip },
+                    { $set: { ip, username: 'unknown', domain, reason: 'Malware Signature Detected (Web Shell)', bannedAt: new Date(), expiresAt: expireDate } },
+                    { upsert: true, new: true }
+                );
+            }
+            await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned until ${expireDate.toISOString()}`, level: 'CRITICAL' });
+        } catch (banErr) {
+            await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
         }
         await AttackLog.create({
             apiKey, domain, category: 'AI_DETECTED_MALWARE', severity: 'CRITICAL',
@@ -200,10 +204,23 @@ export default async function handler(req, res) {
             });
             // Tambahkan ke database blacklist Vercel
             const banExpireDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 Hari Ban
-            if (reqUsername !== 'unknown') {
-                await BannedIP.findOneAndUpdate({ username: reqUsername }, { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
-            } else {
-                await BannedIP.findOneAndUpdate({ ip, username: 'unknown' }, { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, expiresAt: banExpireDate }, { upsert: true });
+            try {
+                if (reqUsername !== 'unknown') {
+                    await BannedIP.findOneAndUpdate(
+                        { username: reqUsername },
+                        { $set: { ip, username: reqUsername, domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, bannedAt: new Date(), expiresAt: banExpireDate } },
+                        { upsert: true, new: true }
+                    );
+                } else {
+                    await BannedIP.findOneAndUpdate(
+                        { ip },
+                        { $set: { ip, username: 'unknown', domain, reason: `Kapuyuak Deep Learning Blocked (${mlResult})`, bannedAt: new Date(), expiresAt: banExpireDate } },
+                        { upsert: true, new: true }
+                    );
+                }
+                await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned 24h (${mlResult})`, level: 'CRITICAL' });
+            } catch (banErr) {
+                await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
             }
             
             return res.status(200).json({ blocked: true });
@@ -280,18 +297,23 @@ export default async function handler(req, res) {
       });
 
       const expireHour = new Date(Date.now() + 1 * 60 * 60 * 1000);
-      if (reqUsername !== 'unknown') {
-          await BannedIP.findOneAndUpdate(
-            { username: reqUsername },
-            { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: expireHour },
-            { upsert: true }
-          );
-      } else {
-          await BannedIP.findOneAndUpdate(
-            { ip, username: 'unknown' },
-            { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, expiresAt: expireHour },
-            { upsert: true }
-          );
+      try {
+          if (reqUsername !== 'unknown') {
+              await BannedIP.findOneAndUpdate(
+                { username: reqUsername },
+                { $set: { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, bannedAt: new Date(), expiresAt: expireHour } },
+                { upsert: true, new: true }
+              );
+          } else {
+              await BannedIP.findOneAndUpdate(
+                { ip },
+                { $set: { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, bannedAt: new Date(), expiresAt: expireHour } },
+                { upsert: true, new: true }
+              );
+          }
+          await AILog.create({ message: `BAN SAVED: ${reqUsername !== 'unknown' ? reqUsername : ip} banned 1h (Manual Score: ${spamScore} pts)`, level: 'CRITICAL' });
+      } catch (banErr) {
+          await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
       }
 
       // SAFE AUTO-LEARNING (SUPERVISED): AI belajar dari data yang tertangkap basah oleh algoritma manual.
