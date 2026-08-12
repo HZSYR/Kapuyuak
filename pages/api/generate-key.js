@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const expiredAt = new Date();
     expiredAt.setDate(expiredAt.getDate() + parseInt(validDays));
 
-    const newKey = await LicenseKey.create({ apiKey, domain, ownerName, expiredAt, ojsVersion: ojsVersion || '3.3' });
+    const newKey = await LicenseKey.create({ apiKey, domain, ownerName, expiredAt, ojsVersion: ojsVersion || '3.4' });
     const activationLink = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/activate?key=${apiKey}`;
 
     return res.status(200).json({ success: true, apiKey, activationLink, domain, ownerName, expiredAt: newKey.expiredAt, createdAt: newKey.createdAt, ojsVersion: newKey.ojsVersion });
