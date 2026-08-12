@@ -70,6 +70,18 @@ export default async function handler(req, res) {
     }
     if (!content || (typeof content === 'string' && content.trim() === '')) return res.status(200).json({ blocked: false });
     
+    // Parse base64 file content tags back into readable strings before scanning
+    let decodedContent = content;
+    if (typeof decodedContent === 'string') {
+        decodedContent = decodedContent.replace(/\[FILE_CONTENT:([A-Za-z0-9+/=]+)\]/g, (match, b64) => {
+            try {
+                return ` [FILE_CONTENT: ${Buffer.from(b64, 'base64').toString('utf8')}] `;
+            } catch (e) {
+                return match; // If decode fails, leave it as is
+            }
+        });
+    }
+
     // =========================================================================
     // 🛡️ FAST MALWARE SIGNATURE SCANNER (STATIC ZERO-DAY)
     // =========================================================================
@@ -91,9 +103,9 @@ export default async function handler(req, res) {
     
     let signatureMatch = false;
     let matchedSigStr = '';
-    if (typeof content === 'string') {
+    if (typeof decodedContent === 'string') {
         for (const sig of malwareSignatures) {
-            const m = content.match(sig);
+            const m = decodedContent.match(sig);
             if (m) {
                 signatureMatch = true;
                 matchedSigStr = m[0];
@@ -109,7 +121,7 @@ export default async function handler(req, res) {
                 { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
                 { upsert: true }
             );
-            await trainAI(content, 'HACK');
+            await trainAI(decodedContent, 'HACK');
         }
         await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain}`, level: 'CRITICAL' });
         const expireDate = new Date();
@@ -138,7 +150,7 @@ export default async function handler(req, res) {
     // =========================================================================
     // 🧠 KAPUYUAK DEEP LEARNING SCANNER (NEURAL ENGINE)
     // =========================================================================
-    if (content.length > 5) {
+    if (decodedContent.length > 5) {
         await AILog.create({ message: `Initiating Kapuyuak Deep Learning Scan for ${domain}...`, level: 'INFO' });
         
         let mlResult = 'AMAN';
@@ -148,7 +160,7 @@ export default async function handler(req, res) {
         // =========================================================================
         const hackPattern = /eval\s*\(|base64_decode\s*\(|system\s*\(|exec\s*\(/i;
         
-        let heuristicMatch = content.match(hackPattern);
+        let heuristicMatch = decodedContent.match(hackPattern);
         if (heuristicMatch) {
             mlResult = 'HACK';
             await Blacklist.findOneAndUpdate(
@@ -156,10 +168,10 @@ export default async function handler(req, res) {
                 { value: heuristicMatch[0], type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
                 { upsert: true }
             );
-            await trainAI(content, 'HACK');
+            await trainAI(decodedContent, 'HACK');
             await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
         } else {
-            mlResult = await predict(content);
+            mlResult = await predict(decodedContent);
         }
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
 
@@ -175,7 +187,7 @@ export default async function handler(req, res) {
             
             await AttackLog.create({
                 apiKey, domain, category: category, severity: 'CRITICAL',
-                field: field || 'unknown', snippet: `[KAPUYUAK AI] ${content.substring(0, 100)}`,
+                field: field || 'unknown', snippet: `[KAPUYUAK AI] ${decodedContent.substring(0, 100)}`,
                 ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: username || 'unknown'
             });
             // Tambahkan ke database blacklist Vercel
