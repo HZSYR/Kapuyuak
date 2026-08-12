@@ -34,6 +34,795 @@ export default function Dashboard() {
   const [apiError, setApiError] = useState(null);
   const [viewKeyLogs, setViewKeyLogs] = useState(null);
   const [aiCountdown, setAiCountdown] = useState(2);
+  const [showKeyTutorial, setShowKeyTutorial] = useState(false);
+  const [newKeyData, setNewKeyData] = useState(null);
+  const [filterLogs, setFilterLogs] = useState('ALL');
+  const [copiedKey, setCopiedKey] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
+  const [isGeneratingKey, setIsGeneratingKey] = useState(false);
+  const [selectedOjsVersion, setSelectedOjsVersion] = useState('3.4');
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isPrivacyMode, setIsPrivacyMode] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+
+  // Load theme and privacy mode from localStorage on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('kpk4444_theme');
+    if (savedTheme === 'light') {
+      setIsDarkTheme(false);
+    }
+    const savedPrivacy = localStorage.getItem('kpk4444_privacy');
+    if (savedPrivacy === 'true') {
+      setIsPrivacyMode(true);
+    }
+  }, []);
+
+  const togglePrivacyMode = () => {
+    setIsPrivacyMode(prev => {
+      const next = !prev;
+      localStorage.setItem('kpk4444_privacy', String(next));
+      return next;
+    });
+  };
+
+  // Sync theme to DOM and localStorage
+  useEffect(() => {
+    if (isDarkTheme) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('kpk4444_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('kpk4444_theme', 'light');
+    }
+  }, [isDarkTheme]);
+
+  const aiPollRef = useRef(null);
+  const countdownRef = useRef(null);
+
+  const downloadIndexPhp = () => {
+    if (!newKeyData) return;
+    let content;
+    if (selectedOjsVersion === '3.4') {
+        content = getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL);
+    } else {
+        content = getFullIndexPhp35(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL);
+    }
+    const blob = new Blob([content], { type: 'application/x-httpd-php' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.php';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 2000);
+  };
+
+  const handleCopyCode = () => {
+    let content;
+    if (selectedOjsVersion === '3.4') {
+        content = getFullIndexPhp34(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL);
+    } else {
+        content = getFullIndexPhp35(newKeyData.apiKey, process.env.NEXT_PUBLIC_VERCEL_URL);
+    }
+    navigator.clipboard.writeText(content);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  const handleCopyKey = () => {
+    navigator.clipboard.writeText(newKeyData.apiKey);
+    setCopiedKey(true);
+    setTimeout(() => setCopiedKey(false), 2000);
+  };
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('admin_jwt');
+    const savedTab = sessionStorage.getItem('active_tab');
+    if (savedTab) setTab(savedTab);
+    if (token) { setJwtToken(token); setAuth(true); loadData(token); }
+  }, []);
+
+  // Global auto-polling every 5 seconds
+  useEffect(() => {
+    if (!auth || !jwtToken) return;
+    const interval = setInterval(() => {
+      loadData(jwtToken, false);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [auth, jwtToken]);
+
+  // Auto-polling AI logs every 2 seconds when on AI SETTINGS tab
+  useEffect(() => {
+    if (!auth || !jwtToken) return;
+    if (tab === 'AI SETTINGS') {
+      // Fetch immediately on tab open
+      fetch('/api/ai-logs', { headers: { 'Authorization': `Bearer ${jwtToken}` } })
+        .then(r => r.json()).then(data => { if (Array.isArray(data)) setAiLogs(data); }).catch(() => { });
+      setAiCountdown(2);
+
+      // Main fetch interval every 2 seconds
+      aiPollRef.current = setInterval(() => {
+        fetch('/api/ai-logs', { headers: { 'Authorization': `Bearer ${jwtToken}` } })
+          .then(r => r.json())
+          .then(data => { if (Array.isArray(data)) setAiLogs(data); })
+          .catch(() => { });
+        setAiCountdown(2);
+      }, 2000);
+
+      // Countdown ticker every 1 second
+      countdownRef.current = setInterval(() => {
+        setAiCountdown(prev => (prev <= 1 ? 2 : prev - 1));
+      }, 1000);
+    } else {
+      clearInterval(aiPollRef.current);
+      clearInterval(countdownRef.current);
+    }
+    return () => {
+      clearInterval(aiPollRef.current);
+      clearInterval(countdownRef.current);
+    };
+  }, [tab, auth, jwtToken]);
+
+  const loadData = async (token, showLoading = true) => {
+    if (showLoading) setIsLoading(true);
+    setApiError(null);
+    const headers = { 'Authorization': `Bearer ${token}` };
+    try {
+      const [lRes, bRes, kRes, alRes, bipRes, aicRes] = await Promise.all([
+        fetch('/api/logs', { headers }),
+        fetch('/api/blacklist', { headers }),
+        fetch('/api/generate-key', { headers }),
+        fetch('/api/ai-logs', { headers }),
+        fetch('/api/banned-ips', { headers }),
+        fetch('/api/ai-config', { headers })
+      ]);
+      const [l, b, k, al, bip, aic] = await Promise.all([lRes.json(), bRes.json(), kRes.json(), alRes.json(), bipRes.json(), aicRes.json()]);
+      if (!lRes.ok || !bRes.ok || !kRes.ok || !alRes.ok || !bipRes.ok) {
+        const errMsg = k.error || b.error || l.error || al.error || bip.error || 'Unknown API error';
+        const errStatus = !kRes.ok ? kRes.status : !bRes.ok ? bRes.status : !lRes.ok ? lRes.status : !alRes.ok ? alRes.status : bipRes.status;
+        setApiError(`Status ${errStatus}: ${errMsg}`);
+      }
+      setLogs(Array.isArray(l) ? l : []);
+      setBlacklists(Array.isArray(b) ? b : []);
+      setKeys(Array.isArray(k) ? k : []);
+      setAiLogs(Array.isArray(al) ? al : []);
+      setBannedIps(Array.isArray(bip) ? bip : []);
+      
+      if (aic) {
+        setAiTrainingSamples(aic.trainingSamples || 0);
+      }
+    } catch (err) {
+      setApiError(`Network Error: ${err.message}`);
+    }
+    if (showLoading) setIsLoading(false);
+  };
+
+  const login = async (e) => {
+    e.preventDefault();
+    if (!recaptchaToken) {
+      alert('Tolong centang kotak I am not a robot!');
+      return;
+    }
+    setIsLoading(true);
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret, recaptchaToken })
+    });
+    const data = await response.json();
+    setIsLoading(false);
+    if (response.ok && data.token) {
+      sessionStorage.setItem('admin_jwt', data.token);
+      setJwtToken(data.token);
+      setAuth(true);
+      loadData(data.token);
+    } else {
+      alert(data.error || 'Login Failed! Invalid Secret.');
+    }
+  };
+
+  const createKey = async (e) => {
+    e.preventDefault();
+    setIsGeneratingKey(true);
+    const res = await fetch('/api/generate-key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` },
+      body: JSON.stringify({ domain: e.target.domain.value, ownerName: e.target.ownerName.value, validDays: e.target.validDays.value, ojsVersion: e.target.ojsVersion.value })
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      setNewKeyData(data);
+      if (data.ojsVersion) setSelectedOjsVersion(data.ojsVersion);
+      setShowKeyTutorial(true);
+      e.target.reset();
+      loadData(jwtToken);
+    } else {
+      alert('Failed to generate key');
+    }
+    setIsGeneratingKey(false);
+  };
+
+  const deleteKey = (id) => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus License Key', message: 'Apakah Anda yakin ingin menghapus License Key ini?',
+      onConfirm: async () => {
+        await fetch(`/api/generate-key?id=${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
+    });
+  };
+
+  const deleteBlacklist = (id) => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus Rule Blacklist', message: 'Hapus rule blacklist ini?',
+      onConfirm: async () => {
+        await fetch('/api/blacklist', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${jwtToken}` }, body: JSON.stringify({ id }) });
+        loadData(jwtToken, false);
+      }
+    });
+  };
+
+  const clearAiLogs = () => {
+    setConfirmModal({
+      isOpen: true, title: 'Hapus Semua AI Logs', message: 'Clear all AI Terminal Logs?',
+      onConfirm: async () => {
+        await fetch('/api/ai-logs', { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        loadData(jwtToken, false);
+      }
+    });
+  };
+
+  const unbanAllIPs = () => {
+    setConfirmModal({
+      isOpen: true, title: 'Unban Semua IP', message: 'Unban ALL IPs?',
+      onConfirm: async () => {
+        const res = await fetch('/api/unban', { method: 'POST', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        if (res.ok) {
+          keys.forEach(k => {
+            if (k.domain && k.apiKey) {
+              fetch(`https://${k.domain}/?kpk_unban=${k.apiKey}&target_ip=ALL`, { mode: 'no-cors' }).catch(() => {});
+            }
+          });
+        }
+        loadData(jwtToken, false);
+      }
+    });
+  };
+
+  const unbanIp = (ip, username) => {
+    const target = (username && username !== 'unknown') ? username : ip;
+    setConfirmModal({
+      isOpen: true, title: 'Unban Entity', message: `Unban ${target}?`,
+      onConfirm: async () => {
+        let url = `/api/banned-ips?ip=${ip}`;
+        if (username && username !== 'unknown') {
+            url += `&username=${username}`;
+        }
+        const res = await fetch(url, { method: 'DELETE', headers: { 'Authorization': `Bearer ${jwtToken}` } });
+        if (res.ok) {
+          keys.forEach(k => {
+            if (k.domain && k.apiKey) {
+              fetch(`https://${k.domain}/?kpk_unban=${k.apiKey}&target_ip=${target}`, { mode: 'no-cors' }).catch(() => {});
+            }
+          });
+        }
+        loadData(jwtToken, false);
+      }
+    });
+  };
+
+  const handleTabChange = (t) => {
+    setTab(t);
+    sessionStorage.setItem('active_tab', t);
+    setSidebarOpen(false);
+  };
+
+  const TABS = ['OVERVIEW', 'API KEYS', 'ATTACK LOGS', 'BLACKLIST', 'AI SETTINGS', 'BANNED IPs'];
+
+  // ─── LOGIN PAGE ───────────────────────────────────────────────────────────
+  if (!auth)
+ return (
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1e3a5f] via-[#1a2035] to-[#141920] flex items-center justify-center p-4">
+      <Head>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <title>KPK4444 — Admin Login</title>
+        <style>{`* { font-family: 'Outfit', sans-serif; }`}</style>
+      </Head>
+      <div className="w-full max-w-xs sm:max-w-sm">
+        <form onSubmit={login} className="bg-slate-100 dark:bg-[#1e2640]/50 backdrop-blur-xl border border-slate-300 dark:border-white/10 p-7 sm:p-9 rounded-2xl shadow-2xl">
+          <div className="flex flex-col items-center mb-7">
+            <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-white/10 mb-4 shadow-xl shadow-black/50">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 dark:from-white to-blue-400 dark:to-gray-400 tracking-tight">kapuyuak</h2>
+
+            </div>
+            <p className="text-[10px] text-indigo-500/70 dark:text-gray-500 uppercase tracking-widest font-semibold mt-1">by.150141146151172150</p>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="text-[10px] font-semibold text-indigo-600/80 dark:text-gray-400 mb-1.5 block uppercase tracking-widest">Master Secret</label>
+              <input
+                type="password"
+                value={secret}
+                onChange={e => setSecret(e.target.value)}
+                placeholder="••••••••••••••••"
+                className="w-full bg-white dark:bg-[#1e2640]/70 text-indigo-900 dark:text-white border border-slate-300 dark:border-white/10 px-4 py-3 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all placeholder-gray-600"
+              />
+            </div>
+            <div className="flex justify-center my-4">
+              <ReCAPTCHA
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                onChange={(token) => setRecaptchaToken(token)}
+                theme="dark"
+              />
+            </div>
+            <button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-500 text-indigo-900 dark:text-white py-3 rounded-lg text-xs font-bold shadow-lg shadow-blue-500/20 transition hover:-translate-y-0.5 uppercase tracking-widest">
+              {isLoading ? 'Processing...' : 'Authenticate'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  // ─── DASHBOARD PAGE ───────────────────────────────────────────────────────
+  const statsCards = [
+    { title: 'Total Blocked Attacks', value: logs.length, color: 'text-rose-400' },
+    { title: 'Active Licenses', value: keys.filter(k => k.status === 'active').length, color: 'text-emerald-400' },
+    { title: 'Blacklist Patterns', value: blacklists.length, color: 'text-blue-400' }
+  ];
+
+
+  // Banned IPs calculations
+  const ipAttackCounts = logs.reduce((acc, log) => {
+    if (log.ipAddress) {
+      acc[log.ipAddress] = (acc[log.ipAddress] || 0) + 1;
+    }
+    return acc;
+  }, {});
+  const topAttackIps = Object.entries(ipAttackCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+  
+  const filteredBannedIps = bannedIps.filter(bip => {
+    const term = bannedIpSearch.toLowerCase();
+    const matchIp = bip.ip?.toLowerCase().includes(term);
+    const matchUser = bip.username && bip.username !== 'unknown' ? bip.username.toLowerCase().includes(term) : false;
+    const matchDomain = bip.domain ? bip.domain.toLowerCase().includes(term) : false;
+    return matchIp || matchUser || matchDomain;
+  });
+  const BANNED_PER_PAGE = 10;
+  const totalBannedPages = Math.max(1, Math.ceil(filteredBannedIps.length / BANNED_PER_PAGE));
+  const currentBannedIps = filteredBannedIps.slice((bannedIpPage - 1) * BANNED_PER_PAGE, bannedIpPage * BANNED_PER_PAGE);
+
+  const formatCountdown = (expiresAt) => {
+    const diff = new Date(expiresAt).getTime() - now;
+    if (diff <= 0) return 'Expired';
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return `${m}m ${s}s`;
+  };
+
+  return (
+    <div className={`h-dvh min-h-0 transition-colors duration-300 ${isDarkTheme ? 'dark' : ''}`}>
+      <div className="h-full min-h-0 bg-transparent dark:bg-[#09090b] text-slate-900 dark:text-gray-300 text-[13px]">
+        <Head>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <script dangerouslySetInnerHTML={{__html: `
+            var savedTheme = localStorage.getItem('kpk4444_theme');
+            if (savedTheme === 'light') {
+              document.documentElement.classList.remove('dark');
+            } else {
+              document.documentElement.classList.add('dark');
+            }
+            var initTw = setInterval(function() {
+              if (window.tailwind) {
+                window.tailwind.config = { darkMode: 'class' };
+                clearInterval(initTw);
+              }
+            }, 10);
+          `}} />
+          <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+          <link rel="icon" type="image/png" href="/logo.png" />
+          <title>KPK4444 — Dashboard</title>
+          <style>{`
+            * { font-family: 'Outfit', sans-serif; }
+            html, body, #__next { height: 100%; max-height: 100vh; overflow: hidden; margin: 0; padding: 0; background-color: #030712; }
+            body { background: #030712; color: #f8fafc; }
+            html.dark body { background: #030712; background-color: #030712; }
+            ::-webkit-scrollbar { width: 5px; height: 5px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+            html.dark ::-webkit-scrollbar-thumb { background: #1e293b; }
+            select option { background: #0f172a; color: white; }
+            html.dark select option { background: #0f172a; color: white; }
+          `}</style>
+        </Head>
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-indigo-900/30 dark:bg-[#1e2640]/70 backdrop-blur-sm z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex h-full min-h-0 overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 bg-[#030712] text-slate-100">
+
+        {/* ── FLOATING DETACHED SIDEBAR CARD (GAMBANG MELAYANG) ───────────────────────────────────────────────────── */}
+        <aside className={`
+          fixed lg:sticky top-3 lg:top-0 left-3 lg:left-auto z-40
+          h-[calc(100dvh-24px)] sm:h-[calc(100dvh-32px)] lg:h-full max-h-full
+          w-64 bg-slate-900/95 dark:bg-[#0b101d]/95 backdrop-blur-2xl
+          border border-slate-700/60 dark:border-cyan-500/20 rounded-3xl
+          shadow-[0_10px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(6,182,212,0.1)]
+          flex flex-col min-h-0 transition-transform duration-300 ease-in-out select-none overflow-hidden shrink-0
+          ${sidebarOpen ? 'translate-x-0 inset-y-3 left-3' : '-translate-x-full lg:translate-x-0'}
+        `}>
+          {/* Brand Header */}
+          <div className="p-4 sm:p-5 pb-4 flex items-center space-x-3 border-b border-slate-800/80 bg-white/[0.02]">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-700 shrink-0 shadow-md">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-base font-black text-white dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-slate-200 tracking-wide font-mono leading-none">kapuyuak</h1>
+              </div>
+              <p className="text-[9px] text-slate-400 tracking-widest uppercase font-mono font-medium mt-1">by.150141146151172150</p>
+            </div>
+          </div>
+
+          {/* Nav Links */}
+          <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+            {TABS.map(t => {
+              const isActive = tab === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => handleTabChange(t)}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
+                    isActive
+                      ? 'bg-gradient-to-r from-cyan-500/25 via-blue-500/20 to-indigo-500/10 text-cyan-300 border-l-2 border-cyan-400 shadow-[inset_0_0_15px_rgba(6,182,212,0.15)]'
+                      : 'text-slate-400 hover:bg-white/[0.05] hover:text-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 z-10">
+                    {/* SVG Icons per Tab */}
+                    <div className={`transition-colors duration-200 ${isActive ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]' : 'text-slate-500 group-hover:text-slate-200'}`}>
+                      {t === 'OVERVIEW' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                      )}
+                      {t === 'API KEYS' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                      )}
+                      {t === 'ATTACK LOGS' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-6z"></path></svg>
+                      )}
+                      {t === 'BLACKLIST' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                      )}
+                      {t === 'AI SETTINGS' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h-4a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                      )}
+                      {t === 'BANNED IPs' && (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                      )}
+                    </div>
+                    <span className="tracking-wide font-sans">{t}</span>
+                  </div>
+
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Bottom Actions / Terminate Session */}
+          <div className="p-3 border-t border-slate-800/80 mt-auto">
+            <button
+              onClick={() => { sessionStorage.clear(); window.location.reload(); }}
+              className="w-full py-2.5 rounded-2xl text-[11px] font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 transition-all duration-200 flex items-center justify-center space-x-2 uppercase tracking-wider shadow-sm hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]"
+            >
+              <svg className="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              <span>Terminate Session</span>
+            </button>
+          </div>
+        </aside>
+
+        {/* ── MAIN CONTENT (FLOATING CONTAINER) ──────────────────────────────────────────────── */}
+        <main className="flex-1 min-w-0 min-h-0 h-full overflow-y-auto overflow-x-hidden flex flex-col rounded-3xl border border-slate-800/80 bg-[#070c18]/60 backdrop-blur-xl shadow-2xl">
+
+          {/* Top bar (visible on mobile) */}
+          <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-700 to-blue-800 dark:bg-[#1e2640]/80 backdrop-blur border-b border-indigo-900/20 dark:border-white/10 lg:hidden">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-full overflow-hidden ring-1 ring-white/10">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-black text-white dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-white dark:to-gray-400">kapuyuak</span>
+
+              </div>
+            </div>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-lg bg-white/20 dark:bg-[#1e2640]/50 border border-white/30 dark:border-white/10 text-white dark:text-gray-300 hover:bg-white/30 transition"
+              aria-label="Open menu"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </header>
+
+          <div className="min-h-full p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+            {/* Page header */}
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-indigo-900 dark:text-white tracking-tight">
+                  {tab === 'OVERVIEW' ? 'Command Center' : tab}
+                </h2>
+                <p className="text-indigo-500/80 dark:text-gray-400 text-xs mt-0.5">Real-time threat monitoring</p>
+              </div>
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest font-mono">Online</span>
+                </div>
+              </div>
+            </div>
+
+            {/* API Error banner */}
+            {apiError && (
+              <div className="mb-5 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-start space-x-3">
+                <div className="w-2 h-2 rounded-full bg-rose-500 mt-1 flex-shrink-0 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></div>
+                <div>
+                  <p className="text-rose-400 text-xs font-bold uppercase tracking-wider mb-1">API Connection Error</p>
+                  <p className="text-rose-300/70 text-[11px] font-mono">{apiError}</p>
+                  <p className="text-indigo-500/70 dark:text-gray-500 text-[10px] mt-2">Kemungkinan penyebab: MongoDB URI salah, nama database tidak ada, atau env variable Vercel belum di-redeploy.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="mb-5 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                <p className="text-blue-400 text-[11px] font-semibold uppercase tracking-widest text-center">Loading data from MongoDB...</p>
+              </div>
+            )}
+
+            {/* ── OVERVIEW ── */}
+            {tab === 'OVERVIEW' && (
+              <div className="space-y-6">
+                
+                {/* 1. TOP METRICS GRID */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {statsCards.map((s, i) => (
+                    <div key={i} className="relative overflow-hidden bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl p-5 rounded-2xl border border-indigo-200/60 dark:border-white/10 shadow-sm hover:border-indigo-300 dark:hover:border-cyan-500/30 transition-all duration-300 group">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-indigo-500 dark:text-gray-400 text-[11px] font-bold uppercase tracking-wider mb-1">{s.title}</p>
+                          <p className={`text-3xl font-black tracking-tight ${s.color} drop-shadow-sm`}>{s.value}</p>
+                        </div>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${i === 0 ? 'bg-rose-500/10 text-rose-400' : i === 1 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                          {i === 0 ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                          ) : i === 1 ? (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                          ) : (
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 2. MAIN 2-COLUMN GRID (GLOBE LEFT + PANELS RIGHT) */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  
+                  {/* LEFT: 3D GLOBE THREAT MAP (lg:col-span-7) */}
+                  <div className="lg:col-span-7 relative overflow-hidden bg-gradient-to-br from-slate-900 via-[#070c18] to-black border border-slate-700/50 dark:border-cyan-500/20 rounded-3xl p-5 shadow-2xl flex flex-col justify-between min-h-[460px]">
+                    {/* Grid background overlay */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(0,200,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,200,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
+
+                    {/* Card Header HUD */}
+                    <div className="relative z-10 flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-200 tracking-wide font-mono">GLOBAL RADAR</h3>
+                          <p className="text-[10px] text-cyan-400/80 font-mono tracking-widest uppercase">LIVE GEO-TARGETING</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full backdrop-blur">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                        </span>
+                        <span className="text-[10px] font-mono text-cyan-300 font-bold uppercase tracking-wider">TARGET: PADANG (ID)</span>
+                      </div>
+                    </div>
+
+                    {/* Globe Center Container */}
+                    <div className="relative z-10 w-full flex items-center justify-center h-[380px] my-auto">
+                      <Globe3D logs={logs} onMarkersUpdate={setTopOrigins} />
+                    </div>
+
+                    {/* Footer note */}
+                    <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-500 font-mono pt-2 border-t border-white/5">
+                      <span>INTERACTIVE 3D RADAR MONITOR</span>
+
+                    </div>
+                  </div>
+
+                  {/* RIGHT: TOP ORIGINS & RECENT THREATS (lg:col-span-5) */}
+                  <div className="lg:col-span-5 space-y-5">
+                    
+                    {/* Top Attack Origins Card */}
+                    <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2 font-mono">
+                          <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                          TOP ORIGINS
+                        </h3>
+                        <span className="text-[10px] text-slate-400 font-mono">LIVE COUNT</span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {topOrigins.length > 0 ? (
+                          topOrigins.sort((a,b) => b.count - a.count).slice(0, 5).map((stat, i) => {
+                            const maxCount = Math.max(...topOrigins.map(o => o.count), 1);
+                            const pct = Math.min(100, Math.round((stat.count / maxCount) * 100));
+                            return (
+                              <div key={i} className="group flex flex-col gap-1">
+                                <div className="flex justify-between items-center text-xs">
+                                  <span className="text-slate-700 dark:text-slate-200 font-semibold">{stat.country || 'Unknown'}</span>
+                                  <span className="text-[11px] text-cyan-500 font-mono font-bold">{stat.count.toLocaleString()} attacks</span>
+                                </div>
+                                <div className="h-2 w-full bg-slate-200 dark:bg-slate-800/80 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full bg-gradient-to-r ${i === 0 ? 'from-rose-500 to-red-600' : i === 1 ? 'from-orange-500 to-amber-500' : i === 2 ? 'from-cyan-500 to-blue-500' : i === 3 ? 'from-indigo-400 to-indigo-600' : 'from-slate-500 to-slate-600'} transition-all duration-500`}
+                                    style={{ width: `${pct}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="py-4 text-center">
+                            <span className="text-xs text-slate-500 font-mono">NO DATA / 0 ATTACKS</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Recent Threat Detections Card */}
+                    <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl rounded-2xl border border-indigo-200/60 dark:border-white/10 p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2 font-mono">
+                          <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                          RECENT THREATS
+                        </h3>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={togglePrivacyMode}
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition flex items-center space-x-1 ${
+                              isPrivacyMode ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]' : 'bg-slate-200/70 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-white/10 hover:text-slate-200'
+                            }`}
+                            title="Toggle Privacy Blur for Domains & IPs"
+                          >
+                            {isPrivacyMode ? (
+                              <>
+                                <svg className="w-3 h-3 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                                </svg>
+                                <span>BLUR</span>
+                              </>
+                            ) : (
+                              <>
+                                <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <span>SHOW</span>
+                              </>
+                            )}
+                          </button>
+                          <span className="text-[10px] text-slate-400 font-mono">{logs.length} TOTAL</span>
+                        </div>
+                      </div>
+
+                      {logs.length === 0 ? (
+                        <p className="text-center py-6 text-slate-400 text-xs">No recent threats detected.</p>
+                      ) : (
+                        <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
+                          {logs.slice(0, 6).map(l => (
+                            <div key={l._id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 hover:bg-slate-200/50 dark:hover:bg-white/[0.06] transition">
+                              <div className="flex items-center space-x-2.5 min-w-0">
+                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${l.severity === 'CRITICAL' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : l.severity === 'HIGH' ? 'bg-orange-500' : 'bg-yellow-500'}`} />
+                                <div className="min-w-0">
+                                  <p
+                                    style={isPrivacyMode ? { filter: 'blur(8px)', WebkitFilter: 'blur(8px)', userSelect: 'none', transition: 'all 0.3s' } : {}}
+                                    className="text-xs font-bold text-slate-800 dark:text-white truncate hover:filter-none"
+                                  >
+                                    {l.domain}
+                                  </p>
+                                  <p className="text-[10px] text-slate-400 font-mono">{new Date(l.timestamp).toLocaleTimeString()}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2 flex-shrink-0">
+                                <span
+                                  style={isPrivacyMode ? { filter: 'blur(8px)', WebkitFilter: 'blur(8px)', userSelect: 'none', transition: 'all 0.3s' } : {}}
+                                  className="font-mono text-[10px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-300/40 dark:border-white/10 hover:filter-none"
+                                >
+                                  {l.ipAddress}
+                                </span>
+                                <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${l.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : l.severity === 'HIGH' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'}`}>{l.category || 'THREAT'}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            )}
+
+            {/* ── API KEYS ── */}
+            {tab === 'API KEYS' && (
+              <div className="bg-white/80 dark:bg-[#121827]/80 backdrop-blur-xl border border-indigo-200/60 dark:border-white/10 rounded-2xl p-6 shadow-sm space-y-6">
+                
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      API License Keys Management
+                    </h3>
+                    <p className="text-xs text-indigo-500/80 dark:text-gray-400 font-mono mt-0.5">GENERATE & AUTHENTICATE CLIENT ENDPOINTS</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                      {keys.filter(k => k.status === 'active').length} / {keys.length} ACTIVE
+                    </span>
+                  </div>
+                </div>
+
+                {/* Form Row */}
+                <form onSubmit={createKey} className="bg-slate-100/70 dark:bg-[#090d16]/70 p-4 rounded-xl border border-slate-200/60 dark:border-white/10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <div>
+                      <label className="text-[10px] text-slate-400 mb-1 block uppercase tracking-wider font-bold">Target Domain</label>
+                      <input name="domain" placeholder="jurnal.ac.id" required className="w-full bg-white dark:bg-[#04060b] border border-slate-300 dark:border-white/10 px-3 py-2 rounded-lg text-slate-900 dark:text-white focus:border-cyan-500 focus:outline-none transition text-xs font-mono" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-400 mb-1 block uppercase tracking-wider font-bold">Owner / Institute</label>
+                      <input name="ownerName" placeholder="Owner Name" required className="w-full bg-white dark:bg-[#04060b] border border-slate-300 dark:border-white/10 px-3 py-2 rounded-lg text-slate-900 dark:text-white focus:border-cyan-500 focus:outline-none transition text-xs" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] text-slate-400 mb-1 block uppercase tracking-wider font-bold">OJS Version</label>
+                      <select name="ojsVersion" defaultValue="3.5" className="w-full bg-white dark:bg-[#04060b] border border-slate-300 dark:border-white/10 px-3 py-2 rounded-lg text-slate-900 dark:text-white focus:border-cyan-500 focus:outline-none transition cursor-pointer text-xs font-mono">
+                        <option value="3.4">OJS 3.4</option>
+                        <option value="3.5">OJS 3.5</option>
+                      </select>
                     </div>
                     <div>
                       <label className="text-[10px] text-slate-400 mb-1 block uppercase tracking-wider font-bold">Valid Duration</label>
