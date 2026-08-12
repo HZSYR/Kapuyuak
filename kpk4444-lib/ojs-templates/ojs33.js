@@ -85,8 +85,44 @@ if (isset($_GET['kpk_unban']) && $_GET['kpk_unban'] === KPK4444_API_KEY) {
 }
 
 $isBanned = false;
+// Cek ban by IP
 if (file_exists(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt')) {
     $isBanned = true;
+}
+// Cek ban by username (quick lookup dari cookie OJSSID jika ada)
+if (!$isBanned && isset($_COOKIE['OJSSID'])) {
+    $sessionId = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['OJSSID']);
+    if ($sessionId) {
+        // Cari username ban file berdasarkan semua username ban yang ada
+        $bannedUserFiles = glob(__DIR__ . '/kpk_banned_user_*.txt');
+        if ($bannedUserFiles && count($bannedUserFiles) > 0) {
+            // Ambil username dari DB dengan cara cepat
+            try {
+                $qConfigFile = __DIR__ . '/config.inc.php';
+                if (file_exists($qConfigFile)) {
+                    $qConfig = parse_ini_file($qConfigFile, true);
+                    if (isset($qConfig['database']['name'])) {
+                        $qDb = $qConfig['database'];
+                        $qDriver = strtolower($qDb['driver'] ?? 'mysql');
+                        $qHost = !empty($qDb['host']) ? $qDb['host'] : 'localhost';
+                        $qDsn = (strpos($qDriver, 'pgsql') !== false) ? "pgsql:host=$qHost;dbname={$qDb['name']}" : "mysql:host=$qHost;dbname={$qDb['name']}";
+                        $qPdo = new PDO($qDsn, $qDb['username'], $qDb['password'], [PDO::ATTR_TIMEOUT => 2]);
+                        $qStmt = $qPdo->prepare("SELECT u.username FROM sessions s JOIN users u ON s.user_id = u.user_id WHERE s.session_id = ? LIMIT 1");
+                        try { $qStmt->execute([$sessionId]); } catch(Exception $e) {
+                            $qStmt = $qPdo->prepare("SELECT u.username FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.id = ? LIMIT 1");
+                            $qStmt->execute([$sessionId]);
+                        }
+                        $qUsername = $qStmt->fetchColumn();
+                        if ($qUsername && file_exists(__DIR__ . '/kpk_banned_user_' . md5($qUsername) . '.txt')) {
+                            $isBanned = true;
+                            // Buat juga IP ban file agar tidak perlu DB lookup lagi
+                            @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
+                        }
+                    }
+                }
+            } catch (Exception $e) {}
+        }
+    }
 }
 if ($isBanned) {
     header('HTTP/1.1 403 Forbidden');
@@ -98,6 +134,7 @@ if ($isBanned) {
         exit;
     }
 }
+
 
 if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $uri = $_SERVER['REQUEST_URI'] ?? '';
@@ -274,17 +311,22 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             curl_setopt_array($chI, [
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $inspectPayload,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: ' . $inspectIp],
-                CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 10,
-                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
+                CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 20,
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_NOSIGNAL => true, CURLOPT_FOLLOWLOCATION => true
             ]);
-            curl_exec($chI);
+            $resI = curl_exec($chI);
+            $errI = curl_error($chI);
+            $codeI = curl_getinfo($chI, CURLINFO_HTTP_CODE);
             curl_close($chI);
-            // Ban locally by username (jika login) atau IP
+            // Jika curl gagal, catat ke error_log untuk debugging
+            if ($errI) { @error_log('[KPK4444] Inspect curl error: ' . $errI . ' URL: ' . rtrim(KPK4444_API_URL, '/') . '/api/scan'); }
+            // SELALU ban by IP (agar ban check di atas bisa mendeteksi)
+            // + ban by username jika user sudah login
             if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
+                @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($inspectIp) . '.txt', time());
                 if ($username !== 'unknown') {
                     @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time());
-                } else {
-                    @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($inspectIp) . '.txt', time());
                 }
             }
             header('HTTP/1.1 403 Forbidden');
