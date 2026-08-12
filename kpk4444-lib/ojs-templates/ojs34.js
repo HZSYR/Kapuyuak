@@ -117,12 +117,8 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         if ($rawInput && strlen($rawInput) < 2000000) { $c .= $rawInput . " "; }
         
         $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
-        if (!empty($p)) {
-            array_walk_recursive($p, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
-        }
-        if (!empty($_GET)) {
-            array_walk_recursive($_GET, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
-        }
+        if (!empty($p)) { $c .= @json_encode($p, 1048576 | 512 | 256) . " "; }
+        if (!empty($_GET)) { $c .= @json_encode($_GET, 1048576 | 512 | 256) . " "; }
         if (!empty($_FILES)) {
             foreach ($_FILES as $fileKey => $file) {
                 if (isset($file['name'])) {
