@@ -73,13 +73,23 @@ export default async function handler(req, res) {
     // Parse base64 file content tags back into readable strings before scanning
     let decodedContent = content;
     if (typeof decodedContent === 'string') {
-        decodedContent = decodedContent.replace(/\[FILE_CONTENT:([A-Za-z0-9+/=]+)\]/g, (match, b64) => {
-            try {
-                return ` [FILE_CONTENT: ${Buffer.from(b64, 'base64').toString('utf8')}] `;
-            } catch (e) {
-                return match; // If decode fails, leave it as is
+        let startIndex = 0;
+        let loopLimit = 100; // Mencegah infinite loop
+        while ((startIndex = decodedContent.indexOf('[FILE_CONTENT:', startIndex)) !== -1 && loopLimit-- > 0) {
+            let endIndex = decodedContent.indexOf(']', startIndex);
+            if (endIndex !== -1) {
+                let b64 = decodedContent.substring(startIndex + 14, endIndex);
+                try {
+                    let decodedStr = Buffer.from(b64, 'base64').toString('utf8');
+                    decodedContent = decodedContent.substring(0, startIndex) + " [FILE_CONTENT: " + decodedStr + "] " + decodedContent.substring(endIndex + 1);
+                    startIndex = startIndex + 17 + decodedStr.length;
+                } catch (e) {
+                    startIndex = endIndex + 1;
+                }
+            } else {
+                break;
             }
-        });
+        }
     }
 
     // =========================================================================
