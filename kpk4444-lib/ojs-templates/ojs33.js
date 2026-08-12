@@ -109,37 +109,6 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             break;
         }
     }
-
-    // === SPECIAL: Handle kpk_threat_inspect (Inspect Element Detection) ===
-    $rawForCheck = file_get_contents('php://input');
-    if ($rawForCheck && strpos($rawForCheck, 'kpk_threat_inspect') !== false) {
-        // User detected using Inspect Element / DevTools. Report to server immediately.
-        $inspectPayload = json_encode([
-            'apiKey' => KPK4444_API_KEY,
-            'domain' => $_SERVER['HTTP_HOST'] ?? 'unknown',
-            'content' => 'kpk_inspect_element_detected shell_exec(1)',
-            'field'  => 'INSPECT_ELEMENT',
-            'userIp' => $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            'username' => 'unknown'
-        ]);
-        $chI = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
-        curl_setopt_array($chI, [
-            CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $inspectPayload,
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.($_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown')],
-            CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 10,
-            CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
-        ]);
-        $resI = curl_exec($chI);
-        curl_close($chI);
-        // Always ban locally and return 403
-        if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
-            @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? 'x') . '.txt', time());
-        }
-        header('HTTP/1.1 403 Forbidden');
-        header('Content-Type: application/json');
-        die(json_encode(['blocked' => true]));
-    }
-    // === END kpk_threat_inspect ===
     
     if (!$shouldSkip) {
         $c = "";
@@ -288,6 +257,42 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 }
             } catch (Exception $e) {}
         }
+
+        // === SPECIAL: Handle kpk_threat_inspect (Inspect Element / DevTools Detection) ===
+        // Handler ini di sini agar $username sudah terisi dari cookie/DB
+        if (strpos($rawInput ?? $c, 'kpk_threat_inspect') !== false) {
+            $inspectIp = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $inspectPayload = json_encode([
+                'apiKey'   => KPK4444_API_KEY,
+                'domain'   => $_SERVER['HTTP_HOST'] ?? 'unknown',
+                'content'  => 'kpk_inspect_element_detected shell_exec(1) devtools_open',
+                'field'    => 'INSPECT_ELEMENT',
+                'userIp'   => $inspectIp,
+                'username' => $username  // sudah diisi dari DB
+            ]);
+            $chI = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
+            curl_setopt_array($chI, [
+                CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $inspectPayload,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: ' . $inspectIp],
+                CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 10,
+                CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
+            ]);
+            curl_exec($chI);
+            curl_close($chI);
+            // Ban locally by username (jika login) atau IP
+            if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
+                if ($username !== 'unknown') {
+                    @file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time());
+                } else {
+                    @file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($inspectIp) . '.txt', time());
+                }
+            }
+            header('HTTP/1.1 403 Forbidden');
+            header('Content-Type: application/json');
+            die(json_encode(['blocked' => true]));
+        }
+        // === END kpk_threat_inspect ===
+
         $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['HTTP_X_FORWARDED_FOR']??$_SERVER['REMOTE_ADDR']??'unknown', 'username'=>$username]);
         if ($p) {
             $ch = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
