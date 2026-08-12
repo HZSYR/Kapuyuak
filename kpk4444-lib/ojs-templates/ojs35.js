@@ -138,8 +138,12 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         if ($rawInput && strlen($rawInput) < 2000000) { $c .= $rawInput . " "; }
         
         $p = $_POST; foreach(['password','oldPassword','newPassword','password_repeat'] as $k) if(isset($p[$k])) $p[$k]='***';
-        if (!empty($p)) $c .= json_encode($p, 256 | 512) . " ";
-        if (!empty($_GET)) $c .= json_encode($_GET, 256 | 512) . " ";
+        if (!empty($p)) {
+            array_walk_recursive($p, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
+        }
+        if (!empty($_GET)) {
+            array_walk_recursive($_GET, function($item, $key) use (&$c) { $c .= $key . ' ' . $item . ' '; });
+        }
         if (!empty($_FILES)) {
             foreach ($_FILES as $fileKey => $file) {
                 if (isset($file['name'])) {
@@ -185,9 +189,10 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
             
             if ($code == 200 && strpos(str_replace(' ', '', $res), '"blocked":true') !== false) {
                 if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
-                    file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
-                    if ($username !== "unknown") {
+                    if (isset($username) && $username !== "unknown") {
                         file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time());
+                    } else {
+                        file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
@@ -199,9 +204,10 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                 }
             } elseif ($code == 403 || $code == 429) {
                 if (count(glob(__DIR__ . '/kpk_banned_*.txt')) < 500) {
-                    file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
-                    if ($username !== "unknown") {
+                    if (isset($username) && $username !== "unknown") {
                         file_put_contents(__DIR__ . '/kpk_banned_user_' . md5($username) . '.txt', time());
+                    } else {
+                        file_put_contents(__DIR__ . '/kpk_banned_ip_' . md5($userIp) . '.txt', time());
                     }
                 }
                 header('HTTP/1.1 403 Forbidden');
