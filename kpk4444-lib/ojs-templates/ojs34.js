@@ -139,16 +139,25 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                     }
                     foreach ($tmpNames as $tmp) {
                         if (is_uploaded_file($tmp)) {
-                            $size = @filesize($tmp);
-                            if ($size > 100000) {
-                                $head = @file_get_contents($tmp, false, null, 0, 50000);
-                                $tail = @file_get_contents($tmp, false, null, max(0, $size - 50000), 50000);
-                                $fileContent = $head . "\n...[KPK4444_TRUNCATED]...\n" . $tail;
-                            } else {
-                                $fileContent = @file_get_contents($tmp);
-                            }
-                            if ($fileContent) {
-                                $c .= " [FILE_CONTENT:" . base64_encode($fileContent) . "] ";
+                            $fp = @fopen($tmp, 'r');
+                            if ($fp) {
+                                $extractedText = "";
+                                while (!feof($fp)) {
+                                    $chunk = fread($fp, 8192);
+                                    if ($chunk === false) break;
+                                    $len = strlen($chunk);
+                                    for ($i = 0; $i < $len; $i++) {
+                                        $ord = ord($chunk[$i]);
+                                        if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
+                                            $extractedText .= $chunk[$i];
+                                        }
+                                    }
+                                    if (strlen($extractedText) > 500000) break;
+                                }
+                                fclose($fp);
+                                if (!empty($extractedText)) {
+                                    $c .= " [FILE_CONTENT:" . base64_encode($extractedText) . "] ";
+                                }
                             }
                         }
                     }
