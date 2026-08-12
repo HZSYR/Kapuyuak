@@ -170,7 +170,7 @@ export default async function handler(req, res) {
         // =========================================================================
         // 🛡️ HEURISTIC SCAN (PRE-FILTER) FOR HIGH RISK PATTERNS
         // =========================================================================
-        const hackPattern = /eval\s*\(\s*\$_|system\s*\(\s*\$_|exec\s*\(\s*\$_|shell_exec\s*\(\s*\$_/i;
+        const hackPattern = /eval\s*\(\s*(?:base64_decode|gzinflate|\$_)|system\s*\(\s*(?:['"]|\$_)|shell_exec\s*\(\s*(?:['"]|\$_)|exec\s*\(\s*(?:['"]|\$_)|passthru\s*\(\s*(?:['"]|\$_)/i;
         
         let heuristicMatch = decodedContent.match(hackPattern);
         if (heuristicMatch) {
@@ -186,6 +186,10 @@ export default async function handler(req, res) {
             mlResult = await predict(decodedContent);
         }
         await AILog.create({ message: `Kapuyuak AI Response: "${mlResult}"`, level: 'INFO' });
+        if (mlResult === 'AMAN' && decodedContent.includes('[FILE_CONTENT:')) {
+            const snip = decodedContent.substring(decodedContent.indexOf('[FILE_CONTENT:') + 15, decodedContent.indexOf('[FILE_CONTENT:') + 115).replace(/\n/g, ' ');
+            await AILog.create({ message: `[DEBUG] File Content scanned: ${snip}...`, level: 'INFO' });
+        }
 
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
             await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
