@@ -165,7 +165,7 @@ export default async function handler(req, res) {
     }
 
     // =========================================================================
-    // 🧠 KAPUYUAK DEEP LEARNING SCANNER (NEURAL ENGINE)
+    // 🧠 KAPUYUAK DEEP LEARNING SCANNER (NEURAL ENGINE & HEURISTICS)
     // =========================================================================
     if (decodedContent.length > 5) {
         await AILog.create({ message: `Initiating Kapuyuak Deep Learning Scan for ${domain}...`, level: 'INFO' });
@@ -173,20 +173,30 @@ export default async function handler(req, res) {
         let mlResult = 'AMAN';
         
         // =========================================================================
-        // 🛡️ HEURISTIC SCAN (PRE-FILTER) FOR HIGH RISK PATTERNS
+        // 🛡️ ADVANCED HEURISTIC SCAN (PRE-FILTER) FOR HIGH RISK PATTERNS & OBFUSCATION
         // =========================================================================
         const hackPattern = /eval\s*\(\s*(?:base64_decode|gzinflate|\$_)|system\s*\(\s*(?:['"]|\$_)|shell_exec\s*\(\s*(?:['"]|\$_)|exec\s*\(\s*(?:['"]|\$_)|passthru\s*\(\s*(?:['"]|\$_)/i;
         
+        // 1. Symbol Ratio Check (Deteksi Obfuscation berlebihan seperti +++++, $__$, dsb)
+        const symbolCount = (decodedContent.match(/[^\w\s]/g) || []).length;
+        const symbolRatio = symbolCount / decodedContent.length;
+        
+        // 2. Suspicious Long Strings Check (Sering dipakai untuk payload base64 raksasa)
+        const hasSuspiciousLongString = /[a-zA-Z0-9+\/]{400,}/.test(decodedContent);
+
         let heuristicMatch = decodedContent.match(hackPattern);
-        if (heuristicMatch) {
+        
+        if (heuristicMatch || symbolRatio > 0.4 || (hasSuspiciousLongString && symbolRatio > 0.15)) {
             mlResult = 'HACK';
+            let matchedReason = heuristicMatch ? heuristicMatch[0] : (symbolRatio > 0.4 ? 'HIGH_SYMBOL_RATIO_OBFUSCATION' : 'SUSPICIOUS_LONG_ENCODED_PAYLOAD');
+            
             await Blacklist.findOneAndUpdate(
-                { value: heuristicMatch[0], type: 'keyword' },
-                { value: heuristicMatch[0], type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                { value: matchedReason, type: 'keyword' },
+                { value: matchedReason, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
                 { upsert: true }
             );
             await trainAI(decodedContent, 'HACK');
-            await AILog.create({ message: `Heuristic Scanner Blocked High-Risk Pattern (Regex Match)`, level: 'BLOCKED' });
+            await AILog.create({ message: `Heuristic Scanner Blocked: ${matchedReason}`, level: 'BLOCKED' });
         } else {
             mlResult = await predict(decodedContent);
         }
