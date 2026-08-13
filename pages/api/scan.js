@@ -129,12 +129,17 @@ export default async function handler(req, res) {
 
     if (signatureMatch) {
         if (matchedSigStr) {
-            await Blacklist.findOneAndUpdate(
-                { value: matchedSigStr, type: 'keyword' },
-                { $set: { value: matchedSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' } },
-                { upsert: true }
-            );
-            await trainAI(decodedContent, 'HACK');
+            // SAFEGUARD: Potong string agar DB tidak crash (Index Limit 1024 bytes)
+            const safeSigStr = matchedSigStr.length > 100 ? matchedSigStr.substring(0, 100) + '...' : matchedSigStr;
+            try {
+                await Blacklist.findOneAndUpdate(
+                    { value: safeSigStr, type: 'keyword' },
+                    { $set: { value: safeSigStr, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' } },
+                    { upsert: true }
+                );
+                // SAFEGUARD: Jangan suruh AI menghafal seluruh file gambar (Bikin RAM jebol), cukup 5000 karakter pertama
+                await trainAI(decodedContent.substring(0, 5000), 'HACK');
+            } catch(e) {}
         }
         await AILog.create({ message: `MALWARE DETECTED: Web Shell Signature Blocked from ${domain} | IP: ${ip} | User: ${reqUsername}`, level: 'BLOCKED' });
         const expireDate = new Date(Date.now() + 60 * 60 * 1000); // Ban 1 jam
@@ -156,11 +161,15 @@ export default async function handler(req, res) {
         } catch (banErr) {
             await AILog.create({ message: `BAN SAVE FAILED: ${banErr.message}`, level: 'ERROR' });
         }
-        await AttackLog.create({
-            apiKey, domain, category: 'AI_DETECTED_MALWARE', severity: 'CRITICAL',
-            field: field || 'unknown', snippet: `[SIGNATURE SCANNER] ${content.substring(0, 100)}`,
-            ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: reqUsername
-        });
+        
+        try {
+            const safeSnippet = typeof content === 'string' ? content.substring(0, 100) : 'Invalid Content';
+            await AttackLog.create({
+                apiKey, domain, category: 'AI_DETECTED_MALWARE', severity: 'CRITICAL',
+                field: field || 'unknown', snippet: `[SIGNATURE SCANNER] ${safeSnippet}`,
+                ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: reqUsername
+            });
+        } catch(e) {}
         return res.status(200).json({ blocked: true });
     }
 
@@ -190,13 +199,18 @@ export default async function handler(req, res) {
             mlResult = 'HACK';
             let matchedReason = heuristicMatch ? heuristicMatch[0] : (symbolRatio > 0.4 ? 'HIGH_SYMBOL_RATIO_OBFUSCATION' : 'SUSPICIOUS_LONG_ENCODED_PAYLOAD');
             
-            await Blacklist.findOneAndUpdate(
-                { value: matchedReason, type: 'keyword' },
-                { value: matchedReason, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
-                { upsert: true }
-            );
-            await trainAI(decodedContent, 'HACK');
-            await AILog.create({ message: `Heuristic Scanner Blocked: ${matchedReason}`, level: 'BLOCKED' });
+            // SAFEGUARD: Potong string agar DB tidak crash
+            const safeMatchedReason = matchedReason.length > 100 ? matchedReason.substring(0, 100) + '...' : matchedReason;
+            
+            try {
+                await Blacklist.findOneAndUpdate(
+                    { value: safeMatchedReason, type: 'keyword' },
+                    { value: safeMatchedReason, type: 'keyword', category: 'MALWARE', severity: 'CRITICAL', addedBy: 'AI_AUTO_LEARNING' },
+                    { upsert: true }
+                );
+                await trainAI(decodedContent.substring(0, 5000), 'HACK');
+            } catch(e) {}
+            await AILog.create({ message: `Heuristic Scanner Blocked: ${safeMatchedReason}`, level: 'BLOCKED' });
         } else {
             mlResult = await predict(decodedContent);
         }
