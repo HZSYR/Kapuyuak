@@ -209,8 +209,17 @@ export default async function handler(req, res) {
         if (mlResult === 'JUDI' || mlResult === 'HACK') {
             await AILog.create({ message: `Kapuyuak AI Detected ${mlResult}`, level: 'BLOCKED' });
             
-            // Dihapus: AI tidak boleh melatih dirinya sendiri menggunakan tebakannya sendiri (mencegah model poisoning/collapse).
-            // Dihapus: Pembuatan Blacklist otomatis dari 40 karakter pertama payload dihapus karena menyebabkan false positive massal.
+            // 🧠 SUPERVISED CONTINUOUS LEARNING: 
+            // AI akan mempertajam ingatannya terhadap payload yang berhasil dia deteksi (Reinforcement).
+            // Hanya dilatih ulang jika payload panjangnya logis (mencegah buffer poisoning).
+            if (decodedContent.length < 50000) {
+                try {
+                    await trainAI(decodedContent, mlResult);
+                    await AILog.create({ message: `AI Reinforced Learning Applied for category: ${mlResult}`, level: 'INFO' });
+                } catch (e) {
+                    console.error("AI Reinforcement failed");
+                }
+            }
 
             const expireDate = new Date();
             expireDate.setHours(expireDate.getHours() + 1); // Ban 1 jam
