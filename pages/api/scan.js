@@ -106,7 +106,12 @@ export default async function handler(req, res) {
       /php:\/\/filter\/(?:read=)?(?:convert\.iconv|string\.rot13|zlib\.deflate)/i,
       /(?:169\.254\.169\.254|metadata\.google\.internal)/i,
       /\{php\}.*(?:system|exec|shell_exec|eval)\(.*\{(?:\/)?php\}/i,
-      /phar:\/\//i
+      /phar:\/\//i,
+      // 🛡️ NEW SIGNATURES: Anti Polyglot & Obfuscation Shell
+      /JFIF[\s\S]{0,1000}<\?php/i, // Blokir gambar yang disisipi tag PHP
+      /(["'][a-zA-Z_]["']\s*\.\s*){3,}["'][a-zA-Z_]["']/i, // Blokir pemisahan string eksekusi (contoh: "p"."u"."t"."e"."n"."v")
+      /f0VMRgIBAQ/i, // Blokir payload binary ELF Linux (Base64)
+      /MAINHACK|CHANKRO=|meterpreter/i // Blokir identitas spesifik shell
     ];
     
     let signatureMatch = false;
