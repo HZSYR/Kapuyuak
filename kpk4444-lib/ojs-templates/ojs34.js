@@ -191,12 +191,12 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
         
         
         $p = json_encode(['apiKey'=>KPK4444_API_KEY, 'domain'=>$_SERVER['HTTP_HOST']??'unknown', 'content'=>$c, 'field'=>'global', 'userIp'=>$userIp, 'username'=>$username]);
-        if ($p) {
+            if ($p) {
             $ch = curl_init(rtrim(KPK4444_API_URL, '/') . '/api/scan');
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $p,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-Forwarded-For: '.$userIp],
-                CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 15,
+                CURLOPT_CONNECTTIMEOUT => 10, CURLOPT_TIMEOUT => 25, // Diperpanjang agar sync dengan AI Server (Mencegah ban asimetris)
                 CURLOPT_FOLLOWLOCATION => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0
             ]);
             $res = curl_exec($ch);
@@ -240,4 +240,5 @@ if (!$isAjax) {
 // --- KPK4444 SHIELD SECURE FOOTER ---
 // Protected by Kapuyuak Security System
 `;
-
+
+
