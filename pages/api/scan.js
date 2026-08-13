@@ -332,24 +332,27 @@ export default async function handler(req, res) {
 
     // Hanya blokir jika skor ancaman >= 100
     if (spamScore >= 100) {
-      await AttackLog.create({
-        apiKey, domain, category: blockedCategory, severity: highestSeverity,
-        field: field || 'unknown', snippet: content.substring(0, 200),
-        ipAddress: ip, userAgent: req.headers['user-agent'], username: username || 'unknown'
-      });
+      const safeMatchedString = matchedPatterns.join(', ').substring(0, 100);
+      try {
+        await AttackLog.create({
+            apiKey, domain, category: blockedCategory, severity: highestSeverity,
+            field: field || 'unknown', snippet: typeof content === 'string' ? content.substring(0, 200) : 'Invalid Content',
+            ipAddress: ip, userAgent: req.headers['user-agent'] || 'unknown', username: reqUsername
+        });
+      } catch(e) {}
 
       const expireHour = new Date(Date.now() + 1 * 60 * 60 * 1000);
       try {
           if (reqUsername !== 'unknown') {
               await BannedIP.findOneAndUpdate(
                 { username: reqUsername },
-                { $set: { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, bannedAt: new Date(), expiresAt: expireHour } },
+                { $set: { ip, username: reqUsername, reason: `Triggered ${highestSeverity} patterns: ${safeMatchedString}`, domain, bannedAt: new Date(), expiresAt: expireHour } },
                 { upsert: true, new: true }
               );
           } else {
               await BannedIP.findOneAndUpdate(
                 { ip },
-                { $set: { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${matchedPatterns.join(', ')}`, domain, bannedAt: new Date(), expiresAt: expireHour } },
+                { $set: { ip, username: 'unknown', reason: `Triggered ${highestSeverity} patterns: ${safeMatchedString}`, domain, bannedAt: new Date(), expiresAt: expireHour } },
                 { upsert: true, new: true }
               );
           }
@@ -362,7 +365,7 @@ export default async function handler(req, res) {
       // Hal ini membuat AI semakin pintar tanpa resiko "keracunan tebakan sendiri" (Model Poisoning).
       try {
           const learnLabel = blockedCategory === 'SPAM_CONTENT' ? 'JUDI' : 'HACK';
-          await trainAI(content, learnLabel);
+          await trainAI(decodedContent.substring(0, 5000), learnLabel);
           await AILog.create({ message: `AI Auto-Learned from Manual Detection (${learnLabel})`, level: 'INFO' });
       } catch (e) {
           // Abaikan jika error saat training
@@ -370,7 +373,7 @@ export default async function handler(req, res) {
       
       return res.status(200).json({
         blocked: true, category: blockedCategory, severity: highestSeverity,
-        matchedPattern: matchedPatterns.join(', '), snippet: content.substring(0, 100)
+        matchedPattern: safeMatchedString, snippet: typeof content === 'string' ? content.substring(0, 100) : 'Invalid'
       });
     }
 
