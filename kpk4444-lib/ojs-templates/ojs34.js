@@ -141,20 +141,35 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
                         if (is_uploaded_file($tmp)) {
                             $fp = @fopen($tmp, 'r');
                             if ($fp) {
-                                $extractedText = "";
-                                while (!feof($fp)) {
-                                    $chunk = fread($fp, 8192);
-                                    if ($chunk === false) break;
-                                    $len = strlen($chunk);
-                                    for ($i = 0; $i < $len; $i++) {
-                                        $ord = ord($chunk[$i]);
-                                        if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
-                                            $extractedText .= $chunk[$i];
-                                        }
-                                    }
-                                    if (strlen($extractedText) > 500000) break;
+                                $size = @filesize($tmp);
+                                if ($size > 150000) {
+                                    $head = fread($fp, 50000);
+                                    fseek($fp, -50000, SEEK_END);
+                                    $tail = fread($fp, 50000);
+                                    $data = $head . "\\n...[TRUNCATED]...\\n" . $tail;
+                                } else {
+                                    $data = fread($fp, 150000);
                                 }
                                 fclose($fp);
+                                
+                                $extractedText = "";
+                                $currentString = "";
+                                $len = strlen($data);
+                                for ($i = 0; $i < $len; $i++) {
+                                    $ord = ord($data[$i]);
+                                    if (($ord >= 32 && $ord <= 126) || $ord == 10 || $ord == 13 || $ord == 9) {
+                                        $currentString .= $data[$i];
+                                    } else {
+                                        if (strlen($currentString) >= 4) {
+                                            $extractedText .= $currentString . "\\n";
+                                        }
+                                        $currentString = "";
+                                    }
+                                }
+                                if (strlen($currentString) >= 4) {
+                                    $extractedText .= $currentString . "\\n";
+                                }
+                                
                                 if (!empty($extractedText)) {
                                     $c .= " [FILE_CONTENT:" . base64_encode($extractedText) . "] ";
                                 }
