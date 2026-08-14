@@ -221,3 +221,4 @@ if (!$isAjax) {
 
 // --- KPK4444 SHIELD SECURE FOOTER ---
 // Protected by Kapuyuak Security System
+`;
