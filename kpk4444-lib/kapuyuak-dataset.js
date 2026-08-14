@@ -270,6 +270,24 @@ function addHiddenSpace(text) {
     return text.replace(/ /g, ' \u200B');
 }
 
+function obfuscateHackPayload(text) {
+    if (Math.random() > 0.4) return text; // 60% peluang tidak berubah
+    const rand = Math.random();
+    if (rand < 0.25) {
+        // Obfuscation PHP String Concatenation: system -> 'sys'.'tem'
+        return text.split('').join("'.'").replace(/''\./g, '').replace(/\.''/g, '');
+    } else if (rand < 0.5) {
+        // Obfuscation JS String Concatenation: system -> 'sys'+'tem'
+        return text.split('').join("'+'").replace(/''\+/g, '').replace(/\+''/g, '');
+    } else if (rand < 0.75) {
+        // PHP Variable Function: system() -> $a='system';$a()
+        return `$z='${text}';$z()`;
+    } else {
+        // JSFuck / Brainfuck mock
+        return `[][(![]+[])[+[]]] ` + text;
+    }
+}
+
 // Fungsi Utama: Generate Dataset
 export function generateMegaDataset() {
     const dataset = [];
@@ -309,6 +327,7 @@ export function generateMegaDataset() {
         else text += ';';
         
         text = addHiddenSpace(text);
+        text = obfuscateHackPayload(text);
         dataset.push({ label: 'HACK', text });
     }
 
