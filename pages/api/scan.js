@@ -10,7 +10,7 @@ import { predict, trainAI } from '../../kpk4444-lib/kapuyuakAI';
 
 export const config = {
   api: {
-    bodyParser: { sizeLimit: '500kb' } // Prevent massive payload DoS
+    bodyParser: { sizeLimit: '4mb' } // Prevent massive payload DoS but allow enough for file scans
   }
 };
 
