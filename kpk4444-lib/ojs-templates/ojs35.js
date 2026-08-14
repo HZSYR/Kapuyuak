@@ -12,8 +12,8 @@ use APP\\core\\Application;
  * (NO ob_start because of OJS 3.5 Slim/Laminas Response Emitter)
  */
 define('INDEX_FILE_LOCATION', __FILE__);
-define('KPK4444_API_KEY', '\${apiKey}');
-define('KPK4444_API_URL', 'https://\${url}');
+define('KPK4444_API_KEY', '${apiKey}');
+define('KPK4444_API_URL', 'https://${url}');
 $userIp = \$_SERVER['HTTP_CF_CONNECTING_IP'] ?? \$_SERVER['REMOTE_ADDR'] ?? 'unknown';
 if (isset(\$_GET['kpk_unban']) && \$_GET['kpk_unban'] === KPK4444_API_KEY) {
     if (isset(\$_GET['target_ip'])) {
